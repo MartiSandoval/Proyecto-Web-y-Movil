@@ -1,0 +1,107 @@
+/* Cabecera Municipal */
+.municipal-toolbar {
+  --background: #006fe3; /* Azul municipal del Figma */
+  --color: white;
+}
+
+.municipal-header-title {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.municipal-header-title strong {
+  font-size: 18px;
+}
+
+.municipal-header-title span {
+  font-size: 12px;
+  font-weight: normal;
+}
+
+/* Fondo de la página */
+.login-background {
+  /* Si tienes la imagen de la municipalidad, agrégala aquí: */
+  /* --background: url('../../public/background1.png') no-repeat center center / cover; */
+  --background: url("C:\Users\marti\Desktop\web\Proyecto-Web-y-Movil\public\image-40.png") no-repeat center center / cover; 
+}
+
+/* Contenedor central usando Flexbox para responsividad */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100%;
+  padding: 20px;
+}
+
+/* Tarjeta de Login */
+.login-card {
+  width: 100%;
+  max-width: 500px;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.login-title {
+  color: #373737;
+  font-weight: bold;
+  font-size: 32px;
+  margin-bottom: 30px;
+}
+
+/* Agrupación de inputs */
+.input-group {
+  margin-bottom: 20px;
+}
+
+.input-label {
+  font-weight: bold;
+  color: #373737;
+  font-size: 18px;
+}
+
+.input-helper {
+  margin: 4px 0 8px 0;
+  font-size: 14px;
+}
+
+.custom-input {
+  --border-color: rgba(0, 0, 0, 0.87);
+  --border-width: 1px;
+  --border-radius: 4px;
+}
+
+/* Enlaces */
+.login-links {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 10px;
+  margin-bottom: 30px;
+}
+
+.link-blue {
+  color: #020bb5;
+  font-weight: bold;
+  text-decoration: underline;
+  font-size: 14px;
+}
+
+.register-text {
+  color: #373737;
+  font-weight: bold;
+  font-size: 14px;
+  margin: 0;
+}
+
+/* Botón */
+.btn-ingresar {
+  --background: #0051a8;
+  --color: white;
+  margin: 0 auto;
+  width: 200px;
+  height: 50px;
+  font-weight: bold;
+}
