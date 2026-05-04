@@ -1,0 +1,60 @@
+.agendar-content {
+  --background: #f4f6fb;
+}
+
+.agendar-layout {
+  display: flex;
+  gap: 24px;
+  padding: 24px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.agendar-calendar-col {
+  flex: 0 0 auto;
+}
+
+.agendar-slots-col {
+  flex: 1;
+  min-width: 260px;
+}
+
+.slots-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.slots-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1a3a6b;
+}
+
+.slots-clock {
+  font-size: 1.2rem;
+}
+
+.slots-fecha {
+  font-size: 0.85rem;
+  color: #555;
+  margin: 4px 0 0;
+  text-transform: capitalize;
+}
+
+.slots-loading,
+.slots-empty {
+  color: #888;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 16px 0;
+}
+
+.slots-count {
+  font-size: 0.8rem;
+  color: #888;
+  text-align: right;
+  margin-top: 12px;
+}
