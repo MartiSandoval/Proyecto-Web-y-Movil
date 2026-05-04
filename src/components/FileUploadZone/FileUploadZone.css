@@ -1,0 +1,113 @@
+.upload-zone-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.upload-dropzone {
+  border: 2px dashed #1a3a6b;
+  border-radius: 12px;
+  padding: 32px 16px;
+  text-align: center;
+  cursor: pointer;
+  background: #f8faff;
+  transition: background 0.15s;
+}
+
+.upload-dropzone:hover {
+  background: #edf2fb;
+}
+
+.upload-icon {
+  font-size: 2.5rem;
+  color: #1a3a6b;
+}
+
+.upload-text {
+  font-weight: 600;
+  color: #1a3a6b;
+  margin: 8px 0 2px;
+}
+
+.upload-subtext {
+  color: #888;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.upload-file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.upload-file-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.upload-file-item.error {
+  border-color: #e53935;
+}
+
+.upload-file-icon {
+  font-size: 1.4rem;
+  color: #1a3a6b;
+  flex-shrink: 0;
+}
+
+.upload-file-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.upload-file-name {
+  display: block;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #222;
+}
+
+.upload-progress-bar {
+  height: 4px;
+  background: #e0e0e0;
+  border-radius: 2px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+
+.upload-progress-fill {
+  height: 100%;
+  background: #1a3a6b;
+  border-radius: 2px;
+  transition: width 0.2s;
+}
+
+.upload-status-label {
+  font-size: 0.8rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+  color: #555;
+}
+
+.upload-file-item.error .upload-status-label {
+  color: #e53935;
+}
+
+.upload-retry {
+  background: none;
+  border: none;
+  color: #e53935;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 0;
+  margin-top: 2px;
+}

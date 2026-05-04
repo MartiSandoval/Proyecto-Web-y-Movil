@@ -1,4 +1,5 @@
 import { JSX } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Tramites.css";
 
 export interface ITramitesProps {
@@ -9,6 +10,7 @@ export const Tramites = ({
   className,
   ...props
 }: ITramitesProps): JSX.Element => {
+  const navigate = useNavigate();
   return (
     <div className={"tramites " + (className || "")}>
       <div className="root">
@@ -22,7 +24,7 @@ export const Tramites = ({
           <div className="groups2">
             <div className="background7"></div>
             <img className="signo-peso-icono-1" src="signo-peso-icono-10.png" />
-            <div className="button">
+            <div className="button" onClick={() => navigate("/tramite/tramite-id-1")} style={{cursor:"pointer"}}>
               <div className="background8"></div>
               <img className="image" src="image0.png" />
               <div className="ver-detalles">Ver detalles </div>
@@ -58,7 +60,7 @@ export const Tramites = ({
           <div className="groups3">
             <div className="background13"></div>
             <img className="signo-peso-icono-1" src="signo-peso-icono-11.png" />
-            <div className="button3">
+            <div className="button3" onClick={() => navigate("/tramite/tramite-id-2")} style={{cursor:"pointer"}}>
               <div className="background14"></div>
               <img className="image3" src="image2.png" />
               <div className="ver-detalles2">Ver detalles </div>
@@ -88,7 +90,7 @@ export const Tramites = ({
           </div>
           <div className="groups4">
             <div className="background13"></div>
-            <div className="button3">
+            <div className="button3" onClick={() => navigate("/tramite/tramite-id-3")} style={{cursor:"pointer"}}>
               <div className="background14"></div>
               <img className="image" src="image4.png" />
               <div className="ver-detalles2">Ver detalles </div>
@@ -168,7 +170,7 @@ export const Tramites = ({
           <div className="groups7">
             <div className="background7"></div>
             <img className="signo-peso-icono-1" src="signo-peso-icono-13.png" />
-            <div className="button">
+            <div className="button" onClick={() => navigate("/tramite/tramite-id-1")} style={{cursor:"pointer"}}>
               <div className="background8"></div>
               <img className="image" src="image10.png" />
               <div className="ver-detalles">Ver detalles </div>

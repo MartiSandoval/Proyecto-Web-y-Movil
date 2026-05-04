@@ -17,18 +17,20 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "bugs": {
     "url": "https://github.com/MartiSandoval/Proyecto-Web-y-Movil/issues"
   },
   "homepage": "https://github.com/MartiSandoval/Proyecto-Web-y-Movil#readme",
   "dependencies": {
     "@ionic/react": "^8.8.5",
+    "@supabase/supabase-js": "^2.105.1",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "ionicons": "^8.0.13",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
+    "react-router-dom": "^7.14.2",
     "typescript": "^6.0.3"
   },
   "devDependencies": {
