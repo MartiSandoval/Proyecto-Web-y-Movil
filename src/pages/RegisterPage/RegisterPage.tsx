@@ -19,7 +19,7 @@ import {
 } from '@ionic/react';
 import { lockClosedOutline, eyeOutline, calendarOutline } from 'ionicons/icons';
 // Importamos el mismo CSS del Login porque la estructura del contenedor es igual
-import './LoginPage.css'; 
+import '../LoginPage/LoginPage.css';
 
 const RegisterPage: React.FC = () => {
   // Estados para capturar todos los campos del formulario
