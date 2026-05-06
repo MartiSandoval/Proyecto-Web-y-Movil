@@ -1,5 +1,5 @@
 import { JSX, useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent,
   IonCard, IonCardHeader, IonCardTitle, IonCardContent,
@@ -20,7 +20,7 @@ const formatFechaLarga = (fecha: string) => {
 
 export const AgendarHora = (): JSX.Element => {
   const { tramiteId } = useParams<{ tramiteId: string }>();
-  const navigate = useNavigate();
+  const history = useHistory();
 
   const today = new Date();
   const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
@@ -48,8 +48,9 @@ export const AgendarHora = (): JSX.Element => {
     setSelectedDate(date);
   };
 
-  const handleContinuar = () => {
-    navigate(`/tramite/${tramiteId}/subir`, {
+ const handleContinuar = () => {
+    history.push({
+      pathname: `/tramite/${tramiteId}/subir`,
       state: { fecha: selectedDate, hora: selectedSlot },
     });
   };
@@ -97,7 +98,7 @@ export const AgendarHora = (): JSX.Element => {
       </IonContent>
 
       <NavButtons
-        onAtras={() => navigate(-1)}
+        onAtras={() => history.goBack()} // Reemplazamos navigate(-1)
         onContinuar={handleContinuar}
         continuarDisabled={!selectedDate || !selectedSlot}
       />

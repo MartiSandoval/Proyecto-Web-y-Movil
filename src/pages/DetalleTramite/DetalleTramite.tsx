@@ -1,5 +1,5 @@
 import { JSX, useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent,
   IonCard, IonCardHeader, IonCardTitle, IonCardContent,
@@ -12,7 +12,7 @@ import "./DetalleTramite.css";
 
 export const DetalleTramite = (): JSX.Element => {
   const { tramiteId } = useParams<{ tramiteId: string }>();
-  const navigate = useNavigate();
+  const history = useHistory();
   const [tramite, setTramite] = useState<ITramite | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -91,8 +91,8 @@ export const DetalleTramite = (): JSX.Element => {
       </IonContent>
 
       <NavButtons
-        onAtras={() => navigate("/")}
-        onContinuar={() => navigate(`/tramite/${tramiteId}/agendar`)}
+        onAtras={() => history.push("/")}
+        onContinuar={() => history.push(`/tramite/${tramiteId}/agendar`)}
         continuarDisabled={!tramite}
       />
     </IonPage>

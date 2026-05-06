@@ -3,7 +3,8 @@ import { IonApp, IonRouterOutlet, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-
+import { AgendarHora } from './pages/AgendarHora/AgendarHora';
+import { DetalleTramite } from './pages/DetalleTramite/DetalleTramite';
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
 /* Basic CSS for apps built with Ionic */
@@ -26,18 +27,31 @@ const App: React.FC = () => (
   <IonApp>
     <IonReactRouter>
       <IonRouterOutlet>
-        {/* Ruta a nuestra nueva página de login */}
+
+        {/* --- RUTAS DE AUTENTICACIÓN --- */}
         <Route exact path="/login">
           <LoginPage />
         </Route>
-        {/* 2. NUEVA RUTA: Ruta del Registro */}
+        
         <Route exact path="/registro">
           <RegisterPage />
         </Route>
-        {/* Si el usuario entra a la raíz "/", lo mandamos al login */}
-        <Route exact path="/">
-          <Redirect to="/login" />
+
+        {/* --- RUTAS DEL FLUJO DE TRÁMITES --- */}
+        {/* El parámetro :tramiteId permite saber qué trámite seleccionó el usuario */}
+        <Route exact path="/tramite/:tramiteId/detalle">
+          <DetalleTramite />
         </Route>
+
+        <Route exact path="/tramite/:tramiteId/agendar">
+          <AgendarHora />
+        </Route>
+
+        
+
+        {/* --- REDIRECCIÓN POR DEFECTO --- */}
+        <Route exact path="/" render={() => <Redirect to="/login" />} />
+
       </IonRouterOutlet>
     </IonReactRouter>
   </IonApp>
