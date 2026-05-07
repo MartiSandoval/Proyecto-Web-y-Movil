@@ -2,6 +2,12 @@
 
 # dependencies
 /node_modules
+
+# Python
+venv/
+__pycache__/
+*.pyc
+backend/.env
 /.pnp
 .pnp.js
 

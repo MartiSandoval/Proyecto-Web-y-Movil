@@ -2,6 +2,21 @@ import { ITramite, ITimeSlot, IAppointment } from "../types/tramite";
 
 const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
+export async function getTramites(): Promise<ITramite[]> {
+  const res = await fetch(`${BASE_URL}/tramites/`);
+  if (!res.ok) throw new Error("Error al obtener trámites");
+  const data = await res.json();
+  return data.map((t: any) => ({
+    id: t.id,
+    nombre: t.nombre,
+    descripcion: t.descripcion,
+    costo: t.costo,
+    departamento: t.departamento,
+    esEnLinea: t.es_en_linea,
+    documentosRequeridos: t.documentos_requeridos ?? [],
+  }));
+}
+
 export async function getTramite(id: string): Promise<ITramite> {
   const res = await fetch(`${BASE_URL}/tramites/${id}`);
   if (!res.ok) throw new Error("Trámite no encontrado");

@@ -1,5 +1,5 @@
 import { JSX, useEffect, useState } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useHistory, useLocation } from "react-router-dom";
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent,
   IonCard, IonCardHeader, IonCardTitle, IonCardContent,
@@ -19,7 +19,7 @@ interface LocationState {
 
 export const SubirArchivos = (): JSX.Element => {
   const { tramiteId } = useParams<{ tramiteId: string }>();
-  const navigate = useNavigate();
+  const history = useHistory();
   const location = useLocation();
   const { fecha, hora } = (location.state as LocationState) || {};
 
@@ -125,7 +125,7 @@ export const SubirArchivos = (): JSX.Element => {
             <h2>¡Hora agendada con éxito!</h2>
             <p>Tu cita fue registrada para el <strong>{fecha}</strong> a las <strong>{hora}</strong>.</p>
             <p>{tramite?.nombre}</p>
-            <button className="subir-volver-btn" onClick={() => navigate("/")}>
+            <button className="subir-volver-btn" onClick={() => history.push("/")}>
               Volver al inicio
             </button>
           </div>
@@ -172,7 +172,7 @@ export const SubirArchivos = (): JSX.Element => {
       </IonContent>
 
       <NavButtons
-        onAtras={() => navigate(-1)}
+        onAtras={() => history.goBack()}
         onContinuar={handleGuardar}
         continuarDisabled={saving}
         continuarLabel={saving ? "Guardando..." : "Guardar Y Continuar"}

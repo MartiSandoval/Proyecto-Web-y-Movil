@@ -7,6 +7,7 @@ import LoginPage from './pages/LoginPage/LoginPage';
 import RegisterPage from './pages/RegisterPage/RegisterPage';
 
 // 2. Importaciones de Trámites (Export nombrados con llaves)
+import { Tramites } from './Tramites/Tramites';
 import { DetalleTramite } from './pages/DetalleTramite/DetalleTramite';
 import { AgendarHora } from './pages/AgendarHora/AgendarHora';
 import { SubirArchivos } from './pages/SubirArchivos/SubirArchivos';
@@ -43,6 +44,11 @@ const App: React.FC = () => (
           <RegisterPage />
         </Route>
 
+        {/* --- RUTA LISTA DE TRÁMITES --- */}
+        <Route exact path="/tramites">
+          <Tramites />
+        </Route>
+
         {/* --- RUTAS DEL FLUJO DE TRÁMITES --- */}
         {/* El parámetro :tramiteId permite saber qué trámite seleccionó el usuario */}
         <Route exact path="/tramite/:tramiteId/detalle">
@@ -58,7 +64,7 @@ const App: React.FC = () => (
         </Route>
 
         {/* --- REDIRECCIÓN POR DEFECTO --- */}
-        <Route exact path="/" render={() => <Redirect to="/login" />} />
+        <Route exact path="/" render={() => <Redirect to="/tramites" />} />
 
       </IonRouterOutlet>
     </IonReactRouter>

@@ -1,8 +1,9 @@
 import { JSX, useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent,
   IonCard, IonCardHeader, IonCardTitle, IonCardContent,
+  useIonViewWillEnter,
 } from "@ionic/react";
 import { ITimeSlot } from "../../types/tramite";
 import { getDisponibilidad } from "../../lib/api";
@@ -20,7 +21,7 @@ const formatFechaLarga = (fecha: string) => {
 
 export const AgendarHora = (): JSX.Element => {
   const { tramiteId } = useParams<{ tramiteId: string }>();
-  const navigate = useNavigate();
+  const history = useHistory();
 
   const today = new Date();
   const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
@@ -30,26 +31,27 @@ export const AgendarHora = (): JSX.Element => {
   const [slots, setSlots] = useState<ITimeSlot[]>([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
 
-  useEffect(() => {
-    if (!tramiteId || !selectedDate || selectedDate.endsWith("-01") && selectedDate !== todayStr) {
-      setSlots([]);
-      setSelectedSlot("");
-      return;
-    }
+  const fetchSlots = () => {
+    if (!tramiteId || !selectedDate) return;
     setLoadingSlots(true);
     setSelectedSlot("");
     getDisponibilidad(tramiteId, selectedDate)
       .then(setSlots)
       .catch(() => setSlots([]))
       .finally(() => setLoadingSlots(false));
-  }, [tramiteId, selectedDate]);
+  };
+
+  useEffect(() => { fetchSlots(); }, [tramiteId, selectedDate]);
+
+  useIonViewWillEnter(() => { fetchSlots(); });
 
   const handleDateChange = (date: string) => {
     setSelectedDate(date);
   };
 
   const handleContinuar = () => {
-    navigate(`/tramite/${tramiteId}/subir`, {
+    history.push({
+      pathname: `/tramite/${tramiteId}/subir`,
       state: { fecha: selectedDate, hora: selectedSlot },
     });
   };
@@ -97,7 +99,7 @@ export const AgendarHora = (): JSX.Element => {
       </IonContent>
 
       <NavButtons
-        onAtras={() => navigate(-1)}
+        onAtras={() => history.goBack()}
         onContinuar={handleContinuar}
         continuarDisabled={!selectedDate || !selectedSlot}
       />
