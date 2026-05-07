@@ -1,21 +1,21 @@
 from fastapi import APIRouter
-from db import supabase
+from db import USE_MOCK, supabase
+from mock_data import SLOTS
+from state import slot_reservado
 
 router = APIRouter()
 
-DEFAULT_SLOTS = [
-    {"hora": "08:00", "disponible": True},
-    {"hora": "09:00", "disponible": True},
-    {"hora": "10:00", "disponible": True},
-    {"hora": "10:30", "disponible": True},
-    {"hora": "11:00", "disponible": True},
-    {"hora": "12:00", "disponible": True},
-    {"hora": "12:30", "disponible": True},
-    {"hora": "15:00", "disponible": True},
-]
-
 @router.get("/{tramite_id}/{fecha}")
 def get_disponibilidad(tramite_id: str, fecha: str):
+    if USE_MOCK:
+        slots = [
+            {
+                "hora": s["hora"],
+                "disponible": s["disponible"] and not slot_reservado(tramite_id, fecha, s["hora"]),
+            }
+            for s in SLOTS
+        ]
+        return {"fecha": fecha, "slots": slots}
     result = (
         supabase.table("disponibilidad")
         .select("hora, disponible")
@@ -26,4 +26,4 @@ def get_disponibilidad(tramite_id: str, fecha: str):
     if result.data:
         slots = [{"hora": row["hora"][:5], "disponible": row["disponible"]} for row in result.data]
         return {"fecha": fecha, "slots": slots}
-    return {"fecha": fecha, "slots": DEFAULT_SLOTS}
+    return {"fecha": fecha, "slots": SLOTS}

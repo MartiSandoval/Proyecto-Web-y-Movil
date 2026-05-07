@@ -1,0 +1,53 @@
+TRAMITES = [
+    {
+        "id": "1",
+        "nombre": "Subsidio de Agua Potable",
+        "descripcion": "Obtén un beneficio económico para financiar parte del costo de tu boleta de agua potable y alcantarillado.",
+        "costo": "Sin costo",
+        "departamento": "DIDECO",
+        "es_en_linea": True,
+        "documentos_requeridos": ["Cédula de identidad", "Última boleta de agua potable"],
+    },
+    {
+        "id": "2",
+        "nombre": "Inscripción descuento en la compra de gas",
+        "descripcion": "La Ilustre Municipalidad de Santo Domingo le apoya para acceder a un descuento en la compra de su gas domiciliario Gasco o Lipigas.",
+        "costo": "Sin costo",
+        "departamento": "DIDECO",
+        "es_en_linea": True,
+        "documentos_requeridos": ["Cédula de identidad", "Última boleta de gas", "Certificado de residencia"],
+    },
+    {
+        "id": "3",
+        "nombre": "Subsidio al pago del Derecho de Aseo",
+        "descripcion": "Solicita la rebaja o exención total del pago por derechos de aseo municipal según tu calificación socioeconómica.",
+        "costo": "Sin costo",
+        "departamento": "Administración Municipal",
+        "es_en_linea": False,
+        "documentos_requeridos": ["Cédula de identidad", "Certificado de residencia", "Cartola de cuenta corriente"],
+    },
+    {
+        "id": "4",
+        "nombre": "Permiso de Edificación",
+        "descripcion": "Solicita el permiso municipal para construir, ampliar o modificar una edificación dentro del territorio comunal.",
+        "costo": "$15.000",
+        "departamento": "Dirección de Obras Municipales",
+        "es_en_linea": False,
+        "documentos_requeridos": ["Planos arquitectónicos", "Cédula de identidad", "Escritura del terreno", "Certificado de informaciones previas"],
+    },
+]
+
+SLOTS = [
+    {"hora": "08:00", "disponible": True},
+    {"hora": "08:30", "disponible": True},
+    {"hora": "09:00", "disponible": False},
+    {"hora": "09:30", "disponible": True},
+    {"hora": "10:00", "disponible": True},
+    {"hora": "10:30", "disponible": False},
+    {"hora": "11:00", "disponible": True},
+    {"hora": "11:30", "disponible": True},
+    {"hora": "12:00", "disponible": True},
+    {"hora": "15:00", "disponible": True},
+    {"hora": "15:30", "disponible": False},
+    {"hora": "16:00", "disponible": True},
+]
