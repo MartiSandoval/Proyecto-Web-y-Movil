@@ -4,9 +4,8 @@ import {
   IonPage, IonContent, IonSearchbar, IonSkeletonText, IonChip, IonIcon,
 } from "@ionic/react";
 import { wifiOutline, businessOutline } from "ionicons/icons";
-import municipalidadLogo from "../../assets/municipalidad-logo.jpeg";
-import { ITramite } from "../../types/tramite";
-import { getTramites } from "../../lib/api";
+import { ITramite } from "../types/tramite";
+import { getTramites } from "../lib/api";
 import "./Tramites.css";
 
 type FiltroTipo = "todos" | "online" | "presencial";
@@ -66,7 +65,7 @@ export const Tramites = (): JSX.Element => {
       {/* Header */}
       <div className="tr-header">
         <div className="tr-header-logo">
-          <img src={municipalidadLogo} alt="Logo Municipalidad" className="tr-logo-img" />
+          <div className="tr-logo-placeholder">SD</div>
           <div>
             <strong>Santo Domingo</strong>
             <span>Municipalidad</span>
@@ -141,14 +140,14 @@ export const Tramites = (): JSX.Element => {
               onClick={() => handleFiltroTipo(filtroTipo === "online" ? "todos" : "online")}
             >
               <IonIcon icon={wifiOutline} />
-              &nbsp;&nbsp;Online
+              &nbsp;a en línea
             </IonChip>
             <IonChip
               color={filtroTipo === "presencial" ? "primary" : "medium"}
               onClick={() => handleFiltroTipo(filtroTipo === "presencial" ? "todos" : "presencial")}
             >
               <IonIcon icon={businessOutline} />
-              &nbsp;&nbsp;Presencial
+              &nbsp;b presencial
             </IonChip>
           </div>
           {!loading && (
