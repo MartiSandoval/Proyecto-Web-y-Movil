@@ -5,9 +5,13 @@
 
 # Python
 venv/
+.venv/
 __pycache__/
 *.pyc
 backend/.env
+
+# Environment variables
+.env
 /.pnp
 .pnp.js
 
