@@ -115,7 +115,7 @@ const LoginPage: React.FC = () => {
               </div>
 
               <div className="login-links">
-                <a href="/recuperar" className="link-blue">Olvide mi contraseña</a>
+                <a href="/login" className="link-blue">Olvide mi contraseña</a> {/*aqui se pone la parte para recuperar contra plop */}
                 <p className="register-text">
                   ¿No tienes cuenta? <IonRouterLink routerLink="/registro" className="link-blue">Crea tu cuenta</IonRouterLink>
                 </p>
