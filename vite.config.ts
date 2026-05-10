@@ -10,9 +10,6 @@ export default defineConfig({
     react(),
     legacy()
   ],
-  optimizeDeps: {
-    include: ['react-router', 'react-router-dom'],
-  },
   test: {
     globals: true,
     environment: 'jsdom',
