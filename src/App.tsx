@@ -50,7 +50,7 @@ const App: React.FC = () => (
         
 
         {/* --- REDIRECCIÓN POR DEFECTO --- */}
-        <Route exact path="/" render={() => <Redirect to="/login" />} />
+        <Route exact path="/" render={() => <Redirect to="/tramite/:tramiteId/detalle" />} />
 
       </IonRouterOutlet>
     </IonReactRouter>
