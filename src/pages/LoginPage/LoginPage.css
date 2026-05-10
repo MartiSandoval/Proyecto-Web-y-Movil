@@ -19,6 +19,12 @@
   font-weight: normal;
 }
 
+.tr-logo-img {
+  height: 55px;
+  width: 100px;
+  object-fit: contain;
+  border-radius: 8px;
+}
 /* Fondo de la página */
 .login-background {
   /* Si tienes la imagen de la municipalidad, agrégala aquí: */

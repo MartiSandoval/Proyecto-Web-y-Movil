@@ -18,11 +18,24 @@ import {
   IonText
 } from '@ionic/react';
 import { lockClosedOutline, eyeOutline, calendarOutline } from 'ionicons/icons';
-// Importamos el mismo CSS del Login porque la estructura del contenedor es igual
 import '../LoginPage/LoginPage.css';
+import municipalidadLogo from "../../assets/municipalidad-logo.jpeg";
+
+
+const validarRut = (rut: string) => {
+  if (!/^[0-9]+[-|‐]{1}[0-9kK]{1}$/.test(rut)) return false;
+  
+  const [numero, dv] = rut.split('-');
+  let num = parseInt(numero);
+  let m = 0, s = 1;
+  for (; num; num = Math.floor(num / 10)) {
+    s = (s + num % 10 * (9 - m++ % 6)) % 11;
+  }
+  const dvEsperado = s ? String(s - 1) : 'k';
+  return dvEsperado.toLowerCase() === dv.toLowerCase();
+};
 
 const RegisterPage: React.FC = () => {
-  // Estados para capturar todos los campos del formulario
   const [nombre, setNombre] = useState('');
   const [rut, setRut] = useState('');
   const [password, setPassword] = useState('');
@@ -34,10 +47,40 @@ const RegisterPage: React.FC = () => {
   const [region, setRegion] = useState('');
   const [comuna, setComuna] = useState('');
   const [terminos, setTerminos] = useState(false);
+  const [rutError, setRutError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [confirmError, setConfirmError] = useState('');
+  const [terminosError, setTerminosError] = useState('');
 
   const handleRegister = () => {
-    console.log('Intentando registrar usuario:', { nombre, rut, correo, region, comuna });
-    // Aquí luego agregarán las validaciones (ej: que las contraseñas coincidan)
+    setRutError('');
+    setPasswordError('');
+    setConfirmError('');
+    setTerminosError('');
+    let esValido = true;
+
+    if (!validarRut(rut)) {
+      setRutError('RUT inválido. Recuerde usar guion y sin puntos.');
+      esValido = false;
+    }
+    if (password.length < 6) {
+      setPasswordError('La contraseña debe tener al menos 6 caracteres.');
+      esValido = false;
+    }
+
+    if (password !== confirmPassword) {
+      setConfirmError('Las contraseñas no coinciden.');
+      esValido = false;
+    }
+
+    if (!terminos) {
+      setTerminosError('Debe aceptar los términos y condiciones.');
+      esValido = false;
+    }
+
+    if (esValido) {
+      console.log('Registro validado correctamente:', { rut, correo, region });
+    }
   };
 
   return (
@@ -45,6 +88,7 @@ const RegisterPage: React.FC = () => {
       {/* Cabecera Municipal */}
       <IonHeader>
         <IonToolbar className="municipal-toolbar">
+          <img src={municipalidadLogo} alt="Logo Municipalidad" className="tr-logo-img" />
           <IonTitle>
             <div className="municipal-header-title">
               <strong>Santo Domingo</strong>
@@ -76,19 +120,20 @@ const RegisterPage: React.FC = () => {
               <div className="input-group">
                 <IonLabel className="input-label">RUT</IonLabel>
                 <IonText color="medium"><p className="input-helper">Sin puntos y con guión</p></IonText>
-                <IonItem className="custom-input">
+                <IonItem className="custom-input" color={rutError ? "danger": ""}>
                   <IonInput 
                     placeholder="Ej: 21714338-9"
                     value={rut}
                     onIonInput={(e: any) => setRut(e.target.value)}
                   ></IonInput>
                 </IonItem>
+                {rutError && <IonText color="danger"><p style={{ fontSize: '12px', marginTop: '5px' }}>{rutError}</p></IonText>}
               </div>
 
               {/* Contraseña */}
               <div className="input-group">
                 <IonLabel className="input-label">Contraseña</IonLabel>
-                <IonItem className="custom-input">
+                <IonItem className="custom-input" color={passwordError ? "danger": ""}>
                   <IonIcon slot="start" icon={lockClosedOutline} color="medium" />
                   <IonInput 
                     type="password"
@@ -98,12 +143,13 @@ const RegisterPage: React.FC = () => {
                   ></IonInput>
                   <IonIcon slot="end" icon={eyeOutline} color="medium" style={{ cursor: 'pointer' }} />
                 </IonItem>
+                {passwordError && <IonText color="danger"><p style={{ fontSize: '12px', marginTop: '5px' }}>{passwordError}</p></IonText>}
               </div>
 
               {/* Confirmar Contraseña */}
               <div className="input-group">
                 <IonLabel className="input-label">Confirmar Contraseña</IonLabel>
-                <IonItem className="custom-input">
+                <IonItem className="custom-input" color={confirmError ? "danger": ""}>
                   <IonIcon slot="start" icon={lockClosedOutline} color="medium" />
                   <IonInput 
                     type="password"
@@ -113,6 +159,7 @@ const RegisterPage: React.FC = () => {
                   ></IonInput>
                   <IonIcon slot="end" icon={eyeOutline} color="medium" style={{ cursor: 'pointer' }} />
                 </IonItem>
+                {confirmError && <IonText color="danger"><p style={{ fontSize: '12px', marginTop: '5px' }}>{confirmError}</p></IonText>}
               </div>
 
               {/* Correo Electrónico */}
@@ -182,9 +229,22 @@ const RegisterPage: React.FC = () => {
                     onIonChange={(e) => setRegion(e.detail.value)}
                     interface="popover"
                   >
+                    <IonSelectOption value="arica">Arica y Parinacota</IonSelectOption>
+                    <IonSelectOption value="tarapaca">Tarapacá</IonSelectOption>
+                    <IonSelectOption value="antofagasta">Antofagasta</IonSelectOption>
+                    <IonSelectOption value="atacama">Atacama</IonSelectOption>
+                    <IonSelectOption value="coquimbo">Coquimbo</IonSelectOption>
                     <IonSelectOption value="valparaiso">Valparaíso</IonSelectOption>
-                    <IonSelectOption value="metropolitana">Metropolitana</IonSelectOption>
-                    {/* Agregar las demás regiones luego */}
+                    <IonSelectOption value="capital">Metropolitana</IonSelectOption>
+                    <IonSelectOption value="ohiggins">O'higgins</IonSelectOption>
+                    <IonSelectOption value="maule">Maule</IonSelectOption>
+                    <IonSelectOption value="nuble">Ñuble</IonSelectOption>
+                    <IonSelectOption value="biobio">Biobío</IonSelectOption>
+                    <IonSelectOption value="araucania">La Araucanía</IonSelectOption>
+                    <IonSelectOption value="rios">Los Ríos</IonSelectOption>
+                    <IonSelectOption value="lagos">Los Lagos</IonSelectOption>
+                    <IonSelectOption value="aysen">Aysén</IonSelectOption>
+                    <IonSelectOption value="magallanes">Magallanes</IonSelectOption>
                   </IonSelect>
                 </IonItem>
               </div>
@@ -200,7 +260,8 @@ const RegisterPage: React.FC = () => {
                     interface="popover"
                   >
                     <IonSelectOption value="santo_domingo">Santo Domingo</IonSelectOption>
-                    <IonSelectOption value="san_antonio">San Antonio</IonSelectOption>
+                    <IonSelectOption value="buin">Buin</IonSelectOption>
+                    <IonSelectOption value="vina">Viña del Mar</IonSelectOption>
                     {/* Agregar las demás comunas luego */}
                   </IonSelect>
                 </IonItem>
@@ -209,6 +270,7 @@ const RegisterPage: React.FC = () => {
               {/* Términos y Condiciones */}
               <div className="input-group" style={{ display: 'flex', alignItems: 'center', marginTop: '20px', marginBottom: '30px' }}>
                 <IonCheckbox 
+                  color={terminosError ? "danger": ""}
                   checked={terminos} 
                   onIonChange={(e) => setTerminos(e.detail.checked)} 
                   style={{ marginRight: '10px' }}
@@ -216,6 +278,7 @@ const RegisterPage: React.FC = () => {
                 <IonLabel style={{ fontSize: '14px', fontWeight: 'bold', color: '#373737' }}>
                   Términos y Condiciones
                 </IonLabel>
+                {terminosError && <IonText color="danger"><p style={{ fontSize: '12px', marginTop: '5px' }}> {terminosError} </p></IonText>}
               </div>
 
               {/* Botón Crear Cuenta */}

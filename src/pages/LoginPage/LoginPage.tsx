@@ -17,20 +17,58 @@ import {
 import { lockClosedOutline, eyeOutline } from 'ionicons/icons';
 import './LoginPage.css'; // Importamos los estilos personalizados
 import { IonRouterLink } from '@ionic/react';
+import municipalidadLogo from "../../assets/municipalidad-logo.jpeg";
+
+
+const validarRut = (rut: string) => {
+  // verificar el rut
+  if (!/^[0-9]+[-|‐]{1}[0-9kK]{1}$/.test(rut)) return false;
+  
+  const [numero, dv] = rut.split('-');
+  let num = parseInt(numero);
+  let m = 0, s = 1;
+  for (; num; num = Math.floor(num / 10)) {
+    s = (s + num % 10 * (9 - m++ % 6)) % 11;
+  }
+  const dvEsperado = s ? String(s - 1) : 'k';
+  return dvEsperado.toLowerCase() === dv.toLowerCase();
+};
 
 const LoginPage: React.FC = () => {
   const [rut, setRut] = useState('');
   const [password, setPassword] = useState('');
+  
+  const [rutError, setRutError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
 
   const handleLogin = () => {
-    console.log('Intentando ingresar con RUT:', rut);
+    setRutError('');
+    setPasswordError('');
+    let esValido = true;
+
+    if (!rut) {
+      setRutError('El RUT es obligatorio.');
+      esValido = false;
+    } else if (!validarRut(rut)) {
+      setRutError('El RUT ingresado no es válido (Ej: 12345678-9).');
+      esValido = false;
+    }
+
+    if (!password) {
+      setPasswordError('La contraseña es obligatoria.');
+      esValido = false;
+    }
+
+    if (esValido) {
+      console.log('Login exitoso con RUT:', rut);
+    }
   };
 
   return (
     <IonPage>
-      {/* Cabecera Municipal que tenías en el diseño */}
       <IonHeader>
         <IonToolbar className="municipal-toolbar">
+          <img src={municipalidadLogo} alt="Logo Municipalidad" className="tr-logo-img" />
           <IonTitle>
             <div className="municipal-header-title">
               <strong>Santo Domingo</strong>
@@ -50,19 +88,20 @@ const LoginPage: React.FC = () => {
               <div className="input-group">
                 <IonLabel className="input-label">RUT</IonLabel>
                 <IonText color="medium"><p className="input-helper">Sin puntos y con guión</p></IonText>
-                <IonItem className="custom-input">
+                <IonItem className="custom-input" color={rutError ? "danger" : ""}>
                   <IonInput 
                     placeholder="Ej: 21714338-9"
                     value={rut}
                     onIonInput={(e: any) => setRut(e.target.value)}
                   ></IonInput>
                 </IonItem>
+                {rutError && <IonText color="danger"><p style={{ fontSize: '12px', marginTop: '5px' }}>{rutError}</p></IonText>}
               </div>
 
               {/* Campo Contraseña */}
               <div className="input-group">
                 <IonLabel className="input-label">Contraseña</IonLabel>
-                <IonItem className="custom-input">
+                <IonItem className="custom-input" color={passwordError ? "danger" : ""}>
                   <IonIcon slot="start" icon={lockClosedOutline} color="medium" />
                   <IonInput 
                     type="password"
@@ -72,9 +111,9 @@ const LoginPage: React.FC = () => {
                   ></IonInput>
                   <IonIcon slot="end" icon={eyeOutline} color="medium" style={{ cursor: 'pointer' }} />
                 </IonItem>
+                {passwordError && <IonText color="danger"><p style={{ fontSize: '12px', marginTop: '5px' }}>{passwordError}</p></IonText>}
               </div>
 
-              {/* Enlaces de ayuda */}
               <div className="login-links">
                 <a href="/recuperar" className="link-blue">Olvide mi contraseña</a>
                 <p className="register-text">
@@ -82,12 +121,7 @@ const LoginPage: React.FC = () => {
                 </p>
               </div>
 
-              {/* Botón Ingresar */}
-              <IonButton 
-                expand="block" 
-                className="btn-ingresar" 
-                onClick={handleLogin}
-              >
+              <IonButton expand="block" className="btn-ingresar" onClick={handleLogin}>
                 Ingresar
               </IonButton>
 
