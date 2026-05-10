@@ -29,13 +29,6 @@
 }
 .tr-header-logo strong { display: block; font-size: 18px; }
 .tr-header-logo span { display: block; font-size: 12px; opacity: 0.8; }
-.tr-logo-img {
-  height: 52px;
-  width: auto;
-  object-fit: contain;
-  border-radius: 8px;
-}
-
 .tr-logo-placeholder {
   width: 52px;
   height: 52px;

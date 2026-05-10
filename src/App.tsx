@@ -7,7 +7,7 @@ import LoginPage from './pages/LoginPage/LoginPage';
 import RegisterPage from './pages/RegisterPage/RegisterPage';
 
 // 2. Importaciones de Trámites (Export nombrados con llaves)
-import { Tramites } from './pages/Tramites/Tramites';
+import { Tramites } from './Tramites/Tramites';
 import { DetalleTramite } from './pages/DetalleTramite/DetalleTramite';
 import { AgendarHora } from './pages/AgendarHora/AgendarHora';
 import { SubirArchivos } from './pages/SubirArchivos/SubirArchivos';
