@@ -90,8 +90,9 @@ export const DetalleTramite = (): JSX.Element => {
         )}
       </IonContent>
 
+      {/* ✅ CORREGIDO: Atrás va a /tramites en vez de "/" */}
       <NavButtons
-        onAtras={() => history.push("/")}
+        onAtras={() => history.push("/tramites")}
         onContinuar={() => history.push(`/tramite/${tramiteId}/agendar`)}
         continuarDisabled={!tramite}
       />

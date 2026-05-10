@@ -1,34 +1,38 @@
 import React, { useState } from 'react';
-import { 
-  IonPage, 
-  IonHeader, 
-  IonToolbar, 
-  IonTitle, 
-  IonContent, 
-  IonInput, 
-  IonButton, 
+import {
+  IonPage,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonInput,
+  IonButton,
   IonText,
   IonCard,
   IonCardContent,
   IonIcon,
   IonItem,
-  IonLabel
+  IonLabel,
+  IonRouterLink
 } from '@ionic/react';
 import { lockClosedOutline, eyeOutline } from 'ionicons/icons';
-import './LoginPage.css'; // Importamos los estilos personalizados
-import { IonRouterLink } from '@ionic/react';
+// ✅ AGREGADO: useHistory para navegar entre páginas
+import { useHistory } from 'react-router-dom';
+import './LoginPage.css';
 
 const LoginPage: React.FC = () => {
+  const history = useHistory(); // ✅ AGREGADO
   const [rut, setRut] = useState('');
   const [password, setPassword] = useState('');
 
+  // ✅ CORREGIDO: Ahora navega a /tramites al ingresar
   const handleLogin = () => {
-    console.log('Intentando ingresar con RUT:', rut);
+    // TODO: Aquí agregar validación con el backend cuando esté listo
+    history.push('/tramites');
   };
 
   return (
     <IonPage>
-      {/* Cabecera Municipal que tenías en el diseño */}
       <IonHeader>
         <IonToolbar className="municipal-toolbar">
           <IonTitle>
@@ -39,7 +43,7 @@ const LoginPage: React.FC = () => {
           </IonTitle>
         </IonToolbar>
       </IonHeader>
-      
+
       <IonContent fullscreen className="login-background">
         <div className="login-container">
           <IonCard className="login-card">
@@ -51,7 +55,7 @@ const LoginPage: React.FC = () => {
                 <IonLabel className="input-label">RUT</IonLabel>
                 <IonText color="medium"><p className="input-helper">Sin puntos y con guión</p></IonText>
                 <IonItem className="custom-input">
-                  <IonInput 
+                  <IonInput
                     placeholder="Ej: 21714338-9"
                     value={rut}
                     onIonInput={(e: any) => setRut(e.target.value)}
@@ -64,9 +68,9 @@ const LoginPage: React.FC = () => {
                 <IonLabel className="input-label">Contraseña</IonLabel>
                 <IonItem className="custom-input">
                   <IonIcon slot="start" icon={lockClosedOutline} color="medium" />
-                  <IonInput 
+                  <IonInput
                     type="password"
-                    placeholder="Contraseña" 
+                    placeholder="Contraseña"
                     value={password}
                     onIonInput={(e: any) => setPassword(e.target.value)}
                   ></IonInput>
@@ -83,9 +87,9 @@ const LoginPage: React.FC = () => {
               </div>
 
               {/* Botón Ingresar */}
-              <IonButton 
-                expand="block" 
-                className="btn-ingresar" 
+              <IonButton
+                expand="block"
+                className="btn-ingresar"
                 onClick={handleLogin}
               >
                 Ingresar
