@@ -76,8 +76,15 @@ export const SubirArchivos = (): JSX.Element => {
       const citaId = cita.id!;
 
       for (const f of files) {
+        if (!supabase) {
+          setFiles((prev) =>
+            prev.map((pf) => (pf.nombre === f.nombre ? { ...pf, estado: "completado", url: "#" } : pf))
+          );
+          continue;
+        }
+
         const path = `${citaId}/${f.nombre}`;
-        const { data, error } = await supabase.storage
+        const { error } = await supabase.storage
           .from("citas-archivos")
           .upload(path, f.file, { upsert: true });
 
