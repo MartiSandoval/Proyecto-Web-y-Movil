@@ -8,7 +8,7 @@ Aplicación web y móvil para gestionar trámites municipales: agendamiento de h
 
 ## Justificación del proyecto y usuario objetivo
 
-Este proyecto está creado para que la municipalidad pueda gestionar de mejor manera los trámites que se puedan realizar, uno de los mayores problemas que se presentaban era que habían escasos trámites que se podían gestionar por la web de la municipalidad, por ello se realiza este proyecto de página web de los trámites de la municipalidad, para que las personas de la comuna de Santo Domingo puedan, de mejor manera, realizar sus trámites online en la medida de lo posible, con una interfaz intuitiva y que no sea difícil.
+Este proyecto está creado para que la municipalidad pueda gestionar de mejor manera los trámites que se puedan realizar, uno de los mayores problemas que se presentaban era que habían escasos trámites que se podían gestionar por la web de la municipalidad, por ello se realiza este proyecto de página web de los trámites de la municipalidad, para que las personas (y funcionarios municipales que actúan de administradores) de la comuna de Santo Domingo puedan, de mejor manera, realizar sus trámites online en la medida de lo posible, con una interfaz intuitiva y que no sea difícil.
 
 ---
 
