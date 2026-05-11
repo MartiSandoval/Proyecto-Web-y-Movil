@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useHistory } from 'react-router-dom';
+import { useCitas } from '../../contexts/CitasContext';
 import {
   IonPage,
   IonContent,
@@ -18,31 +20,36 @@ import {
 } from 'ionicons/icons';
 
 // Importación de tus componentes modulares
-import Header from '../components/Header';
-import AccessibilityMenu from '../components/AccesibilityMenu';
+import Header from '../../components/Header/Header';
+import AccessibilityMenu from '../../components/AccessibilityMenu/AccessibilityMenu';
+import './HistorialTramites.css';
 
 // Datos simulados para que funcione sin backend en esta entrega parcial
 const datosSimulados = [
-  { id: 1, titulo: "Inscripción descuento en la compra de gas", estado: "En revisión", departamento: "Qué departamento de la muni se encarga" },
-  { id: 2, titulo: "Inscripción descuento en la compra de gas", estado: "Terminado", departamento: "Qué departamento de la muni se encarga" },
-  { id: 3, titulo: "Inscripción descuento en la compra de gas", estado: "Terminado", departamento: "Qué departamento de la muni se encarga" },
-  { id: 4, titulo: "Inscripción descuento en la compra de gas", estado: "Terminado", departamento: "Qué departamento de la muni se encarga" },
-  { id: 5, titulo: "Inscripción descuento en la compra de gas", estado: "Terminado", departamento: "Qué departamento de la muni se encarga" },
-  { id: 6, titulo: "Inscripción descuento en la compra de gas", estado: "Terminado", departamento: "Qué departamento de la muni se encarga" },
-  { id: 7, titulo: "Inscripción descuento en la compra de gas", estado: "Terminado", departamento: "Qué departamento de la muni se encarga" },
-  { id: 8, titulo: "Inscripción descuento en la compra de gas", estado: "Terminado", departamento: "Qué departamento de la muni se encarga" },
-  { id: 9, titulo: "Inscripción descuento en la compra de gas", estado: "Terminado", departamento: "Qué departamento de la muni se encarga" },
-  { id: 10, titulo: "Inscripción descuento en la compra de gas", estado: "Terminado", departamento: "Qué departamento de la muni se encarga" },
-  { id: 11, titulo: "Inscripción descuento en la compra de gas", estado: "Terminado", departamento: "Qué departamento de la muni se encarga" },
+  { id: 1, titulo: "Inscripción descuento en la compra de gas", estado: "En revisión", departamento: "Municipalidad" },
+  { id: 2, titulo: "Inscripción descuento en la compra de gas", estado: "Terminado", departamento: "Municipalidad" },
+  { id: 3, titulo: "Inscripción descuento en la compra de gas", estado: "Terminado", departamento: "Municipalidad" },
+  { id: 4, titulo: "Inscripción descuento en la compra de gas", estado: "Terminado", departamento: "Municipalidad" },
+  { id: 5, titulo: "Inscripción descuento en la compra de gas", estado: "Terminado", departamento: "Municipalidad" },
+  { id: 6, titulo: "Inscripción descuento en la compra de gas", estado: "Terminado", departamento: "Municipalidad" },
+  { id: 7, titulo: "Inscripción descuento en la compra de gas", estado: "Terminado", departamento: "Municipalidad" },
+  { id: 8, titulo: "Inscripción descuento en la compra de gas", estado: "Terminado", departamento: "Municipalidad" },
+  { id: 9, titulo: "Inscripción descuento en la compra de gas", estado: "Terminado", departamento: "Municipalidad" },
+  { id: 10, titulo: "Inscripción descuento en la compra de gas", estado: "Terminado", departamento: "Municipalidad" },
+  { id: 11, titulo: "Inscripción descuento en la compra de gas", estado: "Terminado", departamento: "Municipalidad" },
 ];
 
 const HistorialTramites: React.FC = () => {
-  // Estado para manejar la lista de trámites
-  const [tramites, setTramites] = useState(datosSimulados);
+  const history = useHistory();
+  const { citas, eliminarCita } = useCitas();
 
-  // Función para simular la eliminación de un trámite en el frontend
-  const handleEliminar = (id: number) => {
-    setTramites(tramites.filter(tramite => tramite.id !== id));
+  // Usar citas reales del contexto; si no hay ninguna, mostrar datos simulados
+  const tramites = citas.length > 0
+    ? citas.map((c) => ({ id: c.id, titulo: c.tramiteNombre, estado: c.estado, departamento: c.departamento, fecha: c.fecha, hora: c.hora }))
+    : datosSimulados.map((d) => ({ ...d, id: String(d.id), fecha: "", hora: "" }));
+
+  const handleEliminar = (id: string) => {
+    eliminarCita(id);
   };
 
   return (
@@ -52,6 +59,15 @@ const HistorialTramites: React.FC = () => {
         {/* --- COMPONENTES GLOBALES IMPORTADOS --- */}
         <Header />
         <AccessibilityMenu />
+
+        <div style={{ padding: '12px 24px' }}>
+          <button
+            onClick={() => history.push('/tramites')}
+            style={{ background: 'none', border: 'none', color: '#1a3a6b', cursor: 'pointer', fontSize: '14px', fontWeight: 600 }}
+          >
+            ← Volver a Trámites
+          </button>
+        </div>
 
         {/* --- CONTENIDO ESPECÍFICO DE LA PÁGINA --- */}
         

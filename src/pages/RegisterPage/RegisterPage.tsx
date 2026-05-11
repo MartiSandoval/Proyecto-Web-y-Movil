@@ -19,7 +19,7 @@ import {
 } from '@ionic/react';
 import { lockClosedOutline, eyeOutline, calendarOutline } from 'ionicons/icons';
 import '../LoginPage/LoginPage.css';
-import municipalidadLogo from "../../assets/municipalidad-logo.jpeg";
+const municipalidadLogo = "/assets/logoMuni.png";
 
 
 const validarRut = (rut: string) => {

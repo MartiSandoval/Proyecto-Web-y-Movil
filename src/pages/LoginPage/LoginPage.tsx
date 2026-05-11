@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { 
   IonPage, 
   IonHeader, 
@@ -17,7 +18,7 @@ import {
 import { lockClosedOutline, eyeOutline } from 'ionicons/icons';
 import './LoginPage.css'; // Importamos los estilos personalizados
 import { IonRouterLink } from '@ionic/react';
-import municipalidadLogo from "../../assets/municipalidad-logo.jpeg";
+const municipalidadLogo = "/assets/logoMuni.png";
 
 
 const validarRut = (rut: string) => {
@@ -35,6 +36,7 @@ const validarRut = (rut: string) => {
 };
 
 const LoginPage: React.FC = () => {
+  const history = useHistory();
   const [rut, setRut] = useState('');
   const [password, setPassword] = useState('');
   
@@ -60,7 +62,8 @@ const LoginPage: React.FC = () => {
     }
 
     if (esValido) {
-      console.log('Login exitoso con RUT:', rut);
+      localStorage.setItem('isLoggedIn', 'true');
+      history.push('/tramites');
     }
   };
 
@@ -68,11 +71,13 @@ const LoginPage: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar className="municipal-toolbar">
-          <img src={municipalidadLogo} alt="Logo Municipalidad" className="tr-logo-img" />
           <IonTitle>
-            <div className="municipal-header-title">
-              <strong>Santo Domingo</strong>
-              <span>Municipalidad</span>
+            <div className="municipal-header-logo-row">
+              <img src={municipalidadLogo} alt="Logo Municipalidad" className="tr-logo-img" />
+              <div className="municipal-header-title">
+                <strong>Santo Domingo</strong>
+                <span>Municipalidad</span>
+              </div>
             </div>
           </IonTitle>
         </IonToolbar>

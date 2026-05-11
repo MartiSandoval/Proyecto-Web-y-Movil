@@ -4,8 +4,9 @@ import {
   IonPage, IonContent, IonSearchbar, IonSkeletonText, IonChip, IonIcon,
 } from "@ionic/react";
 import { wifiOutline, businessOutline } from "ionicons/icons";
-import { ITramite } from "../types/tramite";
-import { getTramites } from "../lib/api";
+const municipalidadLogo = "/assets/logoMuni.png";
+import { ITramite } from "../../types/tramite";
+import { getTramites } from "../../services/api";
 import "./Tramites.css";
 
 type FiltroTipo = "todos" | "online" | "presencial";
@@ -65,7 +66,7 @@ export const Tramites = (): JSX.Element => {
       {/* Header */}
       <div className="tr-header">
         <div className="tr-header-logo">
-          <div className="tr-logo-placeholder">SD</div>
+          <img src={municipalidadLogo} alt="Logo Municipalidad" className="tr-logo-img" />
           <div>
             <strong>Santo Domingo</strong>
             <span>Municipalidad</span>
@@ -93,6 +94,7 @@ export const Tramites = (): JSX.Element => {
         <span className="tr-nav-right">SIG</span>
         <span className="tr-nav-right">Contacto</span>
         <span className="tr-nav-right">OIRS</span>
+        <span className="tr-nav-right tr-nav-item" onClick={() => history.push('/historial')} style={{cursor:'pointer'}}>Mi Historial</span>
       </nav>
 
       {/* Breadcrumb */}
@@ -140,14 +142,14 @@ export const Tramites = (): JSX.Element => {
               onClick={() => handleFiltroTipo(filtroTipo === "online" ? "todos" : "online")}
             >
               <IonIcon icon={wifiOutline} />
-              &nbsp;a en línea
+              &nbsp;&nbsp;Online
             </IonChip>
             <IonChip
               color={filtroTipo === "presencial" ? "primary" : "medium"}
               onClick={() => handleFiltroTipo(filtroTipo === "presencial" ? "todos" : "presencial")}
             >
               <IonIcon icon={businessOutline} />
-              &nbsp;b presencial
+              &nbsp;&nbsp;Presencial
             </IonChip>
           </div>
           {!loading && (

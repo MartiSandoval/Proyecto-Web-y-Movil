@@ -137,7 +137,7 @@ export async function crearCita(
       estado: data.estado,
     };
   } catch {
-    return { id: String(mockCitaCounter++), tramiteId, fecha, hora, estado: "confirmada" };
+    return { id: String(mockCitaCounter++), tramiteId, fecha, hora, estado: "confirmado" };
   }
 }
 

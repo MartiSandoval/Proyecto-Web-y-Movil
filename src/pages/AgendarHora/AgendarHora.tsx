@@ -5,8 +5,9 @@ import {
   IonCard, IonCardHeader, IonCardTitle, IonCardContent,
   useIonViewWillEnter,
 } from "@ionic/react";
-import { ITimeSlot } from "../../types/tramite";
-import { getDisponibilidad } from "../../lib/api";
+import { ITramite, ITimeSlot } from "../../types/tramite";
+import { getDisponibilidad, getTramite } from "../../services/api";
+import { useCitas } from "../../contexts/CitasContext";
 import { CalendarPicker } from "../../components/CalendarPicker/CalendarPicker";
 import { TimeSlotGrid } from "../../components/TimeSlotGrid/TimeSlotGrid";
 import { NavButtons } from "../../components/NavButtons/NavButtons";
@@ -22,22 +23,34 @@ const formatFechaLarga = (fecha: string) => {
 export const AgendarHora = (): JSX.Element => {
   const { tramiteId } = useParams<{ tramiteId: string }>();
   const history = useHistory();
+  const { agregarCita, isSlotBloqueado } = useCitas();
 
   const today = new Date();
   const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
 
   const [selectedDate, setSelectedDate] = useState(todayStr);
   const [selectedSlot, setSelectedSlot] = useState("");
-  const [slots, setSlots] = useState<ITimeSlot[]>([]);
+  const [rawSlots, setRawSlots] = useState<ITimeSlot[]>([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
+  const [tramite, setTramite] = useState<ITramite | null>(null);
+
+  // Filtrar en render para que el bloqueo sea siempre inmediato
+  const slots = rawSlots.map((s) => ({
+    ...s,
+    disponible: s.disponible && !isSlotBloqueado(tramiteId, selectedDate, s.hora),
+  }));
+
+  useEffect(() => {
+    getTramite(tramiteId).then(setTramite).catch(() => {});
+  }, [tramiteId]);
 
   const fetchSlots = () => {
     if (!tramiteId || !selectedDate) return;
     setLoadingSlots(true);
     setSelectedSlot("");
     getDisponibilidad(tramiteId, selectedDate)
-      .then(setSlots)
-      .catch(() => setSlots([]))
+      .then(setRawSlots)
+      .catch(() => setRawSlots([]))
       .finally(() => setLoadingSlots(false));
   };
 
@@ -50,6 +63,13 @@ export const AgendarHora = (): JSX.Element => {
   };
 
   const handleContinuar = () => {
+    agregarCita({
+      tramiteId,
+      tramiteNombre: tramite?.nombre ?? `Trámite ${tramiteId}`,
+      departamento: tramite?.departamento ?? "Municipalidad",
+      fecha: selectedDate,
+      hora: selectedSlot,
+    });
     history.push({
       pathname: `/tramite/${tramiteId}/subir`,
       state: { fecha: selectedDate, hora: selectedSlot },

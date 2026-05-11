@@ -5,10 +5,9 @@ import {
   searchOutline,
   callOutline
 } from 'ionicons/icons';
-import { ASSETS } from '../config/constants';
+import { ASSETS } from '../../config/constants';
 
-// Importamos la barra superior oscura
-import HeaderTop from './HeaderTop'; 
+import HeaderTop from '../HeaderTop/HeaderTop';
 
 const Header: React.FC = () => {
   // Estado para controlar qué menú desplegable está abierto

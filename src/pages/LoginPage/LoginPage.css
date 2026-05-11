@@ -29,8 +29,8 @@
 .login-background {
   /* Si tienes la imagen de la municipalidad, agrégala aquí: */
   /* --background: url('../../public/background1.png') no-repeat center center / cover; */
-  --background: url("Proyecto-Web-y-Movil/public/image-40.png") no-repeat center center / cover; 
-}
+  --background: url("/image-40.png") no-repeat center center / cover;
+}ç
 
 /* Contenedor central usando Flexbox para responsividad */
 .login-container {
