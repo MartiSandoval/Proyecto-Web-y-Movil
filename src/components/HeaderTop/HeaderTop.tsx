@@ -1,55 +1,47 @@
 import React from 'react';
 import { IonIcon } from '@ionic/react';
 import { 
+  tvOutline, 
   hammerOutline, 
-  documentTextOutline, 
-  videocamOutline 
+  documentTextOutline 
 } from 'ionicons/icons';
+import './HeaderTop.css';
+import { ASSETS } from '../../config/constants';
 
 const HeaderTop: React.FC = () => {
-  // Estilo reutilizable para los enlaces de esta barra
-  const linkStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '5px',
-    cursor: 'pointer',
-    transition: 'opacity 0.2s'
-  };
-
   return (
-    <div style={{ 
-      backgroundColor: '#020617', // Un azul muy oscuro/casi negro
-      color: '#e2e8f0', // Texto gris claro/blanco
-      padding: '8px 40px',
-      display: 'flex',
-      justifyContent: 'flex-end', // Alinea los elementos hacia la derecha como en la imagen
-      gap: '30px', // Separación entre cada enlace
-      fontSize: '12px',
-      flexWrap: 'wrap' // Permite que se adapte en pantallas más pequeñas
-    }}>
+    <div className="header-top-container">
       
-      <div style={linkStyle}>
-        <IonIcon icon={hammerOutline} style={{ fontSize: '14px' }} />
+      <div className="header-top-link">
+        <img 
+          src={ASSETS.logo_martillito_header} 
+          alt="Icono Lobby" 
+          style={{ width: '15px', height: '15px', objectFit: 'contain' }} 
+        />
         <span>Plataforma Ley Lobby</span>
       </div>
 
-      <div style={linkStyle}>
-        <IonIcon icon={hammerOutline} style={{ fontSize: '14px' }} />
+      <div className="header-top-link">
+        <img 
+          src={ASSETS.logo_martillito_header} 
+          alt="Icono Lobby" 
+          style={{ width: '15px', height: '15px', objectFit: 'contain' }} 
+        />
         <span>Solicitud Ley de Transparencia</span>
       </div>
 
-      <div style={linkStyle}>
-        <IonIcon icon={documentTextOutline} style={{ fontSize: '14px' }} />
+      <div className="header-top-link">
+        <IonIcon icon={documentTextOutline} className="header-top-icon-normal" />
         <span>Transparencia Activa</span>
       </div>
 
-      <div style={linkStyle}>
-        <IonIcon icon={documentTextOutline} style={{ fontSize: '14px' }} />
+      <div className="header-top-link">
+        <IonIcon icon={documentTextOutline} className="header-top-icon-normal" />
         <span>Decretos</span>
       </div>
 
-      <div style={{ ...linkStyle, color: '#22c55e', fontWeight: 'bold' }}>
-        <IonIcon icon={videocamOutline} style={{ fontSize: '14px' }} />
+      <div className="header-top-link header-top-live">
+        <IonIcon icon={tvOutline} className="header-top-icon-tv" />
         <span>Observe el Consejo Municipal en VIVO</span>
       </div>
 

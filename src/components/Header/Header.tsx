@@ -6,10 +6,14 @@ import {
   callOutline
 } from 'ionicons/icons';
 import { ASSETS } from '../../config/constants';
-
+import SearchBar from '../SearchBar/SearchBar';
 import HeaderTop from '../HeaderTop/HeaderTop';
 
-const Header: React.FC = () => {
+interface headerProps {
+  simple?: boolean; // Si es true, muestra solo el header principal sin el submenú
+}
+
+const Header: React.FC<headerProps> = ({ simple = false }) => {
   // Estado para controlar qué menú desplegable está abierto
   const [menuAbierto, setMenuAbierto] = useState<string | null>(null);
 
@@ -27,6 +31,20 @@ const Header: React.FC = () => {
     display: 'block'
   };
 
+  if(simple) {
+    return (
+      <div style={{ backgroundColor: '#1c3659', padding: '15px 40px', display: 'flex', alignItems: 'center', color: 'white', zIndex: 10, position: 'relative' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          <img src={ASSETS.LOGO_MUNI} alt="Logo Municipalidad" style={{ width: '40px', height: '50px', objectFit: 'contain' }} />
+          <div>
+            <h2 style={{ margin: 0, fontSize: '16px', fontWeight: 'bold' }}>Santo Domingo</h2>
+            <span style={{ fontSize: '11px', color: '#e2e8f0' }}>Municipalidad</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={{ position: 'relative' }}>
       
@@ -41,8 +59,17 @@ const Header: React.FC = () => {
       {/* 1. BARRA SUPERIOR OSCURA */}
       <HeaderTop />
 
-      {/* 2. HEADER AZUL */}
-      <div style={{ backgroundColor: '#0056b3', padding: '15px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'white', position: 'relative', zIndex: 10 }}>
+      {/* 2. HEADER PRINCIPAL (Ahora con el azul oscuro institucional) */}
+      <div style={{ 
+        backgroundColor: '#1c3659', // <-- Color actualizado a azul marino oscuro
+        padding: '15px 40px', 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        color: 'white', 
+        position: 'relative', 
+        zIndex: 10 
+      }}>
         
         {/* Lado izquierdo: Logo y Títulos */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
@@ -52,27 +79,21 @@ const Header: React.FC = () => {
             style={{ width: '50px', height: '60px', objectFit: 'contain' }} 
           />
           <div>
-            <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>Santo Domingo</h2>
-            <span style={{ fontSize: '12px' }}>Municipalidad</span>
+            <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold', letterSpacing: '0.5px' }}>Santo Domingo</h2>
+            <span style={{ fontSize: '12px', color: '#e2e8f0' }}>Municipalidad</span>
           </div>
         </div>
 
-        {/* Centro: Barra de búsqueda */}
-        <div style={{ display: 'flex', alignItems: 'center', backgroundColor: 'white', padding: '8px 15px', borderRadius: '4px', width: '40%' }}>
-          <IonIcon icon={searchOutline} style={{ color: 'gray', marginRight: '10px' }} />
-          <input 
-            type="text" 
-            placeholder="Desea buscar algo...?" 
-            style={{ border: 'none', outline: 'none', width: '100%', color: 'black', backgroundColor: 'transparent' }} 
-          />
-        </div>
+        {/* Centro: Barra de búsqueda (Un poco más ancha para igualar la imagen) */}
+        <SearchBar width="55%" />
 
         {/* Lado derecho: Contacto */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{ textAlign: 'right', fontSize: '12px' }}>
-            <div>Contacto telefónico</div>
-            <div style={{ letterSpacing: '2px' }}>..........</div>
+            <div style={{ fontWeight: 'bold' }}>Contacto telefónico</div>
+            <div style={{ letterSpacing: '2px', color: '#94a3b8' }}>..........</div>
           </div>
+          {/* Aquí devolvemos el ícono de la llamada */}
           <IonIcon icon={callOutline} style={{ fontSize: '30px' }} />
         </div>
       </div>

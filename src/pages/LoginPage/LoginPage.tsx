@@ -18,6 +18,7 @@ import {
 import { lockClosedOutline, eyeOutline } from 'ionicons/icons';
 import './LoginPage.css'; // Importamos los estilos personalizados
 import { IonRouterLink } from '@ionic/react';
+import Header from '../../components/Header/Header';
 const municipalidadLogo = "/assets/logoMuni.png";
 
 
@@ -69,19 +70,7 @@ const LoginPage: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar className="municipal-toolbar">
-          <IonTitle>
-            <div className="municipal-header-logo-row">
-              <img src={municipalidadLogo} alt="Logo Municipalidad" className="tr-logo-img" />
-              <div className="municipal-header-title">
-                <strong>Santo Domingo</strong>
-                <span>Municipalidad</span>
-              </div>
-            </div>
-          </IonTitle>
-        </IonToolbar>
-      </IonHeader>
+      <Header simple /> {/* Usamos el header simple sin submenú para la página de login */}
       
       <IonContent fullscreen className="login-background">
         <div className="login-container">

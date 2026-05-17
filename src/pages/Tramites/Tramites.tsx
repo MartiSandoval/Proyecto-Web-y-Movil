@@ -8,6 +8,9 @@ const municipalidadLogo = "/assets/logoMuni.png";
 import { ITramite } from "../../types/tramite";
 import { getTramites } from "../../services/api";
 import "./Tramites.css";
+import HeaderTop from "../../components/HeaderTop/HeaderTop";
+import Header from "../../components/Header/Header";
+import AccessibilityMenu from "../../components/AccessibilityMenu/AccessibilityMenu";
 
 type FiltroTipo = "todos" | "online" | "presencial";
 
@@ -54,35 +57,9 @@ export const Tramites = (): JSX.Element => {
 
   return (
     <IonPage>
-      {/* Barra superior */}
-      <div className="tr-topbar">
-        <span>Plataforma Ley Lobby</span>
-        <span>Solicitud Ley de Transparencia</span>
-        <span>Transparencia Activa</span>
-        <span>Decretos</span>
-        <span className="tr-topbar-live">📺 Observe el Consejo Municipal en VIVO</span>
-      </div>
-
+      <AccessibilityMenu />
       {/* Header */}
-      <div className="tr-header">
-        <div className="tr-header-logo">
-          <img src={municipalidadLogo} alt="Logo Municipalidad" className="tr-logo-img" />
-          <div>
-            <strong>Santo Domingo</strong>
-            <span>Municipalidad</span>
-          </div>
-        </div>
-        <div className="tr-header-search">
-          <IonSearchbar
-            placeholder="Desea buscar algo...?"
-            className="tr-header-searchbar"
-          />
-        </div>
-        <div className="tr-header-contact">
-          <span>Contacto telefónico</span>
-          <span className="tr-header-dots">· · · · · · · · · ·</span>
-        </div>
-      </div>
+      <Header />
 
       {/* Navegación */}
       <nav className="tr-nav">
