@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
+
 import { 
   IonPage, 
   IonHeader, 
@@ -51,6 +53,8 @@ const RegisterPage: React.FC = () => {
   const [passwordError, setPasswordError] = useState('');
   const [confirmError, setConfirmError] = useState('');
   const [terminosError, setTerminosError] = useState('');
+  const history = useHistory();
+  
 
   const handleRegister = () => {
     setRutError('');
@@ -79,7 +83,8 @@ const RegisterPage: React.FC = () => {
     }
 
     if (esValido) {
-      console.log('Registro validado correctamente:', { rut, correo, region });
+      localStorage.setItem('isLoggedIn', 'true');
+      history.push('/tramites');
     }
   };
 
