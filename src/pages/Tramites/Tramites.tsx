@@ -61,19 +61,6 @@ export const Tramites = (): JSX.Element => {
       {/* Header */}
       <Header />
 
-      {/* Navegación */}
-      <nav className="tr-nav">
-        <span className="tr-nav-item tr-nav-active">Trámites y servicios ▾</span>
-        <span className="tr-nav-item">Municipio ▾</span>
-        <span className="tr-nav-item">Turismo ▾</span>
-        <span className="tr-nav-item">Noticias</span>
-        <span className="tr-nav-item">Plan regulador comunal ▾</span>
-        <span className="tr-nav-right">SIG</span>
-        <span className="tr-nav-right">Contacto</span>
-        <span className="tr-nav-right">OIRS</span>
-        <span className="tr-nav-right tr-nav-item" onClick={() => history.push('/historial')} style={{cursor:'pointer'}}>Mi Historial</span>
-      </nav>
-
       {/* Breadcrumb */}
       <div className="tr-breadcrumb">
         &rsaquo; Usted está en: <strong>Trámites y Servicios</strong>

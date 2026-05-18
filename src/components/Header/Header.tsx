@@ -57,7 +57,7 @@ const Header: React.FC<headerProps> = ({ simple = false }) => {
       )}
 
       {/* 1. BARRA SUPERIOR OSCURA */}
-      <HeaderTop />
+      <HeaderTop /> 
 
       {/* 2. HEADER PRINCIPAL (Ahora con el azul oscuro institucional) */}
       <div style={{ 

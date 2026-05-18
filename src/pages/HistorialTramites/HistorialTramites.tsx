@@ -57,7 +57,7 @@ const HistorialTramites: React.FC = () => {
       <IonContent color="light">
 
         {/* --- COMPONENTES GLOBALES IMPORTADOS --- */}
-        <Header />
+        <Header/>
         <AccessibilityMenu />
 
         <div style={{ padding: '12px 24px' }}>
