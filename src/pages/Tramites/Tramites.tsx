@@ -4,11 +4,9 @@ import {
   IonPage, IonContent, IonSearchbar, IonSkeletonText, IonChip, IonIcon,
 } from "@ionic/react";
 import { wifiOutline, businessOutline } from "ionicons/icons";
-const municipalidadLogo = "/assets/logoMuni.png";
 import { ITramite } from "../../types/tramite";
 import { getTramites } from "../../services/api";
 import "./Tramites.css";
-import HeaderTop from "../../components/HeaderTop/HeaderTop";
 import Header from "../../components/Header/Header";
 import AccessibilityMenu from "../../components/AccessibilityMenu/AccessibilityMenu";
 
