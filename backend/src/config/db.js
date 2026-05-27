@@ -13,7 +13,7 @@ const pool = new Pool({
 
 // Probamos la conexión al iniciar
 pool.connect()
-    .then(() => console.log('✅ Conectado a la base de datos de Supabase exitosamente'))
-    .catch((err) => console.error('❌ Error conectando a la base de datos:', err.message));
+    .then(() => console.log('Conectado a la base de datos de Supabase exitosamente'))
+    .catch((err) => console.error('Error conectando a la base de datos:', err.message));
 
 export default pool;
