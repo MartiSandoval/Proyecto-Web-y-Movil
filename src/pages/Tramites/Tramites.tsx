@@ -10,7 +10,7 @@ import { getTramites } from "../../services/api";
 import "./Tramites.css";
 import HeaderTop from "../../components/HeaderTop/HeaderTop";
 import Header from "../../components/Header/Header";
-import AccessibilityMenu from "../../components/AccessibilityMenu/AccessibilityMenu";
+import Footer from "../../components/Footer/footer";
 
 type FiltroTipo = "todos" | "online" | "presencial";
 
@@ -57,7 +57,6 @@ export const Tramites = (): JSX.Element => {
 
   return (
     <IonPage>
-      <AccessibilityMenu />
       {/* Header */}
       <Header />
 
@@ -167,6 +166,7 @@ export const Tramites = (): JSX.Element => {
         {!loading && filtrados.length === 0 && !error && (
           <p className="tr-empty">No se encontraron trámites.</p>
         )}
+        <Footer />
       </IonContent>
     </IonPage>
   );

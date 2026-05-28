@@ -21,7 +21,7 @@ import {
 
 // Importación de tus componentes modulares
 import Header from '../../components/Header/Header';
-import AccessibilityMenu from '../../components/AccessibilityMenu/AccessibilityMenu';
+import Footer from '../../components/Footer/footer';
 import './HistorialTramites.css';
 
 // Datos simulados para que funcione sin backend en esta entrega parcial
@@ -58,7 +58,6 @@ const HistorialTramites: React.FC = () => {
 
         {/* --- COMPONENTES GLOBALES IMPORTADOS --- */}
         <Header/>
-        <AccessibilityMenu />
 
         <div style={{ padding: '12px 24px' }}>
           <button
@@ -151,6 +150,7 @@ const HistorialTramites: React.FC = () => {
           </IonGrid>
 
         </div>
+        <Footer />
       </IonContent>
     </IonPage>
   );
