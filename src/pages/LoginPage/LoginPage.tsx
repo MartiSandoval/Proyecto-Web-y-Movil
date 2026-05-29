@@ -21,19 +21,17 @@ import { IonRouterLink } from '@ionic/react';
 import Header from '../../components/Header/Header';
 const municipalidadLogo = "/assets/logoMuni.png";
 
-
+// ahora funciona no necesariamente el rut tiene que ser válido xdd
 const validarRut = (rut: string) => {
-  // verificar el rut
-  if (!/^[0-9]+[-|‐]{1}[0-9kK]{1}$/.test(rut)) return false;
-  
-  const [numero, dv] = rut.split('-');
-  let num = parseInt(numero);
-  let m = 0, s = 1;
-  for (; num; num = Math.floor(num / 10)) {
-    s = (s + num % 10 * (9 - m++ % 6)) % 11;
+  const [num, dv] = rut.split("-");
+  //let num = numero;
+  if (num.length < 7 || num.length > 8 ) {
+    return false;
   }
-  const dvEsperado = s ? String(s - 1) : 'k';
-  return dvEsperado.toLowerCase() === dv.toLowerCase();
+  if (dv.length > 1) {
+    return false;
+  }
+  return /^[0-9]+-[0-9kK]$/.test(rut);
 };
 
 const LoginPage: React.FC = () => {
