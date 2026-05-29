@@ -2,7 +2,7 @@
 
 Aplicación web y móvil para gestionar trámites municipales: agendamiento de horas, subida de documentos e historial de citas.
 
-**Stack:** React 19 + Ionic 8 + TypeScript · FastAPI + Python (backend) · Supabase (base de datos y storage)
+**Stack:** React 19 + Ionic 8 + TypeScript · Node.js + Express (backend) · Supabase (base de datos y storage)
 
 ---
 
@@ -109,35 +109,40 @@ Se usa **React Router v5** integrado con `IonReactRouter` de Ionic para mantener
 ## Estructura del proyecto
 
 ```
-src/
-├── pages/              # Vistas principales de la aplicación
-│   ├── LoginPage/
-│   ├── RegisterPage/
-│   ├── Tramites/
-│   ├── DetalleTramite/
-│   ├── AgendarHora/
-│   ├── SubirArchivos/
-│   └── HistorialTramites/
-├── components/         # Componentes reutilizables
-│   ├── Header/
-│   ├── HeaderTop/
-│   ├── AccessibilityMenu/
-│   ├── CalendarPicker/
-│   ├── TimeSlotGrid/
-│   ├── FileUploadZone/
-│   └── NavButtons/
-├── routes/             # Configuración de rutas y protección
-│   ├── AppRoutes.tsx
-│   └── ProtectedRoute.tsx
-├── services/           # Comunicación con APIs externas
-│   ├── api.ts          # Llamadas al backend FastAPI
-│   └── supabase.ts     # Cliente Supabase (storage)
-├── contexts/           # Estado global (React Context)
-│   └── CitasContext.tsx
-├── types/              # Interfaces TypeScript
-│   └── tramite.ts
-└── theme/
-    └── variables.css
+Proyecto-Web-y-Movil/
+├── src/                          # Frontend React + Ionic
+│   ├── pages/                    # Vistas principales
+│   │   ├── LoginPage/
+│   │   ├── RegisterPage/
+│   │   ├── Tramites/
+│   │   ├── DetalleTramite/
+│   │   ├── AgendarHora/
+│   │   ├── SubirArchivos/
+│   │   └── HistorialTramites/
+│   ├── components/               # Componentes reutilizables
+│   ├── routes/                   # Rutas y protección de vistas
+│   ├── services/                 # Comunicación con APIs
+│   │   ├── api.ts                # Llamadas al backend Node.js
+│   │   └── supabase.ts           # Cliente Supabase (storage)
+│   ├── contexts/                 # Estado global (React Context)
+│   ├── types/                    # Interfaces TypeScript
+│   └── theme/
+├── backend-node/                 # Servidor backend (Node.js + Express)
+│   ├── src/
+│   │   ├── config/db.js          # Conexión Supabase / modo mock
+│   │   ├── controllers/          # Lógica de negocio por recurso
+│   │   ├── data/mockData.js      # Datos de desarrollo (sin BD)
+│   │   ├── middleware/           # Manejo de errores
+│   │   ├── routes/               # Definición de endpoints
+│   │   └── app.js                # Express + middlewares + rutas
+│   ├── supabase/
+│   │   ├── schema.sql            # Schema de la BD (ejecutar en Supabase)
+│   │   ├── seed.sql              # Datos iniciales
+│   │   └── reset.sql             # Limpieza total (¡cuidado!)
+│   ├── server.js                 # Entry point
+│   ├── .env.example              # Plantilla de variables de entorno
+│   └── package.json
+└── .env                          # Variables del frontend (no commitear)
 ```
 
 ---
@@ -150,32 +155,60 @@ src/
 
 ## Instalación y ejecución
 
+El proyecto tiene dos partes que se ejecutan en paralelo: el **frontend** y el **backend**. Necesitas dos terminales abiertas.
+
+### Modo mock (sin credenciales — para desarrollo rápido)
+
+No necesitas ninguna clave ni configuración extra. El backend arranca con datos de prueba automáticamente.
+
 ```bash
-# 1. Clonar el repositorio
-git clone https://github.com/MartiSandoval/Proyecto-Web-y-Movil.git
-cd Proyecto-Web-y-Movil
-
-# 2. Instalar dependencias
+# Terminal 1 — Backend
+cd backend-node
 npm install
+npm run dev          # http://localhost:8000
 
-# 3. Ejecutar en modo desarrollo
-npm run dev
+# Terminal 2 — Frontend
+npm install
+npm run dev          # http://localhost:5173
 ```
 
-Abre el navegador en: `http://localhost:5173`
+### Modo real (conectado a Supabase)
 
-> **Nota:** La aplicación incluye datos mock integrados. Funciona sin backend ni Supabase configurados.
+
+**1. Configura el backend** — crea `backend-node/.env` con:
+
+```env
+PORT=8000
+NODE_ENV=development
+USE_MOCK=false
+
+SUPABASE_URL=https://xxxx.supabase.co
+SUPABASE_SERVICE_KEY=sb_secret_...
+SUPABASE_ANON_KEY=sb_publishable_...
+
+JWT_SECRET=dev-secret-cambia-en-produccion
+CORS_ORIGIN=http://localhost:5173
+```
+
+**2. Configura el frontend** — crea `.env` en la raíz con:
+
+```env
+VITE_SUPABASE_URL=https://xxxx.supabase.co
+VITE_SUPABASE_ANON_KEY=sb_publishable_...
+```
+
+**3. Ejecuta igual que en modo mock** con dos terminales.
+
+> La base de datos ya está creada y con datos iniciales. No necesitas ejecutar ningún SQL a menos que estés configurando Supabase desde cero (ver `backend-node/supabase/`).
 
 ---
 
-## Variables de entorno (opcionales)
+## Endpoints del backend
 
-Solo necesarias si se conecta al backend real:
-
-```
-VITE_API_URL=http://localhost:8000
-VITE_SUPABASE_URL=https://xxxx.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJ...
-```
-
-Crear el archivo `.env.local` en la raíz con estos valores. Sin ellos, la app usa datos mock automáticamente.
+| Método | URL | Descripción |
+|--------|-----|-------------|
+| GET | `/tramites/` | Lista todos los trámites activos |
+| GET | `/tramites/:id` | Detalle de un trámite |
+| GET | `/disponibilidad/:tramiteId/:fecha` | Slots horarios disponibles |
+| POST | `/citas` | Crear una nueva cita |
+| POST | `/citas/:id/archivos` | Registrar archivo adjunto a una cita |

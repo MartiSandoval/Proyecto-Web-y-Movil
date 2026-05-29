@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { IonIcon } from '@ionic/react';
+import { useHistory } from 'react-router-dom';
 import {
   chevronDownOutline,
   searchOutline,
@@ -16,6 +17,11 @@ interface headerProps {
 const Header: React.FC<headerProps> = ({ simple = false }) => {
   // Estado para controlar qué menú desplegable está abierto
   const [menuAbierto, setMenuAbierto] = useState<string | null>(null);
+  const history = useHistory();
+
+  const navigate = (path: string) => {
+    history.push(path);
+  };
 
   // Función para abrir/cerrar los menús
   const toggleMenu = (menu: string) => {
@@ -112,7 +118,16 @@ const Header: React.FC<headerProps> = ({ simple = false }) => {
               <div style={{ position: 'absolute', top: '30px', left: 0, backgroundColor: 'white', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', borderRadius: '6px', minWidth: '220px', padding: '5px 0' }}>
                 <span style={dropdownItemStyle}>Pago de Permisos</span>
                 <span style={dropdownItemStyle}>Certificados en línea</span>
-                <span style={dropdownItemStyle}>Historial de Trámites</span>
+                <span 
+                  style={dropdownItemStyle}
+                  onClick={() => {
+                    // redirigir al historial de trámites
+                    navigate('/historial');
+                    setMenuAbierto(null); // Cerrar el menú después de hacer clic
+                  }}
+                >
+                  Historial de Trámites
+                </span>
               </div>
             )}
           </div>
