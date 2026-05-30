@@ -28,14 +28,6 @@ async function getDisponibilidad(req, res, next) {
   try {
     const { tramiteId, fecha } = req.params;
 
-    if (useMock) {
-      const slots = generarSlots(tramiteId, fecha).map((slot) => ({
-        ...slot,
-        disponible: slot.disponible && !_slotsReservados.has(_keySlot(tramiteId, fecha, slot.hora)),
-      }));
-      return res.json({ fecha, slots });
-    }
-
     // Día de semana en Postgres: 1=lunes…7=domingo
     const diaSemana = new Date(fecha + "T12:00:00").getDay(); // 0=dom
     const diaPg = diaSemana === 0 ? 7 : diaSemana;

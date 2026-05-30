@@ -16,19 +16,6 @@ async function crearCita(req, res, next) {
       return next(err);
     }
 
-    if (useMock) {
-      const cita = {
-        id: uuidv4(),
-        tramite_id,
-        fecha,
-        hora,
-        estado: "pendiente",
-      };
-      _citasDb.push(cita);
-      reservarSlot(tramite_id, fecha, hora);
-      return res.status(201).json(cita);
-    }
-
     const { data, error } = await supabase
       .from("citas")
       .insert({ id: uuidv4(), tramite_id, fecha, hora, estado: "pendiente" })
@@ -50,12 +37,6 @@ async function registrarArchivo(req, res, next) {
       const err = new Error("nombre y url son requeridos");
       err.status = 400;
       return next(err);
-    }
-
-    if (useMock) {
-      const archivo = { id: uuidv4(), cita_id: id, nombre, url };
-      _archivosDb.push(archivo);
-      return res.status(201).json(archivo);
     }
 
     const { data, error } = await supabase
@@ -82,16 +63,6 @@ async function actualizarEstadoCita(req, res, next) {
       const err = new Error(`Estado inválido. Debe ser uno de: ${estadosValidos.join(', ')}`);
       err.status = 400;
       return next(err);
-    }
-
-    // Lógica Mock (Opcional, pero corregida para que actualice, no cree)
-    if (useMock) {
-      const citaIndex = _citasDb.findIndex(c => c.id === id);
-      if (citaIndex !== -1) {
-        _citasDb[citaIndex].estado = estado;
-        return res.status(200).json(_citasDb[citaIndex]);
-      }
-      return res.status(404).json({ error: "Cita mock no encontrada" });
     }
 
     // Actualización real en Supabase
@@ -122,10 +93,6 @@ async function obtenerMisCitas(req, res, next) {
       return next(err);
     }
 
-    if (useMock) {
-      const misCitas = _citasDb.filter(c => c.usuario_id === usuario_id);
-      return res.status(200).json(misCitas);
-    }
 
     // Consulta a Supabase: Traemos las citas y hacemos "join" con el nombre del trámite
     const { data, error } = await supabase
@@ -151,12 +118,6 @@ async function obtenerCitasPorTramite(req, res, next) {
       const err = new Error("El ID del trámite es obligatorio");
       err.status = 400;
       return next(err);
-    }
-
-    if (useMock) {
-      let citasTramite = _citasDb.filter(c => c.tramite_id === tramite_id);
-      if (fecha) citasTramite = citasTramite.filter(c => c.fecha === fecha);
-      return res.status(200).json(citasTramite);
     }
 
     // Consulta base a Supabase (traemos datos del usuario para que el funcionario sepa a quién atiende)

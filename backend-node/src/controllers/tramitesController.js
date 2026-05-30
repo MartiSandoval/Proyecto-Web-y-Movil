@@ -20,15 +20,6 @@ async function getTramites(req, res, next) {
   try {
     const { sucursal_id } = req.query; 
 
-    // Lógica para el Modo Mock
-    if (useMock) {
-      if (sucursal_id) {
-        const tramitesFiltrados = tramites.filter(t => t.sucursal_id === sucursal_id || t.sucursalId === sucursal_id);
-        return res.json(tramitesFiltrados);
-      }
-      return res.json(tramites);
-    }
-
     let query = supabase
       .from("tramites")
       .select("*, sucursales(nombre)")
@@ -54,16 +45,6 @@ async function getTramiteById(req, res, next) {
   try {
     const { id } = req.params;
 
-    if (useMock) {
-      const tramite = tramites.find((t) => t.id === id);
-      if (!tramite) {
-        const err = new Error("Trámite no encontrado");
-        err.status = 404;
-        return next(err);
-      }
-      return res.json(tramite);
-    }
-
     const { data, error } = await supabase
       .from("tramites")
       .select("*, sucursales(nombre)")
@@ -85,11 +66,6 @@ async function crearTramite(req, res, next) {
       const err = new Error("sucursal_id y nombre son obligatorios");
       err.status = 400;
       return next(err);
-    }
-
-    if (useMock) {
-        // Lógica mock si la necesitas, o devolver un error indicando que solo funciona en BD real
-        return res.status(201).json({ mensaje: "Trámite creado en mock" });
     }
 
     // Inserción real en Supabase
@@ -126,11 +102,6 @@ async function actualizarTramite(req, res, next) {
       return next(err);
     }
 
-    if (useMock) {
-        // Lógica mock si la necesitas, o devolver un error indicando que solo funciona en BD real
-        return res.status(200).json({ mensaje: "Trámite actualizado en mock" });
-    }
-
     // Inserción real en Supabase
     const { data, error } = await supabase
       .from("tramites")
@@ -162,11 +133,6 @@ async function eliminarTramite(req, res, next) {
       const err = new Error("id es obligatorio");
       err.status = 400;
       return next(err);
-    }
-
-    if (useMock) {
-        // Lógica mock si la necesitas, o devolver un error indicando que solo funciona en BD real
-        return res.status(200).json({ mensaje: "Trámite eliminado en mock" });
     }
 
     // Inserción real en Supabase
