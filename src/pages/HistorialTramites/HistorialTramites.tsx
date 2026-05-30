@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useIonViewWillEnter } from '@ionic/react';
 import { useHistory } from 'react-router-dom';
-import { useCitas } from '../../contexts/CitasContext';
 import {
   IonPage,
   IonContent,
@@ -8,7 +8,8 @@ import {
   IonGrid,
   IonRow,
   IonCol,
-  IonIcon
+  IonIcon,
+  IonSpinner
 } from '@ionic/react';
 import {
   wifi,
@@ -18,39 +19,31 @@ import {
   businessOutline,
   clipboardOutline
 } from 'ionicons/icons';
+import { getMisCitas } from '../../services/api';
 
 // Importación de tus componentes modulares
 import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/footer';
 import './HistorialTramites.css';
 
-// Datos simulados para que funcione sin backend en esta entrega parcial
-const datosSimulados = [
-  { id: 1, titulo: "Inscripción descuento en la compra de gas", estado: "En revisión", departamento: "Municipalidad" },
-  { id: 2, titulo: "Inscripción descuento en la compra de gas", estado: "Terminado", departamento: "Municipalidad" },
-  { id: 3, titulo: "Inscripción descuento en la compra de gas", estado: "Terminado", departamento: "Municipalidad" },
-  { id: 4, titulo: "Inscripción descuento en la compra de gas", estado: "Terminado", departamento: "Municipalidad" },
-  { id: 5, titulo: "Inscripción descuento en la compra de gas", estado: "Terminado", departamento: "Municipalidad" },
-  { id: 6, titulo: "Inscripción descuento en la compra de gas", estado: "Terminado", departamento: "Municipalidad" },
-  { id: 7, titulo: "Inscripción descuento en la compra de gas", estado: "Terminado", departamento: "Municipalidad" },
-  { id: 8, titulo: "Inscripción descuento en la compra de gas", estado: "Terminado", departamento: "Municipalidad" },
-  { id: 9, titulo: "Inscripción descuento en la compra de gas", estado: "Terminado", departamento: "Municipalidad" },
-  { id: 10, titulo: "Inscripción descuento en la compra de gas", estado: "Terminado", departamento: "Municipalidad" },
-  { id: 11, titulo: "Inscripción descuento en la compra de gas", estado: "Terminado", departamento: "Municipalidad" },
-];
+const estadoLabel: Record<string, string> = {
+  pendiente: 'Pendiente',
+  confirmado: 'Confirmado',
+  cancelado: 'Cancelado',
+  completado: 'Completado',
+};
 
 const HistorialTramites: React.FC = () => {
   const history = useHistory();
-  const { citas, eliminarCita } = useCitas();
+  const [citas, setCitas] = useState<any[]>([]);
+  const [cargando, setCargando] = useState(true);
 
-  // Usar citas reales del contexto; si no hay ninguna, mostrar datos simulados
-  const tramites = citas.length > 0
-    ? citas.map((c) => ({ id: c.id, titulo: c.tramiteNombre, estado: c.estado, departamento: c.departamento, fecha: c.fecha, hora: c.hora }))
-    : datosSimulados.map((d) => ({ ...d, id: String(d.id), fecha: "", hora: "" }));
-
-  const handleEliminar = (id: string) => {
-    eliminarCita(id);
-  };
+  useIonViewWillEnter(() => {
+    setCargando(true);
+    getMisCitas()
+      .then(setCitas)
+      .finally(() => setCargando(false));
+  });
 
   return (
     <IonPage>
@@ -86,68 +79,62 @@ const HistorialTramites: React.FC = () => {
             Podrá modificar, cancelar o revisar el estado de sus trámites.
           </p>
 
-          {/* 3. Listado de Trámites (Grid Responsivo de Ionic) */}
-          <IonGrid>
-            <IonRow>
-              {tramites.map((tramite) => (
-                <IonCol size="12" sizeMd="6" key={tramite.id} style={{ padding: '15px' }}>
-                  <IonCard style={{ margin: 0, boxShadow: '0 2px 10px rgba(0,0,0,0.05)', borderRadius: '10px', border: '1px solid #f1f5f9', backgroundColor: 'white' }}>
-                    
-                    {/* Interior de la Tarjeta */}
-                    <div style={{ display: 'flex', padding: '25px', gap: '20px' }}>
-                      
-                      {/* Iconos de la izquierda */}
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px', minWidth: '50px' }}>
-                        <IonIcon icon={clipboardOutline} style={{ fontSize: '45px', color: '#475569' }} />
-                        <IonIcon icon={businessOutline} style={{ fontSize: '20px', color: '#cbd5e1' }} />
-                      </div>
-                      
-                      {/* Textos centrales */}
-                      <div style={{ flex: 1 }}>
-                        <h3 style={{ fontWeight: 'bold', color: '#475569', fontSize: '16px', marginTop: '5px', marginBottom: '15px', lineHeight: '1.4' }}>
-                          {tramite.titulo}
-                        </h3>
-                        <p style={{ color: '#94a3b8', fontSize: '13px', margin: 0, lineHeight: '1.4' }}>
-                          {tramite.departamento}
-                        </p>
-                      </div>
+          {/* 3. Listado de Trámites */}
+          {cargando ? (
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '60px' }}>
+              <IonSpinner name="crescent" />
+            </div>
+          ) : citas.length === 0 ? (
+            <p style={{ color: '#94a3b8', textAlign: 'center', padding: '40px' }}>
+              No tienes trámites agendados aún.
+            </p>
+          ) : (
+            <IonGrid>
+              <IonRow>
+                {citas.map((cita) => {
+                  const label = estadoLabel[cita.estado] ?? cita.estado;
+                  const terminado = cita.estado === 'completado';
+                  return (
+                    <IonCol size="12" sizeMd="6" key={cita.id} style={{ padding: '15px' }}>
+                      <IonCard style={{ margin: 0, boxShadow: '0 2px 10px rgba(0,0,0,0.05)', borderRadius: '10px', border: '1px solid #f1f5f9', backgroundColor: 'white' }}>
 
-                      {/* Etiquetas / Badges de estado a la derecha */}
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', minWidth: '150px' }}>
-                        <div style={{ backgroundColor: '#fcb864', color: '#7c2d12', padding: '6px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                          <IonIcon icon={wifi} /> Trámite en línea
+                        <div style={{ display: 'flex', padding: '25px', gap: '20px' }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px', minWidth: '50px' }}>
+                            <IonIcon icon={clipboardOutline} style={{ fontSize: '45px', color: '#475569' }} />
+                            <IonIcon icon={businessOutline} style={{ fontSize: '20px', color: '#cbd5e1' }} />
+                          </div>
+
+                          <div style={{ flex: 1 }}>
+                            <h3 style={{ fontWeight: 'bold', color: '#475569', fontSize: '16px', marginTop: '5px', marginBottom: '8px', lineHeight: '1.4' }}>
+                              {cita.tramites?.nombre ?? 'Trámite'}
+                            </h3>
+                            <p style={{ color: '#94a3b8', fontSize: '13px', margin: 0 }}>
+                              {cita.fecha} — {cita.hora}
+                            </p>
+                          </div>
+
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', minWidth: '130px' }}>
+                            <div style={{ backgroundColor: '#fcb864', color: '#7c2d12', padding: '6px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                              <IonIcon icon={wifi} /> En línea
+                            </div>
+                            <div style={{
+                              backgroundColor: terminado ? '#10b981' : '#fde047',
+                              color: terminado ? 'white' : '#854d0e',
+                              padding: '6px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '5px'
+                            }}>
+                              <IonIcon icon={terminado ? checkmarkCircleOutline : timeOutline} />
+                              {label}
+                            </div>
+                          </div>
                         </div>
-                        <div style={{ 
-                          backgroundColor: tramite.estado === 'Terminado' ? '#10b981' : '#fde047', 
-                          color: tramite.estado === 'Terminado' ? 'white' : '#854d0e', 
-                          padding: '6px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '5px' 
-                        }}>
-                          <IonIcon icon={tramite.estado === 'Terminado' ? checkmarkCircleOutline : timeOutline} /> 
-                          {tramite.estado}
-                        </div>
-                      </div>
-                    </div>
 
-                    {/* Botones de acción inferiores */}
-                    <div style={{ display: 'flex', justifyContent: 'flex-start', padding: '0 25px 25px 25px', gap: '15px' }}>
-                      <button 
-                        onClick={() => handleEliminar(tramite.id)} 
-                        style={{ backgroundColor: '#fb7185', color: 'white', border: 'none', padding: '10px 30px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
-                      >
-                        Eliminar
-                      </button>
-                      <button 
-                        style={{ backgroundColor: '#3b82f6', color: 'white', border: 'none', padding: '10px 30px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
-                      >
-                        Modificar
-                      </button>
-                    </div>
-
-                  </IonCard>
-                </IonCol>
-              ))}
-            </IonRow>
-          </IonGrid>
+                      </IonCard>
+                    </IonCol>
+                  );
+                })}
+              </IonRow>
+            </IonGrid>
+          )}
 
         </div>
         <Footer />

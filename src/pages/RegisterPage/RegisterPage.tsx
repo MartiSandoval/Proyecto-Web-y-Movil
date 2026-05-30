@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 
 import { 
   IonPage, 
@@ -51,6 +52,7 @@ const validarTel = (telefono: string) => {
 }
 
 const RegisterPage: React.FC = () => {
+  const { register } = useAuth();
   const [nombre, setNombre] = useState('');
   const [rut, setRut] = useState('');
   const [password, setPassword] = useState('');
@@ -70,14 +72,16 @@ const RegisterPage: React.FC = () => {
   const [correoError, setCorreoError] = useState('');
   const [regionError, setRegionError] = useState('');
   const [comunaError, setComunaError] = useState('');
-  const[telefonoError, setTelefonoError] = useState('');
+  const [telefonoError, setTelefonoError] = useState('');
+  const [registroError, setRegistroError] = useState('');
+  const [cargando, setCargando] = useState(false);
   const [mostrarContra, setMostrarContra] = useState(false);
   const [mostrarContraConfirm, setMostrarContraConfirm] = useState(false);
   const history = useHistory();
   
 
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     setRutError('');
     setPasswordError('');
     setConfirmError('');
@@ -87,6 +91,7 @@ const RegisterPage: React.FC = () => {
     setRegionError('');
     setComunaError('');
     setTelefonoError('');
+    setRegistroError('');
 
     let esValido = true;
     
@@ -155,12 +160,26 @@ const RegisterPage: React.FC = () => {
       esValido = false;
     }
 
-    // 8. Envío final (Si todo es válido)
     if (esValido) {
-      console.log("Formulario perfecto. Listo para enviar al backend.");
-      // Aquí irá el POST a Axios para conectarse a tu Node.js
-      localStorage.setItem('isLoggedIn', 'true');
-      history.push('/tramites');
+      try {
+        setCargando(true);
+        await register({
+          email: correo.trim(),
+          password: password.trim(),
+          nombre: nombre.trim(),
+          rut: rut.trim(),
+          telefono: telefono.trim() || undefined,
+          fecha_nacimiento: fechaNacimiento || undefined,
+          genero: genero || undefined,
+          region: region || undefined,
+          comuna: comuna || undefined,
+        });
+        window.location.replace('/tramites');
+      } catch (err: any) {
+        setRegistroError(err.message || 'Error al crear la cuenta');
+      } finally {
+        setCargando(false);
+      }
     }
   };
 
@@ -369,13 +388,20 @@ const RegisterPage: React.FC = () => {
                 {terminosError && <IonText color="danger"><p style={{ fontSize: '12px', marginTop: '5px' }}> {terminosError} </p></IonText>}
               </div>
 
+              {registroError && (
+                <IonText color="danger">
+                  <p style={{ fontSize: '13px', textAlign: 'center', marginBottom: '10px' }}>{registroError}</p>
+                </IonText>
+              )}
+
               {/* Botón Crear Cuenta */}
-              <IonButton 
-                expand="block" 
-                className="btn-ingresar" 
+              <IonButton
+                expand="block"
+                className="btn-ingresar"
                 onClick={handleRegister}
+                disabled={cargando}
               >
-                Crear Cuenta
+                {cargando ? 'Creando cuenta...' : 'Crear Cuenta'}
               </IonButton>
 
             </IonCardContent>

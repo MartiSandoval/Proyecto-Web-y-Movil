@@ -1,14 +1,10 @@
 const { v4: uuidv4 } = require("uuid");
-const { useMock, supabase } = require("../config/db");
-const { reservarSlot } = require("./disponibilidadController");
-
-// Almacenamiento en memoria (solo mock)
-const _citasDb = [];
-const _archivosDb = [];
+const { supabase } = require("../config/db");
 
 async function crearCita(req, res, next) {
   try {
     const { tramite_id, fecha, hora } = req.body;
+    const usuario_id = req.user.id;
 
     if (!tramite_id || !fecha || !hora) {
       const err = new Error("tramite_id, fecha y hora son requeridos");
@@ -16,25 +12,13 @@ async function crearCita(req, res, next) {
       return next(err);
     }
 
-    if (useMock) {
-      const cita = {
-        id: uuidv4(),
-        tramite_id,
-        fecha,
-        hora,
-        estado: "pendiente",
-      };
-      _citasDb.push(cita);
-      reservarSlot(tramite_id, fecha, hora);
-      return res.status(201).json(cita);
-    }
-
     const { data, error } = await supabase
       .from("citas")
-      .insert({ id: uuidv4(), tramite_id, fecha, hora, estado: "pendiente" })
+      .insert({ id: uuidv4(), usuario_id, tramite_id, fecha, hora, estado: "pendiente" })
       .select()
       .single();
     if (error) throw error;
+
     res.status(201).json(data);
   } catch (err) {
     next(err);
@@ -52,18 +36,13 @@ async function registrarArchivo(req, res, next) {
       return next(err);
     }
 
-    if (useMock) {
-      const archivo = { id: uuidv4(), cita_id: id, nombre, url };
-      _archivosDb.push(archivo);
-      return res.status(201).json(archivo);
-    }
-
     const { data, error } = await supabase
       .from("archivos_cita")
       .insert({ id: uuidv4(), cita_id: id, nombre, url })
       .select()
       .single();
     if (error) throw error;
+
     res.status(201).json(data);
   } catch (err) {
     next(err);
@@ -75,64 +54,19 @@ async function actualizarEstadoCita(req, res, next) {
     const { id } = req.params;
     const { estado } = req.body;
 
-    // Validación: Asegurarnos de que envían un estado válido
-    const estadosValidos = ['pendiente', 'confirmado', 'cancelado', 'completado'];
-    
+    const estadosValidos = ["pendiente", "confirmado", "cancelado", "completado"];
     if (!estado || !estadosValidos.includes(estado)) {
-      const err = new Error(`Estado inválido. Debe ser uno de: ${estadosValidos.join(', ')}`);
+      const err = new Error(`Estado inválido. Debe ser uno de: ${estadosValidos.join(", ")}`);
       err.status = 400;
       return next(err);
     }
 
-    // Lógica Mock (Opcional, pero corregida para que actualice, no cree)
-    if (useMock) {
-      const citaIndex = _citasDb.findIndex(c => c.id === id);
-      if (citaIndex !== -1) {
-        _citasDb[citaIndex].estado = estado;
-        return res.status(200).json(_citasDb[citaIndex]);
-      }
-      return res.status(404).json({ error: "Cita mock no encontrada" });
-    }
-
-    // Actualización real en Supabase
     const { data, error } = await supabase
       .from("citas")
-      .update({ estado: estado }) 
+      .update({ estado })
       .eq("id", id)
       .select()
       .single();
-
-    if (error) throw error;
-    res.status(200).json(data); 
-  } catch (err) {
-    next(err);
-  }
-}
-
-// GET /citas/mis-citas/:usuario_id
-async function obtenerMisCitas(req, res, next) {
-  try {
-    // NOTA: Cuando tu compañero termine el login, este ID debe salir del token: 
-    // const idUsuario = req.user.id;
-    const { usuario_id } = req.params; 
-
-    if (!usuario_id) {
-      const err = new Error("El ID del usuario es obligatorio");
-      err.status = 400;
-      return next(err);
-    }
-
-    if (useMock) {
-      const misCitas = _citasDb.filter(c => c.usuario_id === usuario_id);
-      return res.status(200).json(misCitas);
-    }
-
-    // Consulta a Supabase: Traemos las citas y hacemos "join" con el nombre del trámite
-    const { data, error } = await supabase
-      .from("citas")
-      .select("*, tramites(nombre)")
-      .eq("usuario_id", usuario_id)
-      .order("fecha", { ascending: false }); // Ordenamos de la más reciente a la más antigua
 
     if (error) throw error;
     res.status(200).json(data);
@@ -141,11 +75,27 @@ async function obtenerMisCitas(req, res, next) {
   }
 }
 
-// GET /citas/tramite/:tramite_id
+async function obtenerMisCitas(req, res, next) {
+  try {
+    const usuario_id = req.user.id;
+
+    const { data, error } = await supabase
+      .from("citas")
+      .select("*, tramites(nombre)")
+      .eq("usuario_id", usuario_id)
+      .order("fecha", { ascending: false });
+
+    if (error) throw error;
+    res.status(200).json(data);
+  } catch (err) {
+    next(err);
+  }
+}
+
 async function obtenerCitasPorTramite(req, res, next) {
   try {
     const { tramite_id } = req.params;
-    const { fecha } = req.query; // Permite filtrar por día opcionalmente: /citas/tramite/123?fecha=2026-10-15
+    const { fecha } = req.query;
 
     if (!tramite_id) {
       const err = new Error("El ID del trámite es obligatorio");
@@ -153,32 +103,23 @@ async function obtenerCitasPorTramite(req, res, next) {
       return next(err);
     }
 
-    if (useMock) {
-      let citasTramite = _citasDb.filter(c => c.tramite_id === tramite_id);
-      if (fecha) citasTramite = citasTramite.filter(c => c.fecha === fecha);
-      return res.status(200).json(citasTramite);
-    }
-
-    // Consulta base a Supabase (traemos datos del usuario para que el funcionario sepa a quién atiende)
     let query = supabase
       .from("citas")
-      // Le indicamos explícitamente que use la relación de "usuario_id" 
-      // y opcionalmente renombramos la salida a "ciudadano" para que sea más legible
-      .select("*, ciudadano:perfiles!usuario_id(nombre, rut)") 
+      .select("*, ciudadano:perfiles!usuario_id(nombre, rut)")
       .eq("tramite_id", tramite_id)
       .order("hora", { ascending: true });
 
-    // Si enviaron una fecha específica, filtramos por ese día
     if (fecha) {
       query = query.eq("fecha", fecha);
     }
 
     const { data, error } = await query;
-
     if (error) throw error;
+
     res.status(200).json(data);
   } catch (err) {
     next(err);
   }
 }
+
 module.exports = { crearCita, registrarArchivo, actualizarEstadoCita, obtenerMisCitas, obtenerCitasPorTramite };
