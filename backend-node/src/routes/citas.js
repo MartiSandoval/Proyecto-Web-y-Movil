@@ -14,10 +14,3 @@ router.put("/:id/estado", actualizarEstadoCita); // Cambiar a confirmado, cancel
 
 
 module.exports = router;
-
-
-
-
-
-
-module.exports = router;
