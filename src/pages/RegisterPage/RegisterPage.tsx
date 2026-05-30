@@ -21,6 +21,7 @@ import {
 } from '@ionic/react';
 import { lockClosedOutline, eyeOutline, calendarOutline } from 'ionicons/icons';
 import '../LoginPage/LoginPage.css';
+import Header from '../../components/Header/Header';
 const municipalidadLogo = "/assets/logoMuni.png";
 
 
@@ -90,18 +91,7 @@ const RegisterPage: React.FC = () => {
 
   return (
     <IonPage>
-      {/* Cabecera Municipal */}
-      <IonHeader>
-        <IonToolbar className="municipal-toolbar">
-          <img src={municipalidadLogo} alt="Logo Municipalidad" className="tr-logo-img" />
-          <IonTitle>
-            <div className="municipal-header-title">
-              <strong>Santo Domingo</strong>
-              <span>Municipalidad</span>
-            </div>
-          </IonTitle>
-        </IonToolbar>
-      </IonHeader>
+      <Header simple/>
       
       <IonContent fullscreen className="login-background">
         <div className="login-container">
