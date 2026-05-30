@@ -9,6 +9,8 @@ import { getTramites } from "../../services/api";
 import "./Tramites.css";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/footer";
+import { documentTextOutline } from "ionicons/icons";
+import { IonButton } from "@ionic/react";
 
 type FiltroTipo = "todos" | "online" | "presencial";
 
@@ -57,14 +59,14 @@ export const Tramites = (): JSX.Element => {
     <IonPage>
       {/* Header */}
       <Header />
+      <IonContent>
 
       {/* Breadcrumb */}
       <div className="tr-breadcrumb">
         &rsaquo; Usted está en: <strong>Trámites y Servicios</strong>
       </div>
 
-      <IonContent className="tr-content">
-        {/* Título */}
+      {/* Título ÚNICO con el botón integrado */}
         <div className="tr-title-row">
           <div>
             <h1 className="tr-title">Trámites y Servicios</h1>
@@ -73,9 +75,21 @@ export const Tramites = (): JSX.Element => {
               Gestiona tus trámites de manera fácil y eficiente.
             </p>
           </div>
-          {!loading && (
-            <div className="tr-count-badge">{filtrados.length} trámites disponibles</div>
-          )}
+          
+          <div className="tr-title-actions">
+            {/* Aquí usamos el componente nativo de Ionic */}
+            <IonButton 
+              className="tr-btn-historial-ionic"
+              onClick={() => history.push('/historial')}
+            >
+              <IonIcon slot="start" icon={documentTextOutline} />
+              Ir a Mi Historial
+            </IonButton>
+
+            {!loading && (
+              <div className="tr-count-badge">{filtrados.length} trámites disponibles</div>
+            )}
+          </div>
         </div>
 
         {/* Barra de filtros */}

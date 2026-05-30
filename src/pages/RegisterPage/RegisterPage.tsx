@@ -21,6 +21,7 @@ import {
 } from '@ionic/react';
 import { lockClosedOutline, eyeOutline, calendarOutline } from 'ionicons/icons';
 import '../LoginPage/LoginPage.css';
+import Header from '../../components/Header/Header';
 const municipalidadLogo = "/assets/logoMuni.png";
 
 
@@ -61,12 +62,21 @@ const RegisterPage: React.FC = () => {
     setConfirmError('');
     setTerminosError('');
     let esValido = true;
+    const rutLimpio = rut.trim();
+    const passLimpio = password.trim();
 
-    if (!validarRut(rut)) {
-      setRutError('RUT inválido. Recuerde usar guion y sin puntos.');
+    if (!rutLimpio) {
+      setRutError('El RUT es obligatorio.');
+      esValido = false;
+    } else if (!validarRut(rutLimpio)) {
+      setRutError('El RUT ingresado no es válido (Ej: 12345678-9).');
       esValido = false;
     }
-    if (password.length < 6) {
+
+    if (!passLimpio) {
+      setPasswordError('La contraseña es obligatoria.');
+      esValido = false;
+    } else if (passLimpio.length < 6) {
       setPasswordError('La contraseña debe tener al menos 6 caracteres.');
       esValido = false;
     }
@@ -89,18 +99,7 @@ const RegisterPage: React.FC = () => {
 
   return (
     <IonPage>
-      {/* Cabecera Municipal */}
-      <IonHeader>
-        <IonToolbar className="municipal-toolbar">
-          <img src={municipalidadLogo} alt="Logo Municipalidad" className="tr-logo-img" />
-          <IonTitle>
-            <div className="municipal-header-title">
-              <strong>Santo Domingo</strong>
-              <span>Municipalidad</span>
-            </div>
-          </IonTitle>
-        </IonToolbar>
-      </IonHeader>
+      <Header simple/>
       
       <IonContent fullscreen className="login-background">
         <div className="login-container">
@@ -111,7 +110,7 @@ const RegisterPage: React.FC = () => {
               {/* Nombre Completo */}
               <div className="input-group">
                 <IonLabel className="input-label">Nombre Completo</IonLabel>
-                <IonItem className="custom-input">
+                <IonItem className="custom-input" lines="none">
                   <IonInput 
                     placeholder="Ingrese su nombre completo"
                     value={nombre}
@@ -124,7 +123,7 @@ const RegisterPage: React.FC = () => {
               <div className="input-group">
                 <IonLabel className="input-label">RUT</IonLabel>
                 <IonText color="medium"><p className="input-helper">Sin puntos y con guión</p></IonText>
-                <IonItem className="custom-input" color={rutError ? "danger": ""}>
+                <IonItem className="custom-input" color={rutError ? "danger": ""}lines="none">
                   <IonInput 
                     placeholder="Ej: 21714338-9"
                     value={rut}
@@ -137,7 +136,7 @@ const RegisterPage: React.FC = () => {
               {/* Contraseña */}
               <div className="input-group">
                 <IonLabel className="input-label">Contraseña</IonLabel>
-                <IonItem className="custom-input" color={passwordError ? "danger": ""}>
+                <IonItem className="custom-input" color={passwordError ? "danger": ""}lines="none">
                   <IonIcon slot="start" icon={lockClosedOutline} color="medium" />
                   <IonInput 
                     type="password"
@@ -153,7 +152,7 @@ const RegisterPage: React.FC = () => {
               {/* Confirmar Contraseña */}
               <div className="input-group">
                 <IonLabel className="input-label">Confirmar Contraseña</IonLabel>
-                <IonItem className="custom-input" color={confirmError ? "danger": ""}>
+                <IonItem className="custom-input" color={confirmError ? "danger": ""}lines="none">
                   <IonIcon slot="start" icon={lockClosedOutline} color="medium" />
                   <IonInput 
                     type="password"
@@ -169,7 +168,7 @@ const RegisterPage: React.FC = () => {
               {/* Correo Electrónico */}
               <div className="input-group">
                 <IonLabel className="input-label">Correo Electrónico</IonLabel>
-                <IonItem className="custom-input">
+                <IonItem className="custom-input" lines="none">
                   <IonInput 
                     type="email"
                     placeholder="example@gmail.com"
@@ -182,7 +181,7 @@ const RegisterPage: React.FC = () => {
               {/* Número de Teléfono */}
               <div className="input-group">
                 <IonLabel className="input-label">Número de teléfono</IonLabel>
-                <IonItem className="custom-input">
+                <IonItem className="custom-input" lines="none">
                   <IonInput 
                     type="tel"
                     placeholder="998809831"
@@ -195,7 +194,7 @@ const RegisterPage: React.FC = () => {
               {/* Fecha de Nacimiento */}
               <div className="input-group">
                 <IonLabel className="input-label">Fecha de nacimiento</IonLabel>
-                <IonItem className="custom-input">
+                <IonItem className="custom-input" lines="none">
                   <IonInput 
                     type="date"
                     value={fechaNacimiento}
@@ -208,7 +207,7 @@ const RegisterPage: React.FC = () => {
               {/* Género (Select) */}
               <div className="input-group">
                 <IonLabel className="input-label">Género</IonLabel>
-                <IonItem className="custom-input">
+                <IonItem className="custom-input" lines="none">
                   <IonSelect 
                     placeholder="Seleccione una opción" 
                     value={genero} 
@@ -226,7 +225,7 @@ const RegisterPage: React.FC = () => {
               {/* Región (Select) */}
               <div className="input-group">
                 <IonLabel className="input-label">Región</IonLabel>
-                <IonItem className="custom-input">
+                <IonItem className="custom-input" lines="none">
                   <IonSelect 
                     placeholder="Selecciona una región" 
                     value={region} 
@@ -256,7 +255,7 @@ const RegisterPage: React.FC = () => {
               {/* Comuna (Select) */}
               <div className="input-group">
                 <IonLabel className="input-label">Comuna</IonLabel>
-                <IonItem className="custom-input">
+                <IonItem className="custom-input" lines="none">
                   <IonSelect 
                     placeholder="Selecciona una comuna" 
                     value={comuna} 

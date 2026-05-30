@@ -1,3 +1,5 @@
+// viendo si arrelge el secreto..
+
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { 
@@ -46,17 +48,23 @@ const LoginPage: React.FC = () => {
     setRutError('');
     setPasswordError('');
     let esValido = true;
+    // por si no ponen nada
+    const rutLimpio = rut.trim();
+    const passLimpio = password.trim();
 
-    if (!rut) {
+    if (!rutLimpio) {
       setRutError('El RUT es obligatorio.');
       esValido = false;
-    } else if (!validarRut(rut)) {
+    } else if (!validarRut(rutLimpio)) {
       setRutError('El RUT ingresado no es válido (Ej: 12345678-9).');
       esValido = false;
     }
 
-    if (!password) {
+    if (!passLimpio) {
       setPasswordError('La contraseña es obligatoria.');
+      esValido = false;
+    } else if (passLimpio.length < 6) {
+      setPasswordError('La contraseña debe tener al menos 6 caracteres.');
       esValido = false;
     }
 
@@ -80,7 +88,7 @@ const LoginPage: React.FC = () => {
               <div className="input-group">
                 <IonLabel className="input-label">RUT</IonLabel>
                 <IonText color="medium"><p className="input-helper">Sin puntos y con guión</p></IonText>
-                <IonItem className="custom-input" color={rutError ? "danger" : ""}>
+                <IonItem className="custom-input" color={rutError ? "danger" : ""}lines="none">
                   <IonInput 
                     placeholder="Ej: 21714338-9"
                     value={rut}
@@ -93,7 +101,7 @@ const LoginPage: React.FC = () => {
               {/* Campo Contraseña */}
               <div className="input-group">
                 <IonLabel className="input-label">Contraseña</IonLabel>
-                <IonItem className="custom-input" color={passwordError ? "danger" : ""}>
+                <IonItem className="custom-input" color={passwordError ? "danger" : ""}lines="none">
                   <IonIcon slot="start" icon={lockClosedOutline} color="medium" />
                   <IonInput 
                     type="password"
