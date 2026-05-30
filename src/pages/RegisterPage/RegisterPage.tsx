@@ -19,24 +19,36 @@ import {
   IonCheckbox,
   IonText
 } from '@ionic/react';
-import { lockClosedOutline, eyeOutline, calendarOutline } from 'ionicons/icons';
+import { lockClosedOutline, eyeOutline, calendarOutline, eyeOffOutline } from 'ionicons/icons';
 import '../LoginPage/LoginPage.css';
 import Header from '../../components/Header/Header';
 const municipalidadLogo = "/assets/logoMuni.png";
 
 
 const validarRut = (rut: string) => {
-  if (!/^[0-9]+[-|‐]{1}[0-9kK]{1}$/.test(rut)) return false;
-  
-  const [numero, dv] = rut.split('-');
-  let num = parseInt(numero);
-  let m = 0, s = 1;
-  for (; num; num = Math.floor(num / 10)) {
-    s = (s + num % 10 * (9 - m++ % 6)) % 11;
+  const [num, dv] = rut.split("-");
+  //let num = numero;
+  if (num.length < 7 || num.length > 8 ) {
+    return false;
   }
-  const dvEsperado = s ? String(s - 1) : 'k';
-  return dvEsperado.toLowerCase() === dv.toLowerCase();
+  if (dv.length > 1) {
+    return false;
+  }
+  return /^[0-9]+-[0-9kK]$/.test(rut);
 };
+
+const validarCorreo = (email: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+const validarTel = (telefono: string) => {
+  if (telefono.length == 9) {
+    return true;
+  }
+  if (!isNaN(Number(telefono))) {
+    return false;
+  }
+}
 
 const RegisterPage: React.FC = () => {
   const [nombre, setNombre] = useState('');
@@ -54,21 +66,54 @@ const RegisterPage: React.FC = () => {
   const [passwordError, setPasswordError] = useState('');
   const [confirmError, setConfirmError] = useState('');
   const [terminosError, setTerminosError] = useState('');
+  const [nombreError, setNombreError] = useState('');
+  const [correoError, setCorreoError] = useState('');
+  const [regionError, setRegionError] = useState('');
+  const [comunaError, setComunaError] = useState('');
+  const[telefonoError, setTelefonoError] = useState('');
+  const [mostrarContra, setMostrarContra] = useState(false);
+  const [mostrarContraConfirm, setMostrarContraConfirm] = useState(false);
   const history = useHistory();
   
+
 
   const handleRegister = () => {
     setRutError('');
     setPasswordError('');
     setConfirmError('');
     setTerminosError('');
-    let esValido = true;
+    setNombreError('');
+    setCorreoError('');
+    setRegionError('');
+    setComunaError('');
+    setTelefonoError('');
 
-    if (!validarRut(rut)) {
-      setRutError('RUT inválido. Recuerde usar guion y sin puntos.');
+    let esValido = true;
+    
+    // trim elimina los espacios en blanco
+    const rutLimpio = rut.trim();
+    const passLimpio = password.trim();
+    const nombreLimpio = nombre.trim();
+    const correoLimpio = correo.trim();
+    const telLimpio = telefono.trim();
+
+    if (!nombreLimpio) {
+      setNombreError('El nombre completo es obligatorio.');
       esValido = false;
     }
-    if (password.length < 6) {
+
+    if (!rutLimpio) {
+      setRutError('El RUT es obligatorio.');
+      esValido = false;
+    } else if (!validarRut(rutLimpio)) {
+      setRutError('El RUT ingresado no es válido.');
+      esValido = false;
+    }
+
+    if (!passLimpio) {
+      setPasswordError('La contraseña es obligatoria.');
+      esValido = false;
+    } else if (passLimpio.length < 6) {
       setPasswordError('La contraseña debe tener al menos 6 caracteres.');
       esValido = false;
     }
@@ -78,12 +123,42 @@ const RegisterPage: React.FC = () => {
       esValido = false;
     }
 
+    if (!correoLimpio) {
+      setCorreoError('El correo es obligatorio.');
+      esValido = false;
+    } else if (!validarCorreo(correoLimpio)) {
+      setCorreoError('Ingrese un formato de correo válido (ej: usuario@mail.com).');
+      esValido = false;
+    }
+
+    if (!telLimpio) {
+      setTelefonoError('El teléfono es obligatorio.');
+      esValido = false;
+    } else if (!validarTel(telLimpio)) {
+      setTelefonoError("ingresa bien plox")
+      esValido = false;
+    }
+
+    if (!region) {
+      setRegionError('Debe seleccionar una región.');
+      esValido = false;
+    }
+    if (!comuna) {
+      setComunaError('Debe seleccionar una comuna.');
+      esValido = false;
+    }
+
+    
+
     if (!terminos) {
       setTerminosError('Debe aceptar los términos y condiciones.');
       esValido = false;
     }
 
+    // 8. Envío final (Si todo es válido)
     if (esValido) {
+      console.log("Formulario perfecto. Listo para enviar al backend.");
+      // Aquí irá el POST a Axios para conectarse a tu Node.js
       localStorage.setItem('isLoggedIn', 'true');
       history.push('/tramites');
     }
@@ -102,20 +177,21 @@ const RegisterPage: React.FC = () => {
               {/* Nombre Completo */}
               <div className="input-group">
                 <IonLabel className="input-label">Nombre Completo</IonLabel>
-                <IonItem className="custom-input">
+                <IonItem className="custom-input" lines="none">
                   <IonInput 
                     placeholder="Ingrese su nombre completo"
                     value={nombre}
                     onIonInput={(e: any) => setNombre(e.target.value)}
                   ></IonInput>
                 </IonItem>
+                {nombreError && <IonText color="danger"><p style={{ fontSize: '12px', marginTop: '5px' }}>{nombreError}</p></IonText>}
               </div>
 
               {/* RUT */}
               <div className="input-group">
                 <IonLabel className="input-label">RUT</IonLabel>
                 <IonText color="medium"><p className="input-helper">Sin puntos y con guión</p></IonText>
-                <IonItem className="custom-input" color={rutError ? "danger": ""}>
+                <IonItem className="custom-input" color={rutError ? "danger": ""}lines="none">
                   <IonInput 
                     placeholder="Ej: 21714338-9"
                     value={rut}
@@ -128,15 +204,21 @@ const RegisterPage: React.FC = () => {
               {/* Contraseña */}
               <div className="input-group">
                 <IonLabel className="input-label">Contraseña</IonLabel>
-                <IonItem className="custom-input" color={passwordError ? "danger": ""}>
+                <IonItem className="custom-input" color={passwordError ? "danger": ""}lines="none">
                   <IonIcon slot="start" icon={lockClosedOutline} color="medium" />
                   <IonInput 
-                    type="password"
+                    type={mostrarContra ? "text" : "password"}
                     placeholder="Contraseña" 
                     value={password}
                     onIonInput={(e: any) => setPassword(e.target.value)}
                   ></IonInput>
-                  <IonIcon slot="end" icon={eyeOutline} color="medium" style={{ cursor: 'pointer' }} />
+                  <IonIcon 
+                    slot="end" 
+                    icon={mostrarContra ? eyeOffOutline : eyeOutline} 
+                    color="medium" 
+                    style={{ cursor: 'pointer' }} 
+                    onClick={() => setMostrarContra(!mostrarContra)} 
+                  />
                 </IonItem>
                 {passwordError && <IonText color="danger"><p style={{ fontSize: '12px', marginTop: '5px' }}>{passwordError}</p></IonText>}
               </div>
@@ -144,15 +226,21 @@ const RegisterPage: React.FC = () => {
               {/* Confirmar Contraseña */}
               <div className="input-group">
                 <IonLabel className="input-label">Confirmar Contraseña</IonLabel>
-                <IonItem className="custom-input" color={confirmError ? "danger": ""}>
+                <IonItem className="custom-input" color={confirmError ? "danger": ""}lines="none">
                   <IonIcon slot="start" icon={lockClosedOutline} color="medium" />
                   <IonInput 
-                    type="password"
-                    placeholder="Confirmar Contraseña" 
+                    type={mostrarContraConfirm ? "text" : "password"}
+                    placeholder="Contraseña" 
                     value={confirmPassword}
                     onIonInput={(e: any) => setConfirmPassword(e.target.value)}
                   ></IonInput>
-                  <IonIcon slot="end" icon={eyeOutline} color="medium" style={{ cursor: 'pointer' }} />
+                  <IonIcon 
+                    slot="end" 
+                    icon={mostrarContraConfirm ? eyeOffOutline : eyeOutline} 
+                    color="medium" 
+                    style={{ cursor: 'pointer' }} 
+                    onClick={() => setMostrarContraConfirm(!mostrarContraConfirm)} 
+                  />
                 </IonItem>
                 {confirmError && <IonText color="danger"><p style={{ fontSize: '12px', marginTop: '5px' }}>{confirmError}</p></IonText>}
               </div>
@@ -160,7 +248,7 @@ const RegisterPage: React.FC = () => {
               {/* Correo Electrónico */}
               <div className="input-group">
                 <IonLabel className="input-label">Correo Electrónico</IonLabel>
-                <IonItem className="custom-input">
+                <IonItem className="custom-input" lines="none">
                   <IonInput 
                     type="email"
                     placeholder="example@gmail.com"
@@ -168,12 +256,13 @@ const RegisterPage: React.FC = () => {
                     onIonInput={(e: any) => setCorreo(e.target.value)}
                   ></IonInput>
                 </IonItem>
+                {correoError && <IonText color="danger"><p style={{ fontSize: '12px', marginTop: '5px' }}>{correoError}</p></IonText>}
               </div>
 
               {/* Número de Teléfono */}
               <div className="input-group">
                 <IonLabel className="input-label">Número de teléfono</IonLabel>
-                <IonItem className="custom-input">
+                <IonItem className="custom-input" lines="none">
                   <IonInput 
                     type="tel"
                     placeholder="998809831"
@@ -181,12 +270,14 @@ const RegisterPage: React.FC = () => {
                     onIonInput={(e: any) => setTelefono(e.target.value)}
                   ></IonInput>
                 </IonItem>
+                {telefonoError && <IonText color="danger"><p style={{ fontSize: '12px', marginTop: '5px' }}>{telefonoError}</p></IonText>}
+
               </div>
 
               {/* Fecha de Nacimiento */}
               <div className="input-group">
                 <IonLabel className="input-label">Fecha de nacimiento</IonLabel>
-                <IonItem className="custom-input">
+                <IonItem className="custom-input" lines="none">
                   <IonInput 
                     type="date"
                     value={fechaNacimiento}
@@ -199,7 +290,7 @@ const RegisterPage: React.FC = () => {
               {/* Género (Select) */}
               <div className="input-group">
                 <IonLabel className="input-label">Género</IonLabel>
-                <IonItem className="custom-input">
+                <IonItem className="custom-input" lines="none">
                   <IonSelect 
                     placeholder="Seleccione una opción" 
                     value={genero} 
@@ -217,7 +308,7 @@ const RegisterPage: React.FC = () => {
               {/* Región (Select) */}
               <div className="input-group">
                 <IonLabel className="input-label">Región</IonLabel>
-                <IonItem className="custom-input">
+                <IonItem className="custom-input" lines="none">
                   <IonSelect 
                     placeholder="Selecciona una región" 
                     value={region} 
@@ -242,12 +333,13 @@ const RegisterPage: React.FC = () => {
                     <IonSelectOption value="magallanes">Magallanes</IonSelectOption>
                   </IonSelect>
                 </IonItem>
+                {regionError && <IonText color="danger"><p style={{ fontSize: '12px', marginTop: '5px' }}>{regionError}</p></IonText>}
               </div>
 
               {/* Comuna (Select) */}
               <div className="input-group">
                 <IonLabel className="input-label">Comuna</IonLabel>
-                <IonItem className="custom-input">
+                <IonItem className="custom-input" lines="none">
                   <IonSelect 
                     placeholder="Selecciona una comuna" 
                     value={comuna} 
@@ -260,6 +352,7 @@ const RegisterPage: React.FC = () => {
                     {/* Agregar las demás comunas luego */}
                   </IonSelect>
                 </IonItem>
+                {comunaError && <IonText color="danger"><p style={{ fontSize: '12px', marginTop: '5px' }}>{comunaError}</p></IonText>}
               </div>
 
               {/* Términos y Condiciones */}
