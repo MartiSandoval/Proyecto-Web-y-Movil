@@ -1,5 +1,3 @@
-// viendo si arrelge el secreto..
-
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { 
@@ -17,16 +15,15 @@ import {
   IonItem,
   IonLabel
 } from '@ionic/react';
-import { lockClosedOutline, eyeOutline } from 'ionicons/icons';
+import { lockClosedOutline, eyeOutline, eyeOffOutline } from 'ionicons/icons';
 import './LoginPage.css'; // Importamos los estilos personalizados
 import { IonRouterLink } from '@ionic/react';
 import Header from '../../components/Header/Header';
 const municipalidadLogo = "/assets/logoMuni.png";
 
-// ahora funciona no necesariamente el rut tiene que ser válido xdd
+// ahora funciona no necesariamente el rut tiene que ser válido
 const validarRut = (rut: string) => {
   const [num, dv] = rut.split("-");
-  //let num = numero;
   if (num.length < 7 || num.length > 8 ) {
     return false;
   }
@@ -43,6 +40,7 @@ const LoginPage: React.FC = () => {
   
   const [rutError, setRutError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [mostrarContra, setMostrarContra] = useState(false);
 
   const handleLogin = () => {
     setRutError('');
@@ -74,6 +72,7 @@ const LoginPage: React.FC = () => {
     }
   };
 
+
   return (
     <IonPage>
       <Header simple /> {/* Usamos el header simple sin submenú para la página de login */}
@@ -104,12 +103,18 @@ const LoginPage: React.FC = () => {
                 <IonItem className="custom-input" color={passwordError ? "danger" : ""}lines="none">
                   <IonIcon slot="start" icon={lockClosedOutline} color="medium" />
                   <IonInput 
-                    type="password"
+                    type={mostrarContra ? "text" : "password"}
                     placeholder="Contraseña" 
                     value={password}
                     onIonInput={(e: any) => setPassword(e.target.value)}
                   ></IonInput>
-                  <IonIcon slot="end" icon={eyeOutline} color="medium" style={{ cursor: 'pointer' }} />
+                  <IonIcon 
+                    slot="end" 
+                    icon={mostrarContra ? eyeOffOutline : eyeOutline} 
+                    color="medium" 
+                    style={{ cursor: 'pointer' }} 
+                    onClick={() => setMostrarContra(!mostrarContra)} 
+                  />
                 </IonItem>
                 {passwordError && <IonText color="danger"><p style={{ fontSize: '12px', marginTop: '5px' }}>{passwordError}</p></IonText>}
               </div>

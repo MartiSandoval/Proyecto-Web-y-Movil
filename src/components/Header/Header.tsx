@@ -39,9 +39,23 @@ const Header: React.FC<headerProps> = ({ simple = false }) => {
 
   if(simple) {
     return (
-      <div style={{ backgroundColor: '#1c3659', padding: '15px 40px', display: 'flex', alignItems: 'center', color: 'white', zIndex: 10, position: 'relative' }}>
+      <div style={{ 
+        backgroundColor: '#1c3659', // <-- Color actualizado a azul marino oscuro
+        padding: '15px 40px', 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        color: 'white', 
+        position: 'relative', 
+        zIndex: 10 
+      }}>
+        
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-          <img src={ASSETS.LOGO_MUNI} alt="Logo Municipalidad" style={{ width: '40px', height: '50px', objectFit: 'contain' }} />
+          <img 
+            src={ASSETS.LOGO_MUNI} 
+            alt="Logo Municipalidad" 
+            style={{ width: '50px', height: '60px', objectFit: 'contain' }} 
+          />
           <div>
             <h2 style={{ margin: 0, fontSize: '16px', fontWeight: 'bold' }}>Santo Domingo</h2>
             <span style={{ fontSize: '11px', color: '#e2e8f0' }}>Municipalidad</span>
@@ -118,16 +132,7 @@ const Header: React.FC<headerProps> = ({ simple = false }) => {
               <div style={{ position: 'absolute', top: '30px', left: 0, backgroundColor: 'white', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', borderRadius: '6px', minWidth: '220px', padding: '5px 0' }}>
                 <span style={dropdownItemStyle}>Pago de Permisos</span>
                 <span style={dropdownItemStyle}>Certificados en línea</span>
-                <span 
-                  style={dropdownItemStyle}
-                  onClick={() => {
-                    // redirigir al historial de trámites
-                    navigate('/historial');
-                    setMenuAbierto(null); // Cerrar el menú después de hacer clic
-                  }}
-                >
-                  Historial de Trámites
-                </span>
+                
               </div>
             )}
           </div>

@@ -77,15 +77,6 @@ export const Tramites = (): JSX.Element => {
           </div>
           
           <div className="tr-title-actions">
-            {/* Aquí usamos el componente nativo de Ionic */}
-            <IonButton 
-              className="tr-btn-historial-ionic"
-              onClick={() => history.push('/historial')}
-            >
-              <IonIcon slot="start" icon={documentTextOutline} />
-              Ir a Mi Historial
-            </IonButton>
-
             {!loading && (
               <div className="tr-count-badge">{filtrados.length} trámites disponibles</div>
             )}
@@ -100,17 +91,7 @@ export const Tramites = (): JSX.Element => {
             placeholder="Buscar trámite o servicio..."
             className="tr-filter-searchbar"
           />
-          <div className="tr-filter-type">
-            <select
-              className="tr-select"
-              value={filtroTipo}
-              onChange={(e) => handleFiltroTipo(e.target.value as FiltroTipo)}
-            >
-              <option value="todos">Todos los tipos</option>
-              <option value="online">En línea</option>
-              <option value="presencial">Presencial</option>
-            </select>
-          </div>
+          
           <div className="tr-filter-chips">
             <IonChip
               color={filtroTipo === "online" ? "primary" : "medium"}
@@ -126,6 +107,15 @@ export const Tramites = (): JSX.Element => {
               <IonIcon icon={businessOutline} />
               &nbsp;&nbsp;Presencial
             </IonChip>
+
+            {/* Aquí usamos el componente nativo de Ionic */}
+            <IonButton 
+              className="tr-btn-historial-ionic"
+              onClick={() => history.push('/historial')}
+            >
+              <IonIcon slot="start" icon={documentTextOutline} />
+              Ir a Mi Historial
+            </IonButton>
           </div>
           {!loading && (
             <p className="tr-showing">
