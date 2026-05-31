@@ -1,16 +1,15 @@
 const { Router } = require("express");
-const { crearCita, registrarArchivo, actualizarEstadoCita, obtenerMisCitas, obtenerCitasPorTramite} = require("../controllers/citasController");
+const { crearCita, registrarArchivo, actualizarEstadoCita, obtenerMisCitas, obtenerCitasPorTramite } = require("../controllers/citasController");
+const { authenticate, requireRole } = require("../middleware/authMiddleware");
 
 const router = Router();
 
-router.post("/", crearCita);
-router.post("/:id/archivos", registrarArchivo);
+router.post("/", authenticate, crearCita);
+router.post("/:id/archivos", authenticate, registrarArchivo);
 
-router.get("/mis-citas/:usuario_id", obtenerMisCitas); // Para el ciudadano
-router.get("/tramite/:tramite_id", obtenerCitasPorTramite); // Para el funcionario (acepta ?fecha=YYYY-MM-DD)
+router.get("/mis-citas", authenticate, obtenerMisCitas);
+router.get("/tramite/:tramite_id", authenticate, requireRole("funcionario", "jefe_sucursal"), obtenerCitasPorTramite);
 
-
-router.put("/:id/estado", actualizarEstadoCita); // Cambiar a confirmado, cancelado, inasistencia
-
+router.put("/:id/estado", authenticate, requireRole("funcionario", "jefe_sucursal"), actualizarEstadoCita);
 
 module.exports = router;

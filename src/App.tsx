@@ -1,6 +1,7 @@
 import { IonApp, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { CitasProvider } from './contexts/CitasContext';
+import { AuthProvider } from './contexts/AuthContext';
 import AppRoutes from './routes/AppRoutes';
 import AccessibilityMenu from './components/AccessibilityMenu/AccessibilityMenu';
 
@@ -19,14 +20,16 @@ import './theme/variables.css';
 setupIonicReact();
 
 const App: React.FC = () => (
-  <CitasProvider>
-    <IonApp>
-      <IonReactRouter>
-        <AppRoutes />
-      </IonReactRouter>
-      <AccessibilityMenu />
-    </IonApp>
-  </CitasProvider>
+  <AuthProvider>
+    <CitasProvider>
+      <IonApp>
+        <IonReactRouter>
+          <AppRoutes />
+        </IonReactRouter>
+        <AccessibilityMenu />
+      </IonApp>
+    </CitasProvider>
+  </AuthProvider>
 );
 
 export default App;

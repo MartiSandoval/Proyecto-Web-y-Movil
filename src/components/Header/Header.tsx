@@ -3,21 +3,28 @@ import { IonIcon } from '@ionic/react';
 import { useHistory } from 'react-router-dom';
 import {
   chevronDownOutline,
-  searchOutline,
-  callOutline
+  callOutline,
+  personOutline,
+  logOutOutline
 } from 'ionicons/icons';
 import { ASSETS } from '../../config/constants';
 import SearchBar from '../SearchBar/SearchBar';
 import HeaderTop from '../HeaderTop/HeaderTop';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface headerProps {
   simple?: boolean; // Si es true, muestra solo el header principal sin el submenú
 }
 
 const Header: React.FC<headerProps> = ({ simple = false }) => {
-  // Estado para controlar qué menú desplegable está abierto
   const [menuAbierto, setMenuAbierto] = useState<string | null>(null);
   const history = useHistory();
+  const { user, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    history.replace('/login');
+  };
 
   const navigate = (path: string) => {
     history.push(path);
@@ -107,15 +114,32 @@ const Header: React.FC<headerProps> = ({ simple = false }) => {
         {/* Centro: Barra de búsqueda (Un poco más ancha para igualar la imagen) */}
         <SearchBar width="55%" />
 
-        {/* Lado derecho: Contacto */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{ textAlign: 'right', fontSize: '12px' }}>
-            <div style={{ fontWeight: 'bold' }}>Contacto telefónico</div>
-            <div style={{ letterSpacing: '2px', color: '#94a3b8' }}>..........</div>
+        {/* Lado derecho: usuario o contacto */}
+        {user ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <IonIcon icon={personOutline} style={{ fontSize: '22px' }} />
+            <div style={{ textAlign: 'right', fontSize: '12px' }}>
+              <div style={{ fontWeight: 'bold' }}>{user.nombre}</div>
+              <div style={{ color: '#94a3b8', textTransform: 'capitalize' }}>
+                {user.rol === 'jefe_sucursal' ? 'Jefe de Sucursal' : user.rol}
+              </div>
+            </div>
+            <IonIcon
+              icon={logOutOutline}
+              style={{ fontSize: '24px', cursor: 'pointer' }}
+              title="Cerrar sesión"
+              onClick={handleLogout}
+            />
           </div>
-          {/* Aquí devolvemos el ícono de la llamada */}
-          <IonIcon icon={callOutline} style={{ fontSize: '30px' }} />
-        </div>
+        ) : (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ textAlign: 'right', fontSize: '12px' }}>
+              <div style={{ fontWeight: 'bold' }}>Contacto telefónico</div>
+              <div style={{ letterSpacing: '2px', color: '#94a3b8' }}>..........</div>
+            </div>
+            <IonIcon icon={callOutline} style={{ fontSize: '30px' }} />
+          </div>
+        )}
       </div>
 
       {/* 3. SUB-MENÚ BLANCO INTERACTIVO */}

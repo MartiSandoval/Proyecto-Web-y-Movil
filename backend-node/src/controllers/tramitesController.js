@@ -24,14 +24,7 @@ async function getTramites(req, res, next) {
       .from("tramites")
       .select("*, sucursales(nombre)")
       .eq("activo", true);
-
-    if (sucursal_id) {
-      query = query.eq("sucursal_id", sucursal_id);
-    }
-
-    const { data, error } = await query;
     if (error) throw error;
-
     res.json(data.map((t) => ({
       ...toFrontend(t),
       departamento: t.sucursales?.nombre ?? t.sucursal_id,

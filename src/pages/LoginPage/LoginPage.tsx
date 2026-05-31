@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import { 
   IonPage, 
   IonHeader, 
@@ -35,18 +36,21 @@ const validarRut = (rut: string) => {
 
 const LoginPage: React.FC = () => {
   const history = useHistory();
+  const { login } = useAuth();
   const [rut, setRut] = useState('');
   const [password, setPassword] = useState('');
-  
+
   const [rutError, setRutError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [loginError, setLoginError] = useState('');
+  const [cargando, setCargando] = useState(false);
   const [mostrarContra, setMostrarContra] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     setRutError('');
     setPasswordError('');
+    setLoginError('');
     let esValido = true;
-    // por si no ponen nada
     const rutLimpio = rut.trim();
     const passLimpio = password.trim();
 
@@ -67,8 +71,15 @@ const LoginPage: React.FC = () => {
     }
 
     if (esValido) {
-      localStorage.setItem('isLoggedIn', 'true');
-      history.push('/tramites');
+      try {
+        setCargando(true);
+        await login(rutLimpio, passLimpio);
+        window.location.replace('/tramites');
+      } catch (err: any) {
+        setLoginError(err.message || 'Error al iniciar sesión');
+      } finally {
+        setCargando(false);
+      }
     }
   };
 
@@ -126,8 +137,14 @@ const LoginPage: React.FC = () => {
                 </p>
               </div>
 
-              <IonButton expand="block" className="btn-ingresar" onClick={handleLogin}>
-                Ingresar
+              {loginError && (
+                <IonText color="danger">
+                  <p style={{ fontSize: '13px', textAlign: 'center', marginBottom: '10px' }}>{loginError}</p>
+                </IonText>
+              )}
+
+              <IonButton expand="block" className="btn-ingresar" onClick={handleLogin} disabled={cargando}>
+                {cargando ? 'Ingresando...' : 'Ingresar'}
               </IonButton>
 
             </IonCardContent>

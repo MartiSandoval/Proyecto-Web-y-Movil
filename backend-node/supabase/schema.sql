@@ -15,8 +15,8 @@ CREATE TABLE public.perfiles (
   genero           TEXT,
   region           TEXT,
   comuna           TEXT,
-  rol              TEXT DEFAULT 'ciudadano'
-                   CHECK (rol IN ('ciudadano', 'funcionario', 'admin')),
+  rol              TEXT DEFAULT 'usuario'
+                   CHECK (rol IN ('usuario', 'funcionario', 'jefe_sucursal')),
   sucursal_id      UUID,
   created_at       TIMESTAMPTZ DEFAULT NOW()
 );

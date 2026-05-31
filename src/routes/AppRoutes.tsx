@@ -1,6 +1,6 @@
 import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
-import { IonRouterOutlet } from '@ionic/react';
+import { IonRouterOutlet, IonLoading } from '@ionic/react';
 
 import LoginPage from '../pages/LoginPage/LoginPage';
 import RegisterPage from '../pages/RegisterPage/RegisterPage';
@@ -9,8 +9,30 @@ import { DetalleTramite } from '../pages/DetalleTramite/DetalleTramite';
 import { AgendarHora } from '../pages/AgendarHora/AgendarHora';
 import { SubirArchivos } from '../pages/SubirArchivos/SubirArchivos';
 import HistorialTramites from '../pages/HistorialTramites/HistorialTramites';
+import { useAuth } from '../contexts/AuthContext';
 
-const isLoggedIn = () => localStorage.getItem('isLoggedIn') === 'true';
+interface PrivateRouteProps {
+  path: string;
+  exact?: boolean;
+  component: React.FC;
+  roles?: Array<'usuario' | 'funcionario' | 'jefe_sucursal'>;
+}
+
+const PrivateRoute: React.FC<PrivateRouteProps> = ({ component: Component, roles, ...rest }) => {
+  const { user, loading } = useAuth();
+
+  return (
+    <Route
+      {...rest}
+      render={() => {
+        if (loading) return <IonLoading isOpen={true} message="Cargando..." />;
+        if (!user) return <Redirect to="/login" />;
+        if (roles && !roles.includes(user.rol)) return <Redirect to="/tramites" />;
+        return <Component />;
+      }}
+    />
+  );
+};
 
 const AppRoutes: React.FC = () => (
   <IonRouterOutlet>
@@ -22,12 +44,12 @@ const AppRoutes: React.FC = () => (
       <RegisterPage />
     </Route>
 
-    {/* Rutas protegidas — requieren sesión iniciada */}
-    <Route exact path="/tramites" render={() => isLoggedIn() ? <Tramites /> : <Redirect to="/login" />} />
-    <Route exact path="/tramite/:tramiteId/detalle" render={() => isLoggedIn() ? <DetalleTramite /> : <Redirect to="/login" />} />
-    <Route exact path="/tramite/:tramiteId/agendar" render={() => isLoggedIn() ? <AgendarHora /> : <Redirect to="/login" />} />
-    <Route exact path="/tramite/:tramiteId/subir" render={() => isLoggedIn() ? <SubirArchivos /> : <Redirect to="/login" />} />
-    <Route exact path="/historial" render={() => isLoggedIn() ? <HistorialTramites /> : <Redirect to="/login" />} />
+    {/* Rutas protegidas — cualquier usuario autenticado */}
+    <PrivateRoute exact path="/tramites" component={Tramites} />
+    <PrivateRoute exact path="/tramite/:tramiteId/detalle" component={DetalleTramite} />
+    <PrivateRoute exact path="/tramite/:tramiteId/agendar" component={AgendarHora} />
+    <PrivateRoute exact path="/tramite/:tramiteId/subir" component={SubirArchivos} />
+    <PrivateRoute exact path="/historial" component={HistorialTramites} />
 
     <Route exact path="/" render={() => <Redirect to="/login" />} />
   </IonRouterOutlet>
