@@ -10,7 +10,7 @@ import {
 import { ASSETS } from '../../config/constants';
 import SearchBar from '../SearchBar/SearchBar';
 import HeaderTop from '../HeaderTop/HeaderTop';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContextCore';
 
 interface headerProps {
   simple?: boolean; // Si es true, muestra solo el header principal sin el submenú

@@ -9,7 +9,7 @@ import { DetalleTramite } from '../pages/DetalleTramite/DetalleTramite';
 import { AgendarHora } from '../pages/AgendarHora/AgendarHora';
 import { SubirArchivos } from '../pages/SubirArchivos/SubirArchivos';
 import HistorialTramites from '../pages/HistorialTramites/HistorialTramites';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/AuthContextCore';
 
 interface PrivateRouteProps {
   path: string;
