@@ -19,8 +19,7 @@ async function getDisponibilidad(req, res, next) {
   try {
     const { tramiteId, fecha } = req.params;
 
-    // Día de semana en Postgres: 1=lunes…7=domingo
-    const diaSemana = new Date(fecha + "T12:00:00").getDay(); // 0=dom
+    const diaSemana = new Date(fecha + "T12:00:00").getDay();
     const diaPg = diaSemana === 0 ? 7 : diaSemana;
 
     const { data: horarios, error: errH } = await supabase
