@@ -1,18 +1,7 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { authService, AuthUser, RegisterData } from "../services/authService";
-
-interface AuthContextType {
-  user: AuthUser | null;
-  token: string | null;
-  loading: boolean;
-  login: (rut: string, password: string) => Promise<void>;
-  register: (data: RegisterData) => Promise<void>;
-  logout: () => void;
-}
-
-export const AuthContext = createContext<AuthContextType>({} as AuthContextType);
-
-export const useAuth = () => useContext(AuthContext);
+import { clearToken } from "../services/http";
+import { AuthContext } from "./AuthContextCore";
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -29,7 +18,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setToken(savedToken);
         })
         .catch(() => {
-          localStorage.removeItem("token");
+          clearToken();
         })
         .finally(() => setLoading(false));
     } else {
@@ -39,20 +28,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (rut: string, password: string) => {
     const { token: t, user: u } = await authService.login(rut, password);
-    localStorage.setItem("token", t);
     setToken(t);
     setUser(u);
   };
 
   const register = async (data: RegisterData) => {
     const { token: t, user: u } = await authService.register(data);
-    localStorage.setItem("token", t);
     setToken(t);
     setUser(u);
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
+    clearToken();
     localStorage.removeItem("isLoggedIn");
     setToken(null);
     setUser(null);

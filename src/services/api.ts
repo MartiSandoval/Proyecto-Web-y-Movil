@@ -1,79 +1,61 @@
-import { ITramite, ITimeSlot, IAppointment } from "../types/tramite";
-
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
-
-const getAuthHeaders = (): Record<string, string> => {
-  const token = localStorage.getItem("token");
-  return token ? { Authorization: `Bearer ${token}` } : {};
-};
+import { IAppointment, ITimeSlot, ITramite } from "../types/tramite";
+import httpClient, { buildApiError } from "./http";
 
 export async function getTramites(): Promise<ITramite[]> {
-  const res = await fetch(`${BASE_URL}/tramites/`);
-  if (!res.ok) throw new Error("Error al obtener trámites");
-  const data = await res.json();
-  return data.map((t: any) => ({
-    id: t.id,
-    nombre: t.nombre,
-    descripcion: t.descripcion,
-    costo: t.costo,
-    departamento: t.departamento,
-    esEnLinea: t.esEnLinea,
-    documentosRequeridos: t.documentosRequeridos ?? [],
-  }));
+  try {
+    const response = await httpClient.get("/tramites");
+    return response.data as ITramite[];
+  } catch (error) {
+    throw buildApiError(error, "Error al obtener trámites");
+  }
 }
 
 export async function getTramite(id: string): Promise<ITramite> {
-  const res = await fetch(`${BASE_URL}/tramites/${id}`);
-  if (!res.ok) throw new Error("Trámite no encontrado");
-  const data = await res.json();
-  return {
-    id: data.id,
-    nombre: data.nombre,
-    descripcion: data.descripcion,
-    costo: data.costo,
-    departamento: data.departamento,
-    esEnLinea: data.esEnLinea,
-    documentosRequeridos: data.documentosRequeridos ?? [],
-  };
+  try {
+    const response = await httpClient.get(`/tramites/${id}`);
+    return response.data as ITramite;
+  } catch (error) {
+    throw buildApiError(error, "Trámite no encontrado");
+  }
 }
 
 export async function getDisponibilidad(tramiteId: string, fecha: string): Promise<ITimeSlot[]> {
-  const res = await fetch(`${BASE_URL}/disponibilidad/${tramiteId}/${fecha}`);
-  if (!res.ok) throw new Error("Error al obtener disponibilidad");
-  const data = await res.json();
-  return data.slots;
+  try {
+    const response = await httpClient.get(`/disponibilidad/${tramiteId}/${fecha}`);
+    return response.data.slots as ITimeSlot[];
+  } catch (error) {
+    throw buildApiError(error, "Error al obtener disponibilidad");
+  }
 }
 
 export async function crearCita(tramiteId: string, fecha: string, hora: string): Promise<IAppointment> {
-  const res = await fetch(`${BASE_URL}/citas`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", ...getAuthHeaders() },
-    body: JSON.stringify({ tramite_id: tramiteId, fecha, hora }),
-  });
-  if (!res.ok) throw new Error("Error al crear cita");
-  const data = await res.json();
-  return {
-    id: data.id,
-    tramiteId: data.tramite_id,
-    fecha: data.fecha,
-    hora: data.hora,
-    estado: data.estado,
-  };
+  try {
+    const response = await httpClient.post("/citas", { tramite_id: tramiteId, fecha, hora });
+    return {
+      id: response.data.id,
+      tramiteId: response.data.tramite_id,
+      fecha: response.data.fecha,
+      hora: response.data.hora,
+      estado: response.data.estado,
+    } as IAppointment;
+  } catch (error) {
+    throw buildApiError(error, "Error al crear cita");
+  }
 }
 
 export async function registrarArchivo(citaId: string, nombre: string, url: string): Promise<void> {
-  const res = await fetch(`${BASE_URL}/citas/${citaId}/archivos`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", ...getAuthHeaders() },
-    body: JSON.stringify({ nombre, url }),
-  });
-  if (!res.ok) throw new Error("Error al registrar archivo");
+  try {
+    await httpClient.post(`/citas/${citaId}/archivos`, { nombre, url });
+  } catch (error) {
+    throw buildApiError(error, "Error al registrar archivo");
+  }
 }
 
-export async function getMisCitas(): Promise<any[]> {
-  const res = await fetch(`${BASE_URL}/citas/mis-citas`, {
-    headers: { ...getAuthHeaders() },
-  });
-  if (!res.ok) throw new Error("Error al obtener historial");
-  return res.json();
+export async function getMisCitas(): Promise<Record<string, unknown>[]> {
+  try {
+    const response = await httpClient.get("/citas/mis-citas");
+    return response.data as Record<string, unknown>[];
+  } catch (error) {
+    throw buildApiError(error, "Error al obtener historial");
+  }
 }
