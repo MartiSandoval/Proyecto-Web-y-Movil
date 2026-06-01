@@ -1,0 +1,136 @@
+.historial-back-btn {
+  background: none;
+  border: none;
+  color: #1a3a6b;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 12px 24px;
+  display: block;
+}
+
+.historial-breadcrumb {
+  padding: 15px 40px;
+  font-size: 13px;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+}
+
+.historial-container {
+  padding: 20px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.historial-title {
+  font-weight: bold;
+  color: #334155;
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.historial-subtitle {
+  color: #94a3b8;
+  font-size: 16px;
+  margin-bottom: 40px;
+  line-height: 1.5;
+}
+
+.historial-card {
+  margin: 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+  border: 1px solid #f1f5f9;
+  background-color: white;
+}
+
+.historial-card-body {
+  display: flex;
+  padding: 25px;
+  gap: 20px;
+}
+
+.historial-card-icons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  min-width: 50px;
+}
+
+.historial-card-info {
+  flex: 1;
+}
+
+.historial-card-title {
+  font-weight: bold;
+  color: #475569;
+  font-size: 16px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  line-height: 1.4;
+}
+
+.historial-card-dept {
+  color: #94a3b8;
+  font-size: 13px;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.historial-card-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 150px;
+}
+
+.historial-badge-online {
+  background-color: #fcb864;
+  color: #7c2d12;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.historial-badge-estado {
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.historial-card-actions {
+  display: flex;
+  justify-content: flex-start;
+  padding: 0 25px 25px 25px;
+  gap: 15px;
+}
+
+.historial-btn-eliminar {
+  background-color: #fb7185;
+  color: white;
+  border: none;
+  padding: 10px 30px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.historial-btn-modificar {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 10px 30px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}

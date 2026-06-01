@@ -6,8 +6,8 @@ import {
   IonList, IonItem, IonLabel,
 } from "@ionic/react";
 import { IUploadedFile, ITramite } from "../../types/tramite";
-import { getTramite, crearCita, registrarArchivo } from "../../lib/api";
-import { supabase } from "../../lib/supabase";
+import { getTramite, crearCita, registrarArchivo } from "../../services/api";
+import { supabase } from "../../services/supabase";
 import { FileUploadZone } from "../../components/FileUploadZone/FileUploadZone";
 import { NavButtons } from "../../components/NavButtons/NavButtons";
 import "./SubirArchivos.css";
@@ -76,8 +76,15 @@ export const SubirArchivos = (): JSX.Element => {
       const citaId = cita.id!;
 
       for (const f of files) {
+        if (!supabase) {
+          setFiles((prev) =>
+            prev.map((pf) => (pf.nombre === f.nombre ? { ...pf, estado: "completado", url: "#" } : pf))
+          );
+          continue;
+        }
+
         const path = `${citaId}/${f.nombre}`;
-        const { data, error } = await supabase.storage
+        const { error } = await supabase.storage
           .from("citas-archivos")
           .upload(path, f.file, { upsert: true });
 
@@ -125,7 +132,7 @@ export const SubirArchivos = (): JSX.Element => {
             <h2>¡Hora agendada con éxito!</h2>
             <p>Tu cita fue registrada para el <strong>{fecha}</strong> a las <strong>{hora}</strong>.</p>
             <p>{tramite?.nombre}</p>
-            <button className="subir-volver-btn" onClick={() => history.push("/")}>
+            <button className="subir-volver-btn" onClick={() => history.push("/tramites")}>
               Volver al inicio
             </button>
           </div>

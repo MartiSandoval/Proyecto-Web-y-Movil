@@ -1,123 +1,116 @@
-# Municipalidad Santo Domingo — Web de Trámites
+# Municipalidad Santo Domingo — Plataforma de Trámites
 
-Aplicación web para agendar horas en trámites municipales.
+Aplicación web y móvil para gestionar trámites municipales: agendamiento de horas, subida de documentos e historial de citas.
 
-**Stack:** React 19 + Ionic 8 + TypeScript (frontend) · FastAPI + Python (backend) · Supabase (base de datos y storage)
-
----
-
-## Requisitos previos
-
-Tener instalado en tu máquina:
-
-- [Node.js](https://nodejs.org) v18 o superior (incluye npm)
-- [Python](https://python.org) 3.10 o superior
-- Acceso al proyecto en [Supabase](https://supabase.com) (pedir credenciales al equipo)
+**Stack:** React 19 + Ionic 8 + TypeScript · Node.js + Express (backend) · Supabase (base de datos, autenticación y storage)
 
 ---
 
-## 1. Clonar el repositorio
+## Justificación del proyecto y usuario objetivo
 
-```bash
-git clone https://github.com/MartiSandoval/Proyecto-Web-y-Movil.git
-cd Proyecto-Web-y-Movil
-```
+Este proyecto está creado para que la municipalidad pueda gestionar de mejor manera los trámites que se puedan realizar, uno de los mayores problemas que se presentaban era que habían escasos trámites que se podían gestionar por la web de la municipalidad, por ello se realiza este proyecto de página web de los trámites de la municipalidad, para que las personas (y funcionarios municipales) de la comuna de Santo Domingo puedan, de mejor manera, realizar sus trámites online en la medida de lo posible, con una interfaz intuitiva y que no sea difícil.
 
 ---
 
-## 2. Configurar variables de entorno
+## Requerimientos
 
-Necesitas crear **dos archivos** con las credenciales del proyecto. Pídele al equipo los valores reales.
+### 1. Requerimientos Funcionales
 
-### Frontend — `.env.local` (en la raíz del proyecto)
-
-```
-VITE_SUPABASE_URL=https://xxxx.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJ...anon-key...
-VITE_API_URL=http://localhost:8000
-```
-
-### Backend — `backend/.env`
-
-```
-SUPABASE_URL=https://xxxx.supabase.co
-SUPABASE_SERVICE_KEY=eyJ...service-role-key...
-```
-
-> **Importante:** Estos archivos contienen claves secretas. Nunca los subas al repositorio (ya están en `.gitignore`).
+| ID | Rol | Nombre | Descripción | Criterio de Aceptación |
+|---|---|---|---|---|
+| RF-01 | Usuario | Agendar hora | El usuario puede agendar una hora seleccionando el tipo de examen (Licencia Clase A, B, etc.) e indicando si es primera vez o renovación. | Al confirmar, la cita queda registrada en el sistema con todos los datos del examen seleccionado. |
+| RF-02 | Usuario | Gestión de la reserva | El usuario puede modificar o cancelar una cita previamente agendada desde su panel personal. | El usuario puede cambiar fecha, hora o tipo de examen, o cancelar la cita, y los cambios se reflejan de inmediato en el sistema. |
+| RF-03 | Usuario | Visualización del historial | El sistema muestra el registro completo de exámenes agendados por el usuario, con el detalle de cada trámite. | El historial lista todas las citas del usuario ordenadas cronológicamente con sus datos completos visibles. |
+| RF-04 | Usuario | Seguimiento de estado del examen | El usuario puede consultar el estado actualizado de su trámite (Aprobado, Rechazado, En Proceso) para el proceso de entrega de licencia. | El estado del trámite se muestra correctamente en el perfil del usuario y se actualiza cuando el administrador realiza cambios. |
+| RF-05 | Usuario | Lista de espera | Si no hay disponibilidad en las fechas deseadas, el usuario puede unirse a una lista de espera y recibe una notificación automática si se libera un cupo. | Al liberarse un cupo, el sistema notifica automáticamente al primer usuario en lista de espera para ese bloque horario. |
+| RF-06 | Usuario | Validación de identidad | El sistema integra validación por RUT para garantizar que cada persona pueda tener solo una hora vigente a la vez. | Un RUT con cita activa no puede agendar una segunda hora hasta cancelar o completar la existente. |
+| RF-07 | Usuario | Modificación de datos de contacto | El usuario puede actualizar su correo electrónico, número de teléfono u otros datos de contacto desde su perfil. | Los nuevos datos quedan guardados y se usan en las notificaciones siguientes. |
+| RF-08 | Funcionario / Jefe de Sucursal | Gestión de capacidad y bloqueos | El funcionario puede bloquear días o franjas horarias específicas por feriados, mantenimiento o ausencia de personal. | Los días bloqueados se aplican de inmediato al calendario visible por los usuarios. |
+| RF-09 | Jefe de Sucursal | Exportación de nóminas diarias | El sistema genera automáticamente listas de asistencia diaria en formato PDF o Excel con los datos clave de cada postulante agendado para ese día. | El jefe de sucursal puede descargar la nómina del día en cualquiera de los dos formatos con todos los campos requeridos. |
+| RF-10 | Funcionario | Buscador y editor de citas | El funcionario puede buscar a un usuario por RUT, modificar su hora agendada o registrar asistencia manual. | El funcionario encuentra al usuario por RUT y puede editar o registrar su cita sin errores. |
+| RF-11 | Jefe de Sucursal | Configuración de reglas de negocio | El jefe de sucursal puede editar parámetros del sistema como la duración de cada tipo de trámite y el número máximo de cupos por día. | Los cambios en los parámetros se aplican al flujo de agendamiento de forma inmediata. |
 
 ---
 
-## 3. Instalar dependencias del frontend
+### 2. Requerimientos No Funcionales
 
-Desde la raíz del proyecto:
-
-```bash
-npm install
-```
-
----
-
-## 4. Configurar el entorno Python (backend)
-
-Desde la raíz del proyecto:
-
-```bash
-# Crear entorno virtual
-python -m venv venv
-
-# Activarlo (Windows PowerShell)
-venv\Scripts\Activate.ps1
-
-# Activarlo (Mac / Linux)
-source venv/bin/activate
-
-# Instalar paquetes
-pip install fastapi "uvicorn[standard]" supabase python-multipart pydantic python-dotenv
-```
+| ID | Categoría | Nombre | Descripción | Criterio de Aceptación |
+|---|---|---|---|---|
+| RNF-01 | Usabilidad | Interfaz intuitiva para todo rango etario | La interfaz debe ser clara y fácil de operar para usuarios de todas las edades, usando textos legibles, botones de tamaño adecuado, iconografía de apoyo y un flujo de agendamiento guiado paso a paso sin ambigüedades. | Un usuario mayor de 60 años sin experiencia previa puede completar el flujo de agendamiento sin asistencia en su primer intento. |
+| RNF-02 | Accesibilidad | Cumplimiento de estándares de accesibilidad web | El sistema debe cumplir con las pautas WCAG 2.1 nivel AA, garantizando contraste de colores suficiente, navegación por teclado, etiquetas descriptivas en formularios y compatibilidad con lectores de pantalla. | La aplicación supera una auditoría de accesibilidad automatizada (Lighthouse) con puntaje igual o superior a 90 en la categoría Accessibility. |
+| RNF-03 | Rendimiento | Soporte de carga concurrente | El sistema debe mantener tiempos de respuesta aceptables con al menos 100 usuarios activos simultáneamente, sin degradación visible en la carga de páginas ni en el proceso de agendamiento. | Bajo una prueba de carga de 100 usuarios concurrentes, el tiempo de respuesta promedio del servidor no supera los 3 segundos y no se registran errores de disponibilidad. |
 
 ---
 
-## 5. Ejecutar el proyecto
+## Sistema de roles
 
-Necesitas **dos terminales** abiertas al mismo tiempo.
+| Rol | Descripción | Permisos |
+|-----|-------------|----------|
+| `usuario` | Ciudadano registrado | Ver trámites, agendar citas, subir archivos, ver su historial |
+| `funcionario` | Trabaja en una sucursal | Todo lo anterior + ver y gestionar citas de su sucursal, configurar horarios y bloquear horas |
+| `jefe_sucursal` | Administra una sucursal | Todo lo anterior + crear/editar trámites de su sucursal, registrar funcionarios y asignarlos |
 
-### Terminal 1 — Frontend
-
-```bash
-npm run dev
-```
-
-Abre el navegador en: `http://localhost:4173`
-
-### Terminal 2 — Backend
-
-```bash
-# Activar el entorno virtual primero
-venv\Scripts\Activate.ps1        # Windows
-# source venv/bin/activate       # Mac / Linux
-
-# Arrancar el servidor
-uvicorn main:app --reload --app-dir backend
-```
-
-La API queda disponible en `http://localhost:8000`
-Documentación automática (Swagger): `http://localhost:8000/docs`
+El login se realiza con **RUT + contraseña**. La autenticación usa JWT generados por Supabase Auth.
 
 ---
 
-## 6. Solo la primera vez — Cargar datos de prueba en Supabase
+## Arquitectura de navegación
 
-Si la base de datos está vacía, ejecuta el seed para insertar los trámites de ejemplo:
+### Rutas de la aplicación
 
-```bash
-# Con el venv activo, desde la raíz del proyecto
-cd backend
-python seed.py
-cd ..
+| Ruta | Tipo | Vista |
+|------|------|-------|
+| `/` | Pública | Redirige a `/login` |
+| `/login` | Pública | Inicio de sesión (RUT + contraseña) |
+| `/registro` | Pública | Registro de usuario |
+| `/tramites` | Protegida | Listado de trámites y servicios |
+| `/tramite/:id/detalle` | Protegida | Detalle de un trámite |
+| `/tramite/:id/agendar` | Protegida | Selección de fecha y hora |
+| `/tramite/:id/subir` | Protegida | Subida de documentos requeridos |
+| `/historial` | Protegida | Historial de citas del usuario |
+
+Las rutas protegidas requieren sesión activa. Sin sesión, el usuario es redirigido automáticamente a `/login`.
+
+### Flujo de navegación principal
+
+```
+[Login / Registro]
+        ↓
+[Listado de Trámites]  ←─── [Historial de Citas]
+        ↓
+[Detalle del Trámite]
+        ↓
+[Agendar Hora]
+        ↓
+[Subir Documentos]
+        ↓
+[Confirmación]
 ```
 
-Esto inserta 3 trámites de prueba en Supabase. Solo hace falta hacerlo una vez.
+### Jerarquía de vistas
+
+```
+App
+├── Rutas públicas
+│   ├── LoginPage
+│   └── RegisterPage
+└── Rutas protegidas (requieren sesión)
+    ├── Tramites (vista raíz del usuario autenticado)
+    │   └── DetalleTramite
+    │       └── AgendarHora
+    │           └── SubirArchivos
+    └── HistorialTramites
+```
+
+### Justificación técnica
+
+Se usa **React Router v5** integrado con `IonReactRouter` de Ionic para mantener las transiciones nativas entre páginas. La protección de rutas se implementa con un componente `PrivateRoute` que verifica el estado de sesión y el rol del usuario via `AuthContext` antes de renderizar cada vista privada. El token JWT se almacena en `localStorage` y se envía como `Authorization: Bearer <token>` en cada request al backend. La autenticación es gestionada por **Supabase Auth**; el backend valida los tokens con `supabase.auth.getUser()`.
+
+---
+
+## Prototipo UI/UX
+
+- Enlace a los prototipos de interfaz realizados en [Figma](https://www.figma.com/design/ikeziWl6CLsrR7cKTlQgBP/Mockups-Web?node-id=0-1&t=ehR0DXmXJuPjZbjl-1)
 
 ---
 
@@ -125,87 +118,133 @@ Esto inserta 3 trámites de prueba en Supabase. Solo hace falta hacerlo una vez.
 
 ```
 Proyecto-Web-y-Movil/
-├── backend/                  # API FastAPI (Python)
-│   ├── main.py               # Servidor principal
-│   ├── db.py                 # Cliente Supabase
-│   ├── seed.py               # Datos de prueba
-│   ├── routers/              # Endpoints por recurso
-│   │   ├── tramites.py
-│   │   ├── disponibilidad.py
-│   │   └── citas.py
-│   ├── models/               # Modelos Pydantic
-│   └── .env                  # Credenciales backend (NO subir al repo)
-├── src/
-│   ├── Tramites/             # Página principal (lista de trámites)
-│   ├── pages/
-│   │   ├── DetalleTramite/   # Detalle de un trámite
-│   │   ├── AgendarHora/      # Calendario y selección de horario
-│   │   └── SubirArchivos/    # Subida de documentos
-│   ├── components/
-│   │   ├── CalendarPicker/   # Componente de calendario
-│   │   ├── TimeSlotGrid/     # Grid de horarios disponibles
-│   │   ├── FileUploadZone/   # Zona drag-and-drop de archivos
-│   │   └── NavButtons/       # Botones "Atrás / Guardar y Continuar"
-│   ├── lib/
-│   │   ├── api.ts            # Llamadas al backend FastAPI
-│   │   └── supabase.ts       # Cliente Supabase (frontend)
-│   └── types/
-│       └── tramite.ts        # Interfaces TypeScript
-├── .env.local                # Credenciales frontend (NO subir al repo)
-├── package.json
-└── vite.config.ts
+├── src/                          # Frontend React + Ionic
+│   ├── pages/                    # Vistas principales
+│   │   ├── LoginPage/
+│   │   ├── RegisterPage/
+│   │   ├── Tramites/
+│   │   ├── DetalleTramite/
+│   │   ├── AgendarHora/
+│   │   ├── SubirArchivos/
+│   │   └── HistorialTramites/
+│   ├── components/               # Componentes reutilizables
+│   ├── routes/                   # Rutas y protección de vistas
+│   ├── services/                 # Comunicación con APIs
+│   │   ├── api.ts                # Llamadas al backend Node.js
+│   │   └── supabase.ts           # Cliente Supabase (storage)
+│   ├── contexts/                 # Estado global (React Context)
+│   │   ├── AuthContext.tsx        # Sesión, token y rol del usuario
+│   │   └── CitasContext.tsx       # Estado de slots bloqueados en sesión
+│   ├── types/                    # Interfaces TypeScript
+│   └── theme/
+├── backend-node/                 # Servidor backend (Node.js + Express)
+│   ├── src/
+│   │   ├── config/db.js          # Conexión Supabase
+│   │   ├── controllers/          # Lógica de negocio por recurso
+│   │   ├── middleware/
+│   │   │   ├── authMiddleware.js  # Validación JWT y control de roles
+│   │   │   └── errorHandler.js   # Manejo centralizado de errores
+│   │   ├── routes/               # Definición de endpoints
+│   │   │   ├── auth.js           # /auth/registro, /auth/login, /auth/me
+│   │   │   ├── tramites.js
+│   │   │   ├── citas.js
+│   │   │   ├── disponibilidad.js
+│   │   │   └── sucursales.js
+│   │   └── app.js                # Express + middlewares + rutas
+│   ├── supabase/
+│   │   ├── schema.sql            # Schema de la BD (ejecutar en Supabase)
+│   │   ├── seed.sql              # Datos iniciales (sucursales y trámites)
+│   │   └── reset.sql             # Limpieza total (¡cuidado!)
+│   ├── server.js                 # Entry point
+│   └── package.json
+└── .env                          # Variables del frontend (no commitear)
 ```
 
 ---
 
-## Flujo de usuario implementado
+## Requisitos previos
 
+- [Node.js](https://nodejs.org) v18 o superior
+- Proyecto en [Supabase](https://supabase.com) con las tablas creadas (ver `backend-node/supabase/schema.sql`)
+
+---
+
+## Configuración
+
+### 1. Variables de entorno del backend
+
+Crea el archivo `backend-node/.env`:
+
+```env
+PORT=8000
+NODE_ENV=development
+
+SUPABASE_URL=https://xxxx.supabase.co
+SUPABASE_SERVICE_KEY=sb_secret_...
+SUPABASE_ANON_KEY=sb_publishable_...
+
+CORS_ORIGIN=http://localhost:5173
 ```
-Trámites y Servicios  →  Ver Detalle  →  Agendar Hora  →  Subir Archivos  →  Confirmación
+
+### 2. Variables de entorno del frontend
+
+Crea el archivo `.env` en la raíz del proyecto:
+
+```env
+VITE_SUPABASE_URL=https://xxxx.supabase.co
+VITE_SUPABASE_ANON_KEY=sb_publishable_...
+```
+
+### 3. Base de datos
+
+Si es la primera vez que configuras el proyecto, ejecuta los siguientes archivos SQL en el **SQL Editor de Supabase** en este orden:
+
+1. `backend-node/supabase/schema.sql` — crea las tablas y el trigger de registro
+2. `backend-node/supabase/seed.sql` — inserta sucursales y trámites iniciales
+
+---
+
+## Instalación y ejecución
+
+Necesitas dos terminales abiertas.
+
+```bash
+# Terminal 1 — Backend
+cd backend-node
+npm install
+npm run dev          # http://localhost:8000
+
+# Terminal 2 — Frontend
+npm install
+npm run dev          # http://localhost:5173
 ```
 
 ---
 
-## Tablas en Supabase
+## Endpoints del backend
 
-Si necesitas crear las tablas desde cero (base de datos vacía), ejecuta este SQL en el **SQL Editor** de Supabase:
+### Autenticación (públicos)
 
-```sql
-CREATE TABLE tramites (
-  id TEXT PRIMARY KEY,
-  nombre TEXT NOT NULL,
-  descripcion TEXT,
-  costo TEXT DEFAULT 'Gratuito',
-  departamento TEXT,
-  es_en_linea BOOLEAN DEFAULT true,
-  documentos_requeridos TEXT[]
-);
+| Método | URL | Descripción |
+|--------|-----|-------------|
+| POST | `/auth/registro` | Crear cuenta (email, password, nombre, rut, ...) |
+| POST | `/auth/login` | Iniciar sesión (rut, password) → devuelve JWT |
+| GET | `/auth/me` | Perfil del usuario autenticado |
 
-CREATE TABLE disponibilidad (
-  id SERIAL PRIMARY KEY,
-  tramite_id TEXT REFERENCES tramites(id),
-  fecha DATE NOT NULL,
-  hora TIME NOT NULL,
-  disponible BOOLEAN DEFAULT true,
-  UNIQUE(tramite_id, fecha, hora)
-);
+### Trámites (públicos)
 
-CREATE TABLE citas (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  tramite_id TEXT REFERENCES tramites(id),
-  fecha DATE NOT NULL,
-  hora TIME NOT NULL,
-  estado TEXT DEFAULT 'pendiente',
-  creado_en TIMESTAMPTZ DEFAULT now()
-);
+| Método | URL | Descripción |
+|--------|-----|-------------|
+| GET | `/tramites/` | Lista todos los trámites activos |
+| GET | `/tramites/:id` | Detalle de un trámite |
+| GET | `/disponibilidad/:tramiteId/:fecha` | Slots horarios disponibles |
 
-CREATE TABLE archivos_cita (
-  id SERIAL PRIMARY KEY,
-  cita_id UUID REFERENCES citas(id) ON DELETE CASCADE,
-  nombre TEXT NOT NULL,
-  url TEXT NOT NULL,
-  creado_en TIMESTAMPTZ DEFAULT now()
-);
-```
+### Citas (requieren JWT)
 
-También crear un bucket de Storage llamado **`citas-archivos`** (público) en Supabase → Storage.
+| Método | URL | Roles | Descripción |
+|--------|-----|-------|-------------|
+| POST | `/citas` | usuario, funcionario, jefe_sucursal | Crear una nueva cita |
+| GET | `/citas/mis-citas` | todos | Historial de citas del usuario autenticado |
+| GET | `/citas/tramite/:id` | funcionario, jefe_sucursal | Citas de un trámite (filtrable por fecha) |
+| PUT | `/citas/:id/estado` | funcionario, jefe_sucursal | Actualizar estado de una cita |
+| POST | `/citas/:id/archivos` | todos | Registrar archivo adjunto a una cita |

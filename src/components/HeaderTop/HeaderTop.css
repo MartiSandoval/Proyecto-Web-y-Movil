@@ -1,0 +1,39 @@
+.header-top-container {
+  background-color: #001a33; /*rectangulo de arriba azul marino */ 
+  color: #ffffff; /*letras blancas q contrastan*/
+  padding: 10px 40px; /*espaciado interno del rectangulo de arriba */
+  display: flex; /* flexbox */
+  justify-content: flex-end; /* para la derecha  */
+  align-items: center;
+  gap: 30px; /* Separación entre los elementos */
+  font-size: 13px;
+  flex-wrap: wrap;
+}
+
+.header-top-link { 
+  display: flex; /*flexbox */
+  align-items: center; /* para centrar verticalmente */
+  gap: 6px;
+  cursor: pointer; /*se activa cuando el cursor se para encima */
+  transition: opacity 0.2s ease;
+}
+
+.header-top-link:hover {
+  opacity: 0.7; /*efecto cuando el mouse se para encima */
+}
+
+.header-top-live {
+  color: #00e676; /*color verde brillante para el en vivo */
+  font-weight: bold;
+}
+
+.header-top-icon-tv {
+  font-size: 16px; /*tamaño del icono */
+  color: #8b9bb4;
+}
+
+/*para los iconos de la izq*/
+.header-top-icon-normal {
+  font-size: 15px;
+  color: #cbd5e1;
+}

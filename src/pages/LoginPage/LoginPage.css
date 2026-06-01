@@ -19,11 +19,17 @@
   font-weight: normal;
 }
 
+.tr-logo-img {
+  height: 55px;
+  width: 100px;
+  object-fit: contain;
+  border-radius: 8px;
+}
 /* Fondo de la página */
 .login-background {
   /* Si tienes la imagen de la municipalidad, agrégala aquí: */
   /* --background: url('../../public/background1.png') no-repeat center center / cover; */
-  --background: url("C:\Users\marti\Desktop\web\Proyecto-Web-y-Movil\public\image-40.png") no-repeat center center / cover; 
+  --background: url("/image-40.png") no-repeat center center / cover;
 }
 
 /* Contenedor central usando Flexbox para responsividad */

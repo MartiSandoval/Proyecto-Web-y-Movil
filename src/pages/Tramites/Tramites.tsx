@@ -4,10 +4,13 @@ import {
   IonPage, IonContent, IonSearchbar, IonSkeletonText, IonChip, IonIcon,
 } from "@ionic/react";
 import { wifiOutline, businessOutline } from "ionicons/icons";
-import municipalidadLogo from "../../assets/municipalidad-logo.jpeg";
 import { ITramite } from "../../types/tramite";
-import { getTramites } from "../../lib/api";
+import { getTramites } from "../../services/api";
 import "./Tramites.css";
+import Header from "../../components/Header/Header";
+import Footer from "../../components/Footer/footer";
+import { documentTextOutline } from "ionicons/icons";
+import { IonButton } from "@ionic/react";
 
 type FiltroTipo = "todos" | "online" | "presencial";
 
@@ -54,55 +57,16 @@ export const Tramites = (): JSX.Element => {
 
   return (
     <IonPage>
-      {/* Barra superior */}
-      <div className="tr-topbar">
-        <span>Plataforma Ley Lobby</span>
-        <span>Solicitud Ley de Transparencia</span>
-        <span>Transparencia Activa</span>
-        <span>Decretos</span>
-        <span className="tr-topbar-live">📺 Observe el Consejo Municipal en VIVO</span>
-      </div>
-
       {/* Header */}
-      <div className="tr-header">
-        <div className="tr-header-logo">
-          <img src={municipalidadLogo} alt="Logo Municipalidad" className="tr-logo-img" />
-          <div>
-            <strong>Santo Domingo</strong>
-            <span>Municipalidad</span>
-          </div>
-        </div>
-        <div className="tr-header-search">
-          <IonSearchbar
-            placeholder="Desea buscar algo...?"
-            className="tr-header-searchbar"
-          />
-        </div>
-        <div className="tr-header-contact">
-          <span>Contacto telefónico</span>
-          <span className="tr-header-dots">· · · · · · · · · ·</span>
-        </div>
-      </div>
-
-      {/* Navegación */}
-      <nav className="tr-nav">
-        <span className="tr-nav-item tr-nav-active">Trámites y servicios ▾</span>
-        <span className="tr-nav-item">Municipio ▾</span>
-        <span className="tr-nav-item">Turismo ▾</span>
-        <span className="tr-nav-item">Noticias</span>
-        <span className="tr-nav-item">Plan regulador comunal ▾</span>
-        <span className="tr-nav-right">SIG</span>
-        <span className="tr-nav-right">Contacto</span>
-        <span className="tr-nav-right">OIRS</span>
-      </nav>
+      <Header />
+      <IonContent>
 
       {/* Breadcrumb */}
       <div className="tr-breadcrumb">
         &rsaquo; Usted está en: <strong>Trámites y Servicios</strong>
       </div>
 
-      <IonContent className="tr-content">
-        {/* Título */}
+      {/* Título ÚNICO con el botón integrado */}
         <div className="tr-title-row">
           <div>
             <h1 className="tr-title">Trámites y Servicios</h1>
@@ -111,9 +75,12 @@ export const Tramites = (): JSX.Element => {
               Gestiona tus trámites de manera fácil y eficiente.
             </p>
           </div>
-          {!loading && (
-            <div className="tr-count-badge">{filtrados.length} trámites disponibles</div>
-          )}
+          
+          <div className="tr-title-actions">
+            {!loading && (
+              <div className="tr-count-badge">{filtrados.length} trámites disponibles</div>
+            )}
+          </div>
         </div>
 
         {/* Barra de filtros */}
@@ -124,17 +91,7 @@ export const Tramites = (): JSX.Element => {
             placeholder="Buscar trámite o servicio..."
             className="tr-filter-searchbar"
           />
-          <div className="tr-filter-type">
-            <select
-              className="tr-select"
-              value={filtroTipo}
-              onChange={(e) => handleFiltroTipo(e.target.value as FiltroTipo)}
-            >
-              <option value="todos">Todos los tipos</option>
-              <option value="online">En línea</option>
-              <option value="presencial">Presencial</option>
-            </select>
-          </div>
+          
           <div className="tr-filter-chips">
             <IonChip
               color={filtroTipo === "online" ? "primary" : "medium"}
@@ -150,6 +107,15 @@ export const Tramites = (): JSX.Element => {
               <IonIcon icon={businessOutline} />
               &nbsp;&nbsp;Presencial
             </IonChip>
+
+            {/* Aquí usamos el componente nativo de Ionic */}
+            <IonButton 
+              className="tr-btn-historial-ionic"
+              onClick={() => history.push('/historial')}
+            >
+              <IonIcon slot="start" icon={documentTextOutline} />
+              Ir a Mi Historial
+            </IonButton>
           </div>
           {!loading && (
             <p className="tr-showing">
@@ -202,6 +168,7 @@ export const Tramites = (): JSX.Element => {
         {!loading && filtrados.length === 0 && !error && (
           <p className="tr-empty">No se encontraron trámites.</p>
         )}
+        <Footer />
       </IonContent>
     </IonPage>
   );

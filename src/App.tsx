@@ -1,15 +1,10 @@
-import { Redirect, Route } from 'react-router-dom';
-import { IonApp, IonRouterOutlet, setupIonicReact } from '@ionic/react';
+import { IonApp, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
+import { CitasProvider } from './contexts/CitasContext';
+import { AuthProvider } from './contexts/AuthContext';
+import AppRoutes from './routes/AppRoutes';
+import AccessibilityMenu from './components/AccessibilityMenu/AccessibilityMenu';
 
-import LoginPage from './pages/LoginPage/LoginPage';
-import RegisterPage from './pages/RegisterPage/RegisterPage';
-import { Tramites } from './pages/Tramites/Tramites';
-import { DetalleTramite } from './pages/DetalleTramite/DetalleTramite';
-import { AgendarHora } from './pages/AgendarHora/AgendarHora';
-import { SubirArchivos } from './pages/SubirArchivos/SubirArchivos';
-
-/* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
 import '@ionic/react/css/normalize.css';
 import '@ionic/react/css/structure.css';
@@ -25,43 +20,16 @@ import './theme/variables.css';
 setupIonicReact();
 
 const App: React.FC = () => (
-  <IonApp>
-    <IonReactRouter>
-      <IonRouterOutlet>
-
-        {/* --- RUTAS DE AUTENTICACIÓN --- */}
-        <Route exact path="/login">
-          <LoginPage />
-        </Route>
-
-        <Route exact path="/registro">
-          <RegisterPage />
-        </Route>
-
-        {/* --- RUTA LISTA DE TRÁMITES --- */}
-        <Route exact path="/tramites">
-          <Tramites />
-        </Route>
-
-        {/* --- RUTAS DEL FLUJO DE TRÁMITES --- */}
-        <Route exact path="/tramite/:tramiteId/detalle">
-          <DetalleTramite />
-        </Route>
-
-        <Route exact path="/tramite/:tramiteId/agendar">
-          <AgendarHora />
-        </Route>
-
-        <Route exact path="/tramite/:tramiteId/subir">
-          <SubirArchivos />
-        </Route>
-
-        {/* ✅ CORREGIDO: Redirige al login en vez de a /tramites */}
-        <Route exact path="/" render={() => <Redirect to="/login" />} />
-
-      </IonRouterOutlet>
-    </IonReactRouter>
-  </IonApp>
+  <AuthProvider>
+    <CitasProvider>
+      <IonApp>
+        <IonReactRouter>
+          <AppRoutes />
+        </IonReactRouter>
+        <AccessibilityMenu />
+      </IonApp>
+    </CitasProvider>
+  </AuthProvider>
 );
 
 export default App;

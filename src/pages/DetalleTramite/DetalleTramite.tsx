@@ -6,7 +6,7 @@ import {
   IonList, IonItem, IonLabel, IonSkeletonText, IonChip,
 } from "@ionic/react";
 import { ITramite } from "../../types/tramite";
-import { getTramite } from "../../lib/api";
+import { getTramite } from "../../services/api";
 import { NavButtons } from "../../components/NavButtons/NavButtons";
 import "./DetalleTramite.css";
 

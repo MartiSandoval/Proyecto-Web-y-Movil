@@ -233,3 +233,21 @@
   .tr-grid { grid-template-columns: 1fr; }
   .tr-filters { margin: 16px 16px 0; }
 }
+
+.tr-title-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px; 
+}
+
+/* Estilo súper limpio usando las variables de Ionic */
+.tr-btn-historial-ionic {
+  --background: #1558b0; /* Azul oscuro institucional */
+  --background-hover: #1558b0;
+  --border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: none; /* Para que Ionic no ponga el texto en MAYÚSCULAS por defecto */
+  margin: 0;
+  height: 40px;
+}

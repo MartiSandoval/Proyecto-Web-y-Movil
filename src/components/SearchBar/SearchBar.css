@@ -1,0 +1,28 @@
+.searchbar-container {
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 8px 15px;
+  border-radius: 4px;
+  width: 100%; 
+}
+
+.searchbar-icon {
+  color: #6b7280; /* Gris sutil para el ícono */
+  margin-right: 10px;
+  font-size: 18px;
+}
+
+.searchbar-input {
+  border: none;
+  outline: none;
+  width: 100%;
+  color: #1f2937; /* Texto oscuro */
+  background-color: transparent;
+  font-size: 14px;
+}
+
+/* Cambia el color del texto de ayuda (placeholder) */
+.searchbar-input::placeholder {
+  color: #9ca3af; 
+}
