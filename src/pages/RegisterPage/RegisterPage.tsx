@@ -140,7 +140,7 @@ const RegisterPage: React.FC = () => {
       setTelefonoError('El teléfono es obligatorio.');
       esValido = false;
     } else if (!validarTel(telLimpio)) {
-      setTelefonoError("ingresa bien plox")
+      setTelefonoError('El teléfono debe tener exactamente 9 dígitos numéricos.')
       esValido = false;
     }
 
@@ -176,7 +176,14 @@ const RegisterPage: React.FC = () => {
         });
         window.location.replace('/tramites');
       } catch (err: any) {
-        setRegistroError(err.message || 'Error al crear la cuenta');
+        const msg: string = err.message || 'Error al crear la cuenta';
+        if (msg.includes('RUT ya está registrado')) {
+          setRutError('Este RUT ya tiene una cuenta asociada.');
+        } else if (msg.includes('email ya está registrado')) {
+          setCorreoError('Este correo electrónico ya está en uso.');
+        } else {
+          setRegistroError(msg);
+        }
       } finally {
         setCargando(false);
       }

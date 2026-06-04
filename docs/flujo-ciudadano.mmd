@@ -1,0 +1,25 @@
+flowchart TD
+    A([Usuario accede a la aplicación]) --> B{¿Tiene cuenta?}
+    B -- No --> C[Completa formulario de registro\nnombre · RUT · email\ncontraseña · teléfono · región · comuna]
+    C --> D{¿Datos válidos?}
+    D -- "Errores de formato\no RUT ya registrado" --> C
+    D -- Válidos --> E[Cuenta creada\nInicio de sesión automático]
+    B -- Sí --> F[Ingresa RUT y contraseña]
+    F --> G{¿Credenciales\ncorrectas?}
+    G -- No --> H[Se muestra error específico]
+    H --> F
+    G -- Sí --> I[Listado de trámites municipales]
+    E --> I
+    I --> J[Selecciona un trámite de interés]
+    J --> K["Revisa detalle del trámite\ndescripción · documentos requeridos · costo · modalidad"]
+    K --> L[Selecciona una fecha en el calendario]
+    L --> M{"¿Existen slots\ndisponibles ese día?"}
+    M -- "Sin horarios configurados\no día bloqueado" --> L
+    M -- Sí --> N[Selecciona un horario libre]
+    N --> O[Sube los documentos requeridos]
+    O --> P{"¿Archivos cargados\ncorrectamente?"}
+    P -- Error de carga --> O
+    P -- Completados --> Q[Confirma la reserva]
+    Q --> R([Cita registrada — estado: PENDIENTE])
+    R --> S[Revisa historial de citas]
+    S --> I

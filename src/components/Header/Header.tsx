@@ -124,6 +124,23 @@ const Header: React.FC<headerProps> = ({ simple = false }) => {
                 {user.rol === 'jefe_sucursal' ? 'Jefe de Sucursal' : user.rol}
               </div>
             </div>
+            {(user.rol === 'funcionario' || user.rol === 'jefe_sucursal') && (
+              <span
+                onClick={() => navigate('/panel-funcionario')}
+                style={{
+                  fontSize: '12px',
+                  fontWeight: 'bold',
+                  backgroundColor: '#2563eb',
+                  color: 'white',
+                  padding: '5px 10px',
+                  borderRadius: '5px',
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                Panel de Gestión
+              </span>
+            )}
             <IonIcon
               icon={logOutOutline}
               style={{ fontSize: '24px', cursor: 'pointer' }}

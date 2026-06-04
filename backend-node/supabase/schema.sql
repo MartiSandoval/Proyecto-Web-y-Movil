@@ -18,6 +18,7 @@ CREATE TABLE public.perfiles (
   rol              TEXT DEFAULT 'usuario'
                    CHECK (rol IN ('usuario', 'funcionario', 'jefe_sucursal')),
   sucursal_id      UUID,
+  password_hash    TEXT,                    -- bcrypt hash explícito (EP 2.6b)
   created_at       TIMESTAMPTZ DEFAULT NOW()
 );
 
