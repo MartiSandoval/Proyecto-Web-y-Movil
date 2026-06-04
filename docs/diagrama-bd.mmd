@@ -1,0 +1,78 @@
+erDiagram
+    SUCURSALES {
+        uuid id PK
+        text nombre
+        text tipo
+        text direccion
+        text telefono
+        text email
+        boolean activa
+    }
+    PERFILES {
+        uuid id PK
+        text nombre
+        text rut
+        text telefono
+        date fecha_nacimiento
+        text genero
+        text region
+        text comuna
+        text rol
+        uuid sucursal_id FK
+        text password_hash
+    }
+    TRAMITES {
+        uuid id PK
+        uuid sucursal_id FK
+        text nombre
+        text descripcion
+        text costo
+        boolean es_en_linea
+        text[] documentos_requeridos
+        boolean activo
+        uuid created_by FK
+    }
+    HORARIOS_TRAMITE {
+        uuid id PK
+        uuid tramite_id FK
+        int dia_semana
+        time hora_inicio
+        time hora_fin
+        int intervalo_minutos
+        boolean activo
+    }
+    BLOQUEOS_HORARIO {
+        uuid id PK
+        uuid tramite_id FK
+        date fecha
+        time hora
+        text motivo
+        uuid created_by FK
+    }
+    CITAS {
+        uuid id PK
+        uuid usuario_id FK
+        uuid tramite_id FK
+        date fecha
+        time hora
+        text estado
+        text notas
+        uuid atendido_por FK
+    }
+    ARCHIVOS_CITA {
+        uuid id PK
+        uuid cita_id FK
+        text nombre
+        text url
+    }
+
+    SUCURSALES ||--o{ PERFILES : "sucursal_id"
+    SUCURSALES ||--o{ TRAMITES : "sucursal_id"
+    PERFILES ||--o{ TRAMITES : "created_by"
+    PERFILES ||--o{ CITAS : "usuario_id"
+    PERFILES ||--o{ CITAS : "atendido_por"
+    PERFILES ||--o{ BLOQUEOS_HORARIO : "created_by"
+    TRAMITES ||--o{ HORARIOS_TRAMITE : "tramite_id"
+    TRAMITES ||--o{ BLOQUEOS_HORARIO : "tramite_id"
+    TRAMITES ||--o{ CITAS : "tramite_id"
+    CITAS ||--o{ ARCHIVOS_CITA : "cita_id"

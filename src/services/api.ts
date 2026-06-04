@@ -1,12 +1,25 @@
 import { IAppointment, ITimeSlot, ITramite } from "../types/tramite";
 import httpClient, { buildApiError } from "./http";
 
-export async function getTramites(): Promise<ITramite[]> {
+export async function getTramites(sucursalId?: string): Promise<ITramite[]> {
   try {
-    const response = await httpClient.get("/tramites");
+    const url = sucursalId ? `/tramites?sucursal_id=${sucursalId}` : "/tramites";
+    const response = await httpClient.get(url);
     return response.data as ITramite[];
   } catch (error) {
     throw buildApiError(error, "Error al obtener trámites");
+  }
+}
+
+export async function getCitasPorTramite(tramiteId: string, fecha?: string): Promise<Record<string, unknown>[]> {
+  try {
+    const url = fecha
+      ? `/citas/tramite/${tramiteId}?fecha=${fecha}`
+      : `/citas/tramite/${tramiteId}`;
+    const response = await httpClient.get(url);
+    return response.data as Record<string, unknown>[];
+  } catch (error) {
+    throw buildApiError(error, "Error al obtener citas del trámite");
   }
 }
 

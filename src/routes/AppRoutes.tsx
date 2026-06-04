@@ -9,6 +9,7 @@ import { DetalleTramite } from '../pages/DetalleTramite/DetalleTramite';
 import { AgendarHora } from '../pages/AgendarHora/AgendarHora';
 import { SubirArchivos } from '../pages/SubirArchivos/SubirArchivos';
 import HistorialTramites from '../pages/HistorialTramites/HistorialTramites';
+import PanelFuncionario from '../pages/PanelFuncionario/PanelFuncionario';
 import { useAuth } from '../contexts/AuthContextCore';
 
 interface PrivateRouteProps {
@@ -50,6 +51,14 @@ const AppRoutes: React.FC = () => (
     <PrivateRoute exact path="/tramite/:tramiteId/agendar" component={AgendarHora} />
     <PrivateRoute exact path="/tramite/:tramiteId/subir" component={SubirArchivos} />
     <PrivateRoute exact path="/historial" component={HistorialTramites} />
+
+    {/* Ruta protegida — solo funcionario y jefe_sucursal */}
+    <PrivateRoute
+      exact
+      path="/panel-funcionario"
+      component={PanelFuncionario}
+      roles={['funcionario', 'jefe_sucursal']}
+    />
 
     <Route exact path="/" render={() => <Redirect to="/login" />} />
   </IonRouterOutlet>

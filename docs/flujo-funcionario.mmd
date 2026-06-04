@@ -1,0 +1,20 @@
+flowchart TD
+    A([Inicio de sesión con RUT + contraseña]) --> B{¿Credenciales\ncorrectas?}
+    B -- No --> A
+    B -- Sí --> C{¿Cuál es el rol\nasignado?}
+    C -- usuario --> D([Redirigido al flujo del ciudadano])
+    C -- "funcionario /\njefe_sucursal" --> E[Panel de Gestión de su sucursal]
+    E --> F[Revisa lista de trámites de su sucursal]
+    F --> G[Selecciona un trámite]
+    G --> H["Consulta citas del trámite\n(puede filtrar por fecha)"]
+    H --> I{¿Hay citas\nque gestionar?}
+    I -- No --> F
+    I -- Sí --> J[Selecciona una cita]
+    J --> K{¿Qué acción\nrealiza?}
+    K -- Confirmar asistencia --> L[Estado → CONFIRMADO]
+    K -- Registrar atención --> M[Estado → COMPLETADO]
+    K -- Cancelar --> N[Estado → CANCELADO]
+    L --> H
+    M --> H
+    N --> H
+    H --> O([Cambio visible para el ciudadano\nen su historial])
