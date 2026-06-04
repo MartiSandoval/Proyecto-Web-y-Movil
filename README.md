@@ -1,5 +1,12 @@
 # Municipalidad Santo Domingo — Plataforma de Trámites
 
+## Integrantes
+
+- Felipe Astudillo
+- Martina Sandoval
+- Daniel Cornejo
+- Diego Zúñiga
+
 Aplicación web y móvil para gestionar trámites municipales: agendamiento de horas, subida de documentos e historial de citas.
 
 **Stack:** React 19 + Ionic 8 + TypeScript · Node.js + Express (backend) · Supabase (base de datos, autenticación y storage)
