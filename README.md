@@ -369,16 +369,16 @@ Authorization: Bearer {{token}}
 
 Caso #1: 
 
-<img src="http://github.com/MartiSandoval/Proyecto-Web-y-Movil/blob/main/imagenes-pruebas/1%20Crear%20usuario.png" alt="Ruido 1" width="300" height="300">
+<img src="https://github.com/MartiSandoval/Proyecto-Web-y-Movil/blob/main/imagenes-pruebas/1%20Crear%20usuario.png" alt="Test 1" width="300" height="300">
 
 Caso #5:
 
-<img src="https://github.com/MartiSandoval/Proyecto-Web-y-Movil/blob/main/imagenes-pruebas/5%20Login.png" alt="Ruido 1" width="300" height="300">
+<img src="https://github.com/MartiSandoval/Proyecto-Web-y-Movil/blob/main/imagenes-pruebas/5%20Login.png" alt="Test 5" width="300" height="300">
 
 Caso #7:
 
-<img src="https://github.com/MartiSandoval/Proyecto-Web-y-Movil/blob/main/imagenes-pruebas/7%20Perfil%20usuario.png" alt="Ruido 1" width="300" height="300">
+<img src="https://github.com/MartiSandoval/Proyecto-Web-y-Movil/blob/main/imagenes-pruebas/7%20Perfil%20usuario.png" alt="Test 7" width="300" height="300">
 
 Caso #15:
 
-<img src="https://github.com/MartiSandoval/Proyecto-Web-y-Movil/blob/main/imagenes-pruebas/15%20Acceder%20a%20tramites.png" alt="Ruido 1" width="300" height="300">
+<img src="https://github.com/MartiSandoval/Proyecto-Web-y-Movil/blob/main/imagenes-pruebas/15%20Acceder%20a%20tramites.png" alt="Test 15" width="300" height="300">
