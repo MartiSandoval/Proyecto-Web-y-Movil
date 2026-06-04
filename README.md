@@ -252,13 +252,6 @@ VITE_SUPABASE_URL=https://xxxx.supabase.co
 VITE_SUPABASE_ANON_KEY=sb_publishable_...
 ```
 
-### 3. Base de datos
-
-Si es la primera vez que configuras el proyecto, ejecuta los siguientes archivos SQL en el **SQL Editor de Supabase** en este orden:
-
-1. `backend-node/supabase/schema.sql` — crea las tablas y el trigger de registro
-2. `backend-node/supabase/seed.sql` — inserta sucursales y trámites iniciales
-
 ---
 
 ## Instalación y ejecución
