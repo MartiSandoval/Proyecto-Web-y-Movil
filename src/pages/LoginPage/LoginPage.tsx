@@ -19,7 +19,6 @@ import {
 } from '@ionic/react';
 import { lockClosedOutline, eyeOutline, eyeOffOutline } from 'ionicons/icons';
 import './LoginPage.css'; // Importamos los estilos personalizados
-import { IonRouterLink } from '@ionic/react';
 import Header from '../../components/Header/Header';
 const municipalidadLogo = "/assets/logoMuni.png";
 

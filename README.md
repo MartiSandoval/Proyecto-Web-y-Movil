@@ -248,3 +248,42 @@ npm run dev          # http://localhost:5173
 | GET | `/citas/tramite/:id` | funcionario, jefe_sucursal | Citas de un trámite (filtrable por fecha) |
 | PUT | `/citas/:id/estado` | funcionario, jefe_sucursal | Actualizar estado de una cita |
 | POST | `/citas/:id/archivos` | todos | Registrar archivo adjunto a una cita |
+
+# Pruebas
+
+Las pruebas estan realizadas en Postman, se utilizan las siguientes variables de entorno:
+
+| Variable | Valor |
+|-|---------|
+|`base_url`|`http://localhost:8000`|
+|`token`|(Vacio)|
+
+Se usa el siguiente script en post-request:
+
+```js
+const json = pm.response.json();
+if (json.token) pm.environment.set("token", json.token);
+pm.test("Status correcto", () => pm.expect(pm.response.code).to.be.oneOf([200, 201]));
+```
+
+
+| 1|Endpoint | Escenario | Codigo esperado |
+|-|---------|------|---------|
+| 1|`POST /auth/registro`   | Datos completos y validos   | 201 |
+| 2|`POST /auth/registro`     | Email duplicado   | 409    |
+| 3|`POST /auth/registro`   | Sin campo rut   | 400 |
+| 4|`POST /auth/login`     | RUT y password correctos   | 200    |
+| 5|`POST /auth/login`   | Password incorrecta   | 401 |
+| 6|`POST /auth/login`   | RUT no existe   | 401 |
+| 7|`GET /auth/me`     | Token válido   | 200    |
+| 8|`GET /auth/me`   | Sin campo rut   | 400 |
+| 9|`GET /auth/me`     | Token manipulado   | 401    |
+| 10|`POST /citas`   | Campos completos, autenticado   | 201 |
+| 11|`POST /citas`   | Sin fecha   | 400 |
+| 12|`GET /citas/mis-citas`     | Usuario autenticado   | 200    |
+| 13|`PUT /citas/:id/estado`   | Estado confirmado, rol funcionario   | 200 |
+| 14|`PUT /citas/:id/estado`| Estado aprobado   | 400    |
+| 15|`GET /citas/tramite/:id`   | Rol ciudadano (sin permisos)   | 403 |
+| 16|`POST /tramites`   | Sin autenticacion   | 201 |
+| 17|`GET /tramites`     | Publico, sin token   | 200    |
+| 18|`GET /disponibilidad/:id/:fecha`   | Fecha con horarios configurados   | 200 |
