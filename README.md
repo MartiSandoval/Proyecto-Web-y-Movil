@@ -318,54 +318,51 @@ Las siguientes cuentas ya están cargadas en la base de datos del proyecto:
 | PUT | `/citas/:id/estado` | funcionario, jefe_sucursal | Actualizar estado de una cita |
 | POST | `/citas/:id/archivos` | todos | Registrar archivo adjunto a una cita |
 
-## Pruebas funcionales (EP 2.7)
+# Pruebas
 
-Las pruebas están realizadas en **Postman**. La colección completa con los 18 casos de prueba y sus scripts de validación automática está disponible en:
+Las pruebas estan realizadas en Postman, se utilizan las siguientes variables de entorno:
 
-📁 `docs/postman/coleccion.postman_collection.json`
+| Variable | Valor |
+|-|---------|
+|`base_url`|`http://localhost:8000`|
+|`token`|(Vacio)|
 
-### Cómo importar la colección
+Se usa el siguiente script en post-request para `login` y `registro`:
 
-1. Abrir Postman
-2. Clic en **Import** (esquina superior izquierda)
-3. Seleccionar el archivo `docs/postman/coleccion.postman_collection.json`
-4. La colección aparecerá con las 4 carpetas y 18 casos listos para ejecutar
+```js
+const json = pm.response.json();
+if (json.token) pm.environment.set("token", json.token);
+pm.test("Status correcto", () => pm.expect(pm.response.code).to.be.oneOf([200, 201]));
+```
 
----
+Agregar header en caso de rutas protegidas
 
-### Variables de colección
+```
+Authorization: Bearer {{token}}
+Content-Type: application/json
+```
 
-| Variable | Valor inicial | Descripción |
-|----------|--------------|-------------|
-| `base_url` | `http://localhost:8000` | URL base del backend |
-| `token` | *(vacío)* | Se llena automáticamente al hacer login o registro |
-| `tramite_id` | *(vacío)* | Se llena automáticamente al listar trámites |
-| `cita_id` | *(vacío)* | Se llena automáticamente al crear una cita |
 
-> Los scripts de test en cada request actualizan estas variables automáticamente. Se recomienda ejecutar los casos en orden.
+### Casos cubiertos:
 
----
-
-### Casos de prueba cubiertos
-
-| # | Endpoint | Escenario | Código esperado |
-|---|----------|-----------|-----------------|
-| TC-01 | `POST /auth/registro` | Datos completos y válidos | 201 |
-| TC-02 | `POST /auth/registro` | RUT ya registrado (duplicado) | 409 |
-| TC-03 | `POST /auth/registro` | Sin campo `rut` | 400 |
-| TC-04 | `POST /auth/login` | RUT y contraseña correctos | 200 |
-| TC-05 | `POST /auth/login` | Contraseña incorrecta | 401 |
-| TC-06 | `POST /auth/login` | RUT inexistente | 401 |
-| TC-07 | `GET /auth/me` | Token válido | 200 |
-| TC-08 | `GET /auth/me` | Sin token (sin cabecera Authorization) | 401 |
-| TC-09 | `GET /auth/me` | Token manipulado / inválido | 401 |
-| TC-10 | `GET /tramites` | Endpoint público, sin token | 200 |
-| TC-11 | `GET /disponibilidad/:id/:fecha` | Fecha con horarios configurados | 200 |
-| TC-12 | `POST /citas` | Campos completos, usuario autenticado | 201 |
-| TC-13 | `POST /citas` | Sin campo `fecha` | 400 |
-| TC-14 | `GET /citas/mis-citas` | Usuario autenticado | 200 |
-| TC-15 | `GET /citas/tramite/:id` | Rol `usuario` (sin permisos) | 403 |
-| TC-16 | `PUT /citas/:id/estado` | Estado `confirmado`, rol `funcionario` | 200 |
-| TC-17 | `PUT /citas/:id/estado` | Estado inválido (`aprobado`) | 400 |
-| TC-18 | `GET /sucursales` | Endpoint público | 200 |
+| 1|Endpoint | Escenario | Codigo esperado |
+|-|---------|------|---------|
+| 1|`POST /auth/registro`   | Datos completos y validos   | 201 |
+| 2|`POST /auth/registro`     | Email duplicado   | 409    |
+| 3|`POST /auth/registro`   | Sin campo rut   | 400 |
+| 4|`POST /auth/login`     | RUT y password correctos   | 200    |
+| 5|`POST /auth/login`   | Password incorrecta   | 401 |
+| 6|`POST /auth/login`   | RUT no existe   | 401 |
+| 7|`GET /auth/me`     | Token válido   | 200    |
+| 8|`GET /auth/me`   | Sin campo rut   | 400 |
+| 9|`GET /auth/me`     | Token manipulado   | 401    |
+| 10|`POST /citas`   | Campos completos, autenticado   | 201 |
+| 11|`POST /citas`   | Sin fecha   | 400 |
+| 12|`GET /citas/mis-citas`     | Usuario autenticado   | 200    |
+| 13|`PUT /citas/:id/estado`   | Estado confirmado, rol funcionario   | 200 |
+| 14|`PUT /citas/:id/estado`| Estado aprobado   | 400    |
+| 15|`GET /citas/tramite/:id`   | Rol ciudadano (sin permisos)   | 403 |
+| 16|`POST /tramites`   | Sin autenticacion   | 201 |
+| 17|`GET /tramites`     | Publico, sin token   | 200    |
+| 18|`GET /disponibilidad/:id/:fecha`   | Fecha con horarios configurados   | 200 |
 
