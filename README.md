@@ -311,3 +311,21 @@ Content-Type: application/json
 | 16|`POST /tramites`   | Sin autenticacion   | 201 |
 | 17|`GET /tramites`     | Publico, sin token   | 200    |
 | 18|`GET /disponibilidad/:id/:fecha`   | Fecha con horarios configurados   | 200 |
+
+### Imagenes de pruebas
+
+Caso #1: 
+
+<img src="https://github.com/MartiSandoval/Proyecto-Web-y-Movil/blob/main/imagenes-pruebas/1%20Crear%20Usuario.png" alt="Ruido 1" width="300" height="300">
+
+Caso #5:
+
+<img src="https://github.com/MartiSandoval/Proyecto-Web-y-Movil/blob/main/imagenes-pruebas/5%20Login.png" alt="Ruido 1" width="300" height="300">
+
+Caso #7:
+
+<img src="https://github.com/MartiSandoval/Proyecto-Web-y-Movil/blob/main/imagenes-pruebas/7%Perfil%20Usuario.png" alt="Ruido 1" width="300" height="300">
+
+Caso #15:
+
+<img src="https://github.com/MartiSandoval/Proyecto-Web-y-Movil/blob/main/imagenes-pruebas/15%20Acceder%20a%20tramites.png" alt="Ruido 1" width="300" height="300">
