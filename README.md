@@ -265,7 +265,7 @@ Las pruebas estan realizadas en Postman, se utilizan las siguientes variables de
 |`base_url`|`http://localhost:8000`|
 |`token`|(Vacio)|
 
-Se usa el siguiente script en post-request:
+Se usa el siguiente script en post-request para `login` y `registro`:
 
 ```js
 const json = pm.response.json();
@@ -273,6 +273,15 @@ if (json.token) pm.environment.set("token", json.token);
 pm.test("Status correcto", () => pm.expect(pm.response.code).to.be.oneOf([200, 201]));
 ```
 
+Agregar header en caso de rutas protegidas
+
+```
+Authorization: Bearer {{token}}
+Content-Type: application/json
+```
+
+
+### Casos cubiertos:
 
 | 1|Endpoint | Escenario | Codigo esperado |
 |-|---------|------|---------|
