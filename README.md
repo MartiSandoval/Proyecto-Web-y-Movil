@@ -1,5 +1,12 @@
 # Municipalidad Santo Domingo — Plataforma de Trámites
 
+## Integrantes
+
+- Felipe Astudillo
+- Martina Sandoval
+- Daniel Cornejo
+- Diego Zúñiga
+
 Aplicación web y móvil para gestionar trámites municipales: agendamiento de horas, subida de documentos e historial de citas.
 
 **Stack:** React 19 + Ionic 8 + TypeScript · Node.js + Express (backend) · Supabase (base de datos, autenticación y storage)
@@ -7,8 +14,12 @@ Aplicación web y móvil para gestionar trámites municipales: agendamiento de h
 ---
 
 ## Justificación del proyecto y usuario objetivo
+Actualmente, la Municipalidad de Santo Domingo enfrenta un grave déficit en la digitialización de sus trámites. Esta carencia obliga a la ciudadanía a acudir presencialmente para agendar sus citas, exigiendo a las personas invertir tiempo extra en trasladarse, solicitar la atención y esperar para que le den una hora (en caso de que le den una). El principal problema radica en la falta de opciones para realizar estas solicitudes vía web, lo que genera distintas consecuencias negativas:
 
-Este proyecto está creado para que la municipalidad pueda gestionar de mejor manera los trámites que se puedan realizar, uno de los mayores problemas que se presentaban era que habían escasos trámites que se podían gestionar por la web de la municipalidad, por ello se realiza este proyecto de página web de los trámites de la municipalidad, para que las personas (y funcionarios municipales) de la comuna de Santo Domingo puedan, de mejor manera, realizar sus trámites online en la medida de lo posible, con una interfaz intuitiva y que no sea difícil.
+- Para la ciudadanía: Congestión en las sucursales físicas, pérdida de tiempo y frustación debido a la falta de claridad en los documentos que se necesitan, las pocas horas disponibles o la modificación/cancelación de estas sin un motivo concreto.
+- Para el municipio: Existe una sobrecarga para los funcionarios, lo que dificulta la gestión eficiente de las citas, la mezcla de todos los documentos (físicos y digitales).
+
+Por lo tanto, este proyecto busca solucionar esta problemática mediante el desarrollo de una página web intuitiva y fácil de usar para todo tipo de usuarios (desde jovenes hasta adultos mayores) centrada principalmente en agendar, gestionar y hacer un seguimiento de los trámites en línea. De este modo, se espera optimizar los recursos municipales, mejorar la eficiencia en los servicioes y dar una respuesta a las necesidades de los usuarios.
 
 ---
 
@@ -50,42 +61,66 @@ Este proyecto está creado para que la municipalidad pueda gestionar de mejor ma
 | `funcionario` | Trabaja en una sucursal | Todo lo anterior + ver y gestionar citas de su sucursal, configurar horarios y bloquear horas |
 | `jefe_sucursal` | Administra una sucursal | Todo lo anterior + crear/editar trámites de su sucursal, registrar funcionarios y asignarlos |
 
-El login se realiza con **RUT + contraseña**. La autenticación usa JWT generados por Supabase Auth.
+El login se realiza con **RUT + contraseña**. La autenticación usa JWT generados por Supabase Auth. 
+
+(El RUT ya no tiene que existir necesariamente, puede ser cualquiera que cumpla con la validación básica)
+
+(Hasta el momento en el proyecto solo se ve reflejado el rol de usuario con sus respectivas funciones, el rol de funcionario y jefe de surcursal aún no estan implementados).
 
 ---
 
 ## Arquitectura de navegación
 
+El sistema diferencia dos flujos de navegación según el rol del usuario autenticado: el flujo del **ciudadano** (rol `usuario`) centrado en el agendamiento de trámites, y el flujo del **personal municipal** (roles `funcionario` y `jefe_sucursal`) orientado a la gestión de citas. Ambos flujos comparten el punto de entrada (login/registro) pero divergen inmediatamente después en función del rol detectado.
+
+---
+
 ### Rutas de la aplicación
 
-| Ruta | Tipo | Vista |
-|------|------|-------|
-| `/` | Pública | Redirige a `/login` |
-| `/login` | Pública | Inicio de sesión (RUT + contraseña) |
-| `/registro` | Pública | Registro de usuario |
-| `/tramites` | Protegida | Listado de trámites y servicios |
-| `/tramite/:id/detalle` | Protegida | Detalle de un trámite |
-| `/tramite/:id/agendar` | Protegida | Selección de fecha y hora |
-| `/tramite/:id/subir` | Protegida | Subida de documentos requeridos |
-| `/historial` | Protegida | Historial de citas del usuario |
+| Ruta | Acceso | Descripción |
+|------|--------|-------------|
+| `/` | Pública | Redirige automáticamente a `/login` |
+| `/login` | Pública | Inicio de sesión con RUT + contraseña |
+| `/registro` | Pública | Registro de nueva cuenta ciudadana |
+| `/tramites` | Autenticado (todos los roles) | Listado de trámites municipales disponibles |
+| `/tramite/:id/detalle` | Autenticado (todos los roles) | Detalle de un trámite específico |
+| `/tramite/:id/agendar` | Autenticado (todos los roles) | Selección de fecha y slot horario |
+| `/tramite/:id/subir` | Autenticado (todos los roles) | Subida de documentos y confirmación de cita |
+| `/historial` | Autenticado (todos los roles) | Historial de citas del usuario autenticado |
+| `/panel-funcionario` | Solo `funcionario` y `jefe_sucursal` | Panel de gestión de citas por sucursal |
 
-Las rutas protegidas requieren sesión activa. Sin sesión, el usuario es redirigido automáticamente a `/login`.
+Las rutas protegidas requieren sesión activa; sin sesión el usuario es redirigido a `/login`. Las rutas con restricción de rol redirigen a `/tramites` si el rol no coincide, sin exponer la existencia de la ruta restringida.
 
-### Flujo de navegación principal
+---
 
-```
-[Login / Registro]
-        ↓
-[Listado de Trámites]  ←─── [Historial de Citas]
-        ↓
-[Detalle del Trámite]
-        ↓
-[Agendar Hora]
-        ↓
-[Subir Documentos]
-        ↓
-[Confirmación]
-```
+### Flujo del ciudadano (rol `usuario`)
+
+El flujo completo desde el acceso inicial hasta la confirmación de la cita, incluyendo puntos de decisión y desvíos posibles:
+
+![Flujo del Ciudadano](docs/flujo-ciudadano.png)
+
+---
+
+### Flujo del funcionario y jefe de sucursal
+
+El flujo del personal municipal diverge tras el login según el rol asignado al perfil:
+
+![Flujo del Funcionario](docs/flujo-funcionario.png)
+
+---
+
+### Puntos críticos de interacción y coherencia
+
+| Punto | Descripción |
+|-------|-------------|
+| **Autenticación con RUT** | El login opera con RUT (no email). El backend localiza el perfil por RUT, verifica la contraseña con `bcrypt.compare()` y delega la generación del JWT a Supabase Auth. RUT inexistente o contraseña incorrecta devuelven 401 sin distinguir cuál falló, evitando enumeración de usuarios. |
+| **Verificación de disponibilidad** | Los slots horarios se generan en tiempo real combinando tres fuentes: `horarios_tramite` (horario base por día de semana), `bloqueos_horario` (días u horas inhabilitadas por funcionarios) y `citas` existentes con estado distinto de `cancelado`. Solo se presentan los slots realmente libres. |
+| **Control de acceso por rol** | `PrivateRoute` intercepta cada navegación antes de renderizar. Sin sesión → redirige a `/login`. Con rol insuficiente → redirige a `/tramites`. El backend replica la misma validación de rol de forma independiente como segunda capa de seguridad. |
+| **Subida de documentos** | La carga es asíncrona con barra de progreso individual por archivo. Los archivos se almacenan en Supabase Storage y solo cuando todos están cargados correctamente se habilita la confirmación de la cita. |
+| **Transición de estado de cita** | Las citas siguen la secuencia `pendiente → confirmado → completado` o pueden ser `cancelado` en cualquier punto. Solo `funcionario` y `jefe_sucursal` pueden modificar estados vía `PUT /citas/:id/estado`; el backend valida JWT y rol antes de procesar. |
+| **Coherencia de sesión** | Al iniciar la app, `AuthProvider` recupera el token de `localStorage` y lo valida con `GET /auth/me`. Si el token expiró o fue alterado, se elimina automáticamente y el usuario es redirigido a `/login` sin intervención manual. |
+
+---
 
 ### Jerarquía de vistas
 
@@ -94,19 +129,39 @@ App
 ├── Rutas públicas
 │   ├── LoginPage
 │   └── RegisterPage
-└── Rutas protegidas (requieren sesión)
-    ├── Tramites (vista raíz del usuario autenticado)
+└── Rutas protegidas (requieren sesión activa)
+    ├── Tramites                        ← vista raíz para todos los roles
     │   └── DetalleTramite
     │       └── AgendarHora
     │           └── SubirArchivos
-    └── HistorialTramites
+    ├── HistorialTramites
+    └── PanelFuncionario                ← exclusivo: funcionario / jefe_sucursal
 ```
+
+---
 
 ### Justificación técnica
 
-Se usa **React Router v5** integrado con `IonReactRouter` de Ionic para mantener las transiciones nativas entre páginas. La protección de rutas se implementa con un componente `PrivateRoute` que verifica el estado de sesión y el rol del usuario via `AuthContext` antes de renderizar cada vista privada. El token JWT se almacena en `localStorage` y se envía como `Authorization: Bearer <token>` en cada request al backend. La autenticación es gestionada por **Supabase Auth**; el backend valida los tokens con `supabase.auth.getUser()`.
+**React Router v5 + IonReactRouter.**
+Se usa React Router v5 (no v6) por compatibilidad estricta con `IonReactRouter` de Ionic 8, que envuelve el router para inyectar las transiciones de página nativas (slide entre pantallas, fade en modales) propias de aplicaciones móviles. Migrar a v6 rompería estas animaciones porque la API de renderizado de rutas cambió de forma incompatible.
 
----
+**Componente `PrivateRoute` centralizado.**
+En lugar de proteger cada vista individualmente con lógica duplicada, se encapsula el control de acceso en un único componente de orden superior (HOC). Cualquier cambio en la política de autenticación o roles se aplica desde un único punto sin tocar cada página. El componente encadena tres verificaciones en orden: carga inicial → autenticación → rol, garantizando que nunca se renderice contenido protegido antes de que el estado de sesión esté resuelto.
+
+**`AuthContext` (React Context API) en lugar de Redux o Zustand.**
+El estado de autenticación necesita ser accesible en tres niveles: rutas (`PrivateRoute`), componentes de layout (`Header`) y páginas individuales. Context API cubre exactamente este alcance sin el boilerplate de un store global. Introducir Redux o Zustand solo para gestionar el usuario autenticado sería sobredimensionar la solución para el problema actual.
+
+**JWT almacenado en `localStorage`.**
+Se eligió `localStorage` sobre cookies de sesión porque Capacitor —la capa de empaquetado que permite generar la app para iOS y Android— no gestiona cookies HTTP entre el WebView nativo y el servidor de la misma forma que un navegador de escritorio. `localStorage` es accesible de manera uniforme desde el WebView de Capacitor en todas las plataformas objetivo sin configuración adicional.
+
+**Redirección silenciosa en caso de rol insuficiente.**
+Cuando un usuario intenta acceder a una ruta para la que no tiene permisos, `PrivateRoute` lo redirige a `/tramites` en lugar de mostrar una página de error 403. Esta decisión tiene dos motivaciones: primero, no expone la existencia de rutas restringidas a usuarios no autorizados; segundo, mejora la experiencia al llevar al usuario directamente a contenido relevante para su rol.
+
+**Flujo de agendamiento como wizard unidireccional.**
+Las vistas `Tramites → Detalle → Agendar → SubirArchivos` forman una secuencia encadenada donde cada paso recibe el contexto del anterior vía parámetros de ruta (`tramiteId`) y estado de navegación (`fecha`, `hora`). Esto garantiza que el usuario nunca llegue a una pantalla intermedia sin los datos necesarios, evitando estados parciales o reservas inconsistentes. El flujo no es reversible automáticamente: el botón volver redirige explícitamente al paso anterior, no permite saltar pasos.
+
+**Validación en dos capas (frontend + backend).**
+La validación de inputs ocurre primero en el cliente para dar retroalimentación inmediata sin round-trip al servidor. Se repite íntegramente en el backend porque el cliente no puede ser considerado una barrera de seguridad: cualquier petición HTTP directa omitiría las validaciones del frontend. Esta redundancia intencional es coherente con el principio de defensa en profundidad.
 
 ## Prototipo UI/UX
 
@@ -116,56 +171,45 @@ Se usa **React Router v5** integrado con `IonReactRouter` de Ionic para mantener
 
 ## Estructura del proyecto
 
+El repositorio es un **monorepo** con dos subproyectos hermanos, cada uno
+organizado con **Clean Architecture** (`core/` + `features/<feature>/{data,domain,
+presentation[,composition]}`):
+
 ```
 Proyecto-Web-y-Movil/
-├── src/                          # Frontend React + Ionic
-│   ├── pages/                    # Vistas principales
-│   │   ├── LoginPage/
-│   │   ├── RegisterPage/
-│   │   ├── Tramites/
-│   │   ├── DetalleTramite/
-│   │   ├── AgendarHora/
-│   │   ├── SubirArchivos/
-│   │   └── HistorialTramites/
-│   ├── components/               # Componentes reutilizables
-│   ├── routes/                   # Rutas y protección de vistas
-│   ├── services/                 # Comunicación con APIs
-│   │   ├── api.ts                # Llamadas al backend Node.js
-│   │   └── supabase.ts           # Cliente Supabase (storage)
-│   ├── contexts/                 # Estado global (React Context)
-│   │   ├── AuthContext.tsx        # Sesión, token y rol del usuario
-│   │   └── CitasContext.tsx       # Estado de slots bloqueados en sesión
-│   ├── types/                    # Interfaces TypeScript
-│   └── theme/
-├── backend-node/                 # Servidor backend (Node.js + Express)
-│   ├── src/
-│   │   ├── config/db.js          # Conexión Supabase
-│   │   ├── controllers/          # Lógica de negocio por recurso
-│   │   ├── middleware/
-│   │   │   ├── authMiddleware.js  # Validación JWT y control de roles
-│   │   │   └── errorHandler.js   # Manejo centralizado de errores
-│   │   ├── routes/               # Definición de endpoints
-│   │   │   ├── auth.js           # /auth/registro, /auth/login, /auth/me
-│   │   │   ├── tramites.js
-│   │   │   ├── citas.js
-│   │   │   ├── disponibilidad.js
-│   │   │   └── sucursales.js
-│   │   └── app.js                # Express + middlewares + rutas
-│   ├── supabase/
-│   │   ├── schema.sql            # Schema de la BD (ejecutar en Supabase)
-│   │   ├── seed.sql              # Datos iniciales (sucursales y trámites)
-│   │   └── reset.sql             # Limpieza total (¡cuidado!)
-│   ├── server.js                 # Entry point
-│   └── package.json
-└── .env                          # Variables del frontend (no commitear)
+├── Ionic-Muni/                   # Frontend (Ionic React + TypeScript)
+│   └── src/
+│       ├── network/             # Capa de red (httpClient axios, apiConfig, supabaseClient)
+│       ├── core/                # Transversal: auth (token), config, theme, router
+│       │   └── presentation/components/   # atoms / molecules / organisms (Header, Footer, ...)
+│       └── features/            # Una carpeta por dominio funcional
+│           ├── auth/            # login, registro, sesión
+│           ├── tramites/        # listado y detalle de trámites
+│           ├── citas/           # agendar, subir archivos, historial
+│           └── panel/           # panel de gestión (funcionario/jefe_sucursal)
+│                                # cada feature: data/ domain/ presentation/ composition/
+└── nodejs-Muni/                 # Backend (Node.js + Express)
+    ├── src/
+    │   ├── index.js             # Bootstrap: createApp().listen()
+    │   ├── core/                # config/ database/ middleware/ server/createApp
+    │   └── features/            # auth, tramites, citas, disponibilidad, sucursales, health
+    │                            # cada feature: presentation/ domain/ data/
+    └── supabase/
+        ├── schema.sql           # Schema de la BD (ejecutar en Supabase)
+        ├── seed.sql             # Datos iniciales (sucursales y trámites)
+        ├── seed-users.js        # Crea cuentas de prueba (npm run seed:users)
+        └── reset.sql            # Limpieza total (¡cuidado!)
 ```
+
+> Cada feature aplica el patrón DTO (data) → Model (domain), con `useCases` y sus
+> `protocols`, y un módulo de `composition` que conecta las tres capas.
 
 ---
 
 ## Requisitos previos
 
 - [Node.js](https://nodejs.org) v18 o superior
-- Proyecto en [Supabase](https://supabase.com) con las tablas creadas (ver `backend-node/supabase/schema.sql`)
+- Proyecto en [Supabase](https://supabase.com) con las tablas creadas (ver `nodejs-Muni/supabase/schema.sql`)
 
 ---
 
@@ -173,34 +217,28 @@ Proyecto-Web-y-Movil/
 
 ### 1. Variables de entorno del backend
 
-Crea el archivo `backend-node/.env`:
+Crea el archivo `nodejs-Muni/.env` (puedes partir de `nodejs-Muni/.env.example`):
 
 ```env
-PORT=8000
 NODE_ENV=development
+PORT=8000
+
+CORS_ORIGIN=http://localhost:5173
 
 SUPABASE_URL=https://xxxx.supabase.co
 SUPABASE_SERVICE_KEY=sb_secret_...
 SUPABASE_ANON_KEY=sb_publishable_...
-
-CORS_ORIGIN=http://localhost:5173
 ```
 
 ### 2. Variables de entorno del frontend
 
-Crea el archivo `.env` en la raíz del proyecto:
+Crea el archivo `Ionic-Muni/.env` (puedes partir de `Ionic-Muni/.env.example`):
 
 ```env
+VITE_API_URL=http://localhost:8000
 VITE_SUPABASE_URL=https://xxxx.supabase.co
 VITE_SUPABASE_ANON_KEY=sb_publishable_...
 ```
-
-### 3. Base de datos
-
-Si es la primera vez que configuras el proyecto, ejecuta los siguientes archivos SQL en el **SQL Editor de Supabase** en este orden:
-
-1. `backend-node/supabase/schema.sql` — crea las tablas y el trigger de registro
-2. `backend-node/supabase/seed.sql` — inserta sucursales y trámites iniciales
 
 ---
 
@@ -210,14 +248,30 @@ Necesitas dos terminales abiertas.
 
 ```bash
 # Terminal 1 — Backend
-cd backend-node
+cd nodejs-Muni
 npm install
 npm run dev          # http://localhost:8000
 
 # Terminal 2 — Frontend
+cd Ionic-Muni
 npm install
 npm run dev          # http://localhost:5173
 ```
+
+---
+
+## Cuentas de prueba
+
+Las siguientes cuentas ya están cargadas en la base de datos del proyecto:
+
+| Rol | RUT | Contraseña | Qué puede probar |
+|-----|-----|------------|------------------|
+| `usuario` | `11111111-1` | `Test1234!` | Flujo completo del ciudadano: ver trámites, agendar cita, subir archivos, ver historial |
+| `funcionario` | `22222222-2` | `Test1234!` | Panel de gestión (`/panel-funcionario`): ver citas de la sucursal DIDECO, cambiar estado |
+| `jefe_sucursal` | `33333333-3` | `Test1234!` | Todo lo del funcionario + Gestión de Trámites: crear/editar trámites, definir horarios y cupos, asignar funcionarios |
+| `funcionario` | `44444444-4` | `Test1234!` | Segundo funcionario de DIDECO, útil para probar la asignación de trámites desde el jefe de sucursal |
+
+> El login se realiza con RUT (sin puntos, con guión) + contraseña.
 
 ---
 
@@ -231,13 +285,19 @@ npm run dev          # http://localhost:5173
 | POST | `/auth/login` | Iniciar sesión (rut, password) → devuelve JWT |
 | GET | `/auth/me` | Perfil del usuario autenticado |
 
-### Trámites (públicos)
+### Trámites y disponibilidad (públicos)
 
 | Método | URL | Descripción |
 |--------|-----|-------------|
 | GET | `/tramites/` | Lista todos los trámites activos |
 | GET | `/tramites/:id` | Detalle de un trámite |
 | GET | `/disponibilidad/:tramiteId/:fecha` | Slots horarios disponibles |
+
+### Sucursales (públicos)
+
+| Método | URL | Descripción |
+|--------|-----|-------------|
+| GET | `/sucursales` | Lista todas las sucursales activas |
 
 ### Citas (requieren JWT)
 
@@ -248,3 +308,67 @@ npm run dev          # http://localhost:5173
 | GET | `/citas/tramite/:id` | funcionario, jefe_sucursal | Citas de un trámite (filtrable por fecha) |
 | PUT | `/citas/:id/estado` | funcionario, jefe_sucursal | Actualizar estado de una cita |
 | POST | `/citas/:id/archivos` | todos | Registrar archivo adjunto a una cita |
+
+# Pruebas
+
+Las pruebas estan realizadas en Postman, se utilizan las siguientes variables de entorno:
+
+| Variable | Valor |
+|-|---------|
+|`base_url`|`http://localhost:8000`|
+|`token`|(Vacio)|
+
+Se usa el siguiente script en post-request para `login` y `registro`:
+
+```js
+const json = pm.response.json();
+if (json.token) pm.environment.set("token", json.token);
+pm.test("Status correcto", () => pm.expect(pm.response.code).to.be.oneOf([200, 201]));
+```
+
+Agregar header en caso de rutas protegidas
+
+```
+Authorization: Bearer {{token}}
+```
+
+### Casos cubiertos
+| 1|Endpoint | Escenario | Codigo esperado |
+|-|---------|------|---------|
+| 1|`POST /auth/registro`   | Datos completos y validos   | 201 |
+| 2|`POST /auth/registro`     | Email duplicado   | 409    |
+| 3|`POST /auth/registro`   | Sin campo rut   | 400 |
+| 4|`POST /auth/login`     | RUT y password correctos   | 200    |
+| 5|`POST /auth/login`   | Password incorrecta   | 401 |
+| 6|`POST /auth/login`   | RUT no existe   | 401 |
+| 7|`GET /auth/me`     | Token válido   | 200    |
+| 8|`GET /auth/me`   | Sin campo rut   | 400 |
+| 9|`GET /auth/me`     | Token manipulado   | 401    |
+| 10|`POST /citas`   | Campos completos, autenticado   | 201 |
+| 11|`POST /citas`   | Sin fecha   | 400 |
+| 12|`GET /citas/mis-citas`     | Usuario autenticado   | 200    |
+| 13|`PUT /citas/:id/estado`   | Estado confirmado, rol funcionario   | 200 |
+| 14|`PUT /citas/:id/estado`| Estado aprobado   | 400    |
+| 15|`GET /citas/tramite/:id`   | Rol ciudadano (sin permisos)   | 403 |
+| 16|`POST /tramites`   | Sin autenticacion   | 201 |
+| 17|`GET /tramites`     | Publico, sin token   | 200    |
+| 18|`GET /disponibilidad/:id/:fecha`   | Fecha con horarios configurados   | 200 |
+
+
+### Imagenes de pruebas
+
+Caso #1: 
+
+<img src="https://github.com/MartiSandoval/Proyecto-Web-y-Movil/blob/main/imagenes-pruebas/1%20Crear%20usuario.png" alt="Test 1" width="300" height="300">
+
+Caso #5:
+
+<img src="https://github.com/MartiSandoval/Proyecto-Web-y-Movil/blob/main/imagenes-pruebas/5%20Login.png" alt="Test 5" width="300" height="300">
+
+Caso #7:
+
+<img src="https://github.com/MartiSandoval/Proyecto-Web-y-Movil/blob/main/imagenes-pruebas/7%20Perfil%20usuario.png" alt="Test 7" width="300" height="300">
+
+Caso #15:
+
+<img src="https://github.com/MartiSandoval/Proyecto-Web-y-Movil/blob/main/imagenes-pruebas/15%20Acceder%20a%20tramites.png" alt="Test 15" width="300" height="300">
