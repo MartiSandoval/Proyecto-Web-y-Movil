@@ -107,6 +107,17 @@ CREATE TABLE public.archivos_cita (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- ── tramite_funcionarios ──────────────────────────────────────
+-- Relaciona cada trámite con los funcionarios que lo atienden.
+-- El jefe de sucursal gestiona estas asignaciones (Fase 3).
+CREATE TABLE public.tramite_funcionarios (
+  id             UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  tramite_id     UUID REFERENCES public.tramites(id) ON DELETE CASCADE,
+  funcionario_id UUID REFERENCES public.perfiles(id) ON DELETE CASCADE,
+  created_at     TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE (tramite_id, funcionario_id)
+);
+
 -- ── Trigger: auto-crear perfil al registrarse ─────────────────
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$

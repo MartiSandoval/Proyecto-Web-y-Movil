@@ -1,5 +1,6 @@
 import httpClient, { buildApiError } from "../../../../network/httpClient";
 import type { CitaDTO } from "../entities/CitaDTO";
+import type { CitaGestionDTO } from "../entities/CitaGestionDTO";
 import type { CitaHistorialDTO } from "../entities/CitaHistorialDTO";
 import type { DisponibilidadResponseDTO, TimeSlotDTO } from "../entities/TimeSlotDTO";
 import type { CitasDataSourceProtocol } from "./citasDataSourceProtocol";
@@ -37,6 +38,27 @@ export const remoteCitasDataSource: CitasDataSourceProtocol = {
       return response.data as CitaHistorialDTO[];
     } catch (error) {
       throw buildApiError(error, "Error al obtener historial");
+    }
+  },
+
+  async getCitasPorTramite(tramiteId: string, fecha?: string): Promise<CitaGestionDTO[]> {
+    try {
+      const url = fecha
+        ? `/citas/tramite/${tramiteId}?fecha=${fecha}`
+        : `/citas/tramite/${tramiteId}`;
+      const response = await httpClient.get(url);
+      return response.data as CitaGestionDTO[];
+    } catch (error) {
+      throw buildApiError(error, "Error al obtener las citas del trámite");
+    }
+  },
+
+  async actualizarEstadoCita(citaId: string, estado: string): Promise<CitaGestionDTO> {
+    try {
+      const response = await httpClient.put(`/citas/${citaId}/estado`, { estado });
+      return response.data as CitaGestionDTO;
+    } catch (error) {
+      throw buildApiError(error, "Error al actualizar el estado de la cita");
     }
   },
 };

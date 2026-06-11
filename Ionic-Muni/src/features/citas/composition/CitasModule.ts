@@ -5,6 +5,8 @@ import { createGetDisponibilidadUseCase } from "../domain/useCases/getDisponibil
 import { createPostCitaUseCase } from "../domain/useCases/postCitaUseCase";
 import { createPostArchivoUseCase } from "../domain/useCases/postArchivoUseCase";
 import { createGetMisCitasUseCase } from "../domain/useCases/getMisCitasUseCase";
+import { createGetCitasPorTramiteUseCase } from "../domain/useCases/getCitasPorTramiteUseCase";
+import { createActualizarEstadoCitaUseCase } from "../domain/useCases/actualizarEstadoCitaUseCase";
 import { createUseCitasData } from "../presentation/hooks/useCitasData";
 
 // MARK: Data
@@ -24,6 +26,8 @@ export function resolveCitasDomain(): CitasUseCasesProtocol {
     postCitaUseCase: createPostCitaUseCase(repository),
     postArchivoUseCase: createPostArchivoUseCase(repository),
     getMisCitasUseCase: createGetMisCitasUseCase(repository),
+    getCitasPorTramiteUseCase: createGetCitasPorTramiteUseCase(repository),
+    actualizarEstadoCitaUseCase: createActualizarEstadoCitaUseCase(repository),
   };
 }
 

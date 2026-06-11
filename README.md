@@ -268,6 +268,8 @@ Las siguientes cuentas ya están cargadas en la base de datos del proyecto:
 |-----|-----|------------|------------------|
 | `usuario` | `11111111-1` | `Test1234!` | Flujo completo del ciudadano: ver trámites, agendar cita, subir archivos, ver historial |
 | `funcionario` | `22222222-2` | `Test1234!` | Panel de gestión (`/panel-funcionario`): ver citas de la sucursal DIDECO, cambiar estado |
+| `jefe_sucursal` | `33333333-3` | `Test1234!` | Todo lo del funcionario + Gestión de Trámites: crear/editar trámites, definir horarios y cupos, asignar funcionarios |
+| `funcionario` | `44444444-4` | `Test1234!` | Segundo funcionario de DIDECO, útil para probar la asignación de trámites desde el jefe de sucursal |
 
 > El login se realiza con RUT (sin puntos, con guión) + contraseña.
 
@@ -330,8 +332,7 @@ Agregar header en caso de rutas protegidas
 Authorization: Bearer {{token}}
 ```
 
-### Casos cubiertos:
-
+### Casos cubiertos
 | 1|Endpoint | Escenario | Codigo esperado |
 |-|---------|------|---------|
 | 1|`POST /auth/registro`   | Datos completos y validos   | 201 |

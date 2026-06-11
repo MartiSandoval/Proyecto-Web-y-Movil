@@ -4,7 +4,7 @@ import type { GetTramitesUseCaseProtocol } from "./protocols/getTramitesUseCaseP
 export function createGetTramitesUseCase(
   repository: TramitesRepository
 ): GetTramitesUseCaseProtocol {
-  return function getTramitesUseCase(sucursalId?: string) {
-    return repository.getTramites(sucursalId);
+  return function getTramitesUseCase(sucursalId?: string, funcionarioId?: string) {
+    return repository.getTramites(sucursalId, funcionarioId);
   };
 }

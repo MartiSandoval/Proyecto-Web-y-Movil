@@ -1,3 +1,5 @@
+import type { ActualizarEstadoCitaUseCaseProtocol } from "./actualizarEstadoCitaUseCaseProtocol";
+import type { GetCitasPorTramiteUseCaseProtocol } from "./getCitasPorTramiteUseCaseProtocol";
 import type { GetDisponibilidadUseCaseProtocol } from "./getDisponibilidadUseCaseProtocol";
 import type { GetMisCitasUseCaseProtocol } from "./getMisCitasUseCaseProtocol";
 import type { PostArchivoUseCaseProtocol } from "./postArchivoUseCaseProtocol";
@@ -8,4 +10,6 @@ export type CitasUseCasesProtocol = {
   postCitaUseCase: PostCitaUseCaseProtocol;
   postArchivoUseCase: PostArchivoUseCaseProtocol;
   getMisCitasUseCase: GetMisCitasUseCaseProtocol;
+  getCitasPorTramiteUseCase: GetCitasPorTramiteUseCaseProtocol;
+  actualizarEstadoCitaUseCase: ActualizarEstadoCitaUseCaseProtocol;
 };

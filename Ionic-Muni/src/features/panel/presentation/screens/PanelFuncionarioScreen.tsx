@@ -20,6 +20,10 @@ import {
   businessOutline,
   cashOutline,
   personCircleOutline,
+  calendarNumberOutline,
+  lockClosedOutline,
+  arrowForwardOutline,
+  createOutline,
 } from 'ionicons/icons';
 import type { TramiteModel } from '../../../tramites/domain/entities/TramiteModel';
 import { useAuth } from '../../../auth/presentation/hooks/useAuth';
@@ -34,15 +38,47 @@ const PanelFuncionarioScreen: React.FC = () => {
   const [tramites, setTramites] = useState<TramiteModel[]>([]);
   const [cargando, setCargando] = useState(true);
 
-  const rolLabel = user?.rol === 'jefe_sucursal' ? 'Jefe de Sucursal' : 'Funcionario';
+  const esJefe = user?.rol === 'jefe_sucursal';
+  const rolLabel = esJefe ? 'Jefe de Sucursal' : 'Funcionario';
 
   useIonViewWillEnter(() => {
     setCargando(true);
-    getTramitesUseCase(user?.sucursal_id ?? undefined)
+    // El funcionario solo ve sus trámites asignados; el jefe ve todos los de la sucursal.
+    const funcionarioId = user?.rol === 'funcionario' ? user?.id : undefined;
+    getTramitesUseCase(user?.sucursal_id ?? undefined, funcionarioId)
       .then(setTramites)
       .catch(() => setTramites([]))
       .finally(() => setCargando(false));
   });
+
+  const acciones = [
+    {
+      titulo: 'Gestión de Citas',
+      descripcion: 'Ver citas por trámite y fecha, buscar por RUT y actualizar su estado.',
+      icono: calendarNumberOutline,
+      color: '#1c3659',
+      ruta: '/panel-funcionario/citas',
+    },
+    {
+      titulo: 'Bloqueo de Horarios',
+      descripcion: 'Bloquear días completos u horas puntuales por feriados o ausencias.',
+      icono: lockClosedOutline,
+      color: '#b45309',
+      ruta: '/panel-funcionario/bloqueos',
+    },
+    // Exclusivo del jefe de sucursal.
+    ...(esJefe
+      ? [
+          {
+            titulo: 'Gestión de Trámites',
+            descripcion: 'Crear y editar trámites, definir horarios y cupos, y asignar funcionarios.',
+            icono: createOutline,
+            color: '#0f766e',
+            ruta: '/panel-funcionario/tramites',
+          },
+        ]
+      : []),
+  ];
 
   return (
     <IonPage>
@@ -91,6 +127,41 @@ const PanelFuncionarioScreen: React.FC = () => {
               </div>
             </IonCardContent>
           </IonCard>
+
+          {/* Accesos a las funciones de gestión */}
+          <h1 style={{ fontWeight: 'bold', color: '#334155', fontSize: '24px', marginBottom: '8px' }}>
+            Acciones de gestión
+          </h1>
+          <p style={{ color: '#94a3b8', fontSize: '15px', marginBottom: '20px' }}>
+            Herramientas para administrar la atención de tu sucursal.
+          </p>
+
+          <IonGrid style={{ marginBottom: '30px', padding: 0 }}>
+            <IonRow>
+              {acciones.map((accion) => (
+                <IonCol size="12" sizeMd="6" key={accion.ruta} style={{ padding: '10px' }}>
+                  <IonCard
+                    button
+                    onClick={() => history.push(accion.ruta)}
+                    style={{ margin: 0, borderRadius: '10px', boxShadow: '0 2px 10px rgba(0,0,0,0.06)', border: '1px solid #f1f5f9', backgroundColor: 'white', cursor: 'pointer' }}
+                  >
+                    <IonCardContent style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '22px' }}>
+                      <IonIcon icon={accion.icono} style={{ fontSize: '40px', color: accion.color, flexShrink: 0 }} />
+                      <div style={{ flex: 1 }}>
+                        <h3 style={{ margin: '0 0 4px', fontSize: '16px', fontWeight: 'bold', color: '#334155' }}>
+                          {accion.titulo}
+                        </h3>
+                        <p style={{ margin: 0, fontSize: '13px', color: '#94a3b8', lineHeight: '1.5' }}>
+                          {accion.descripcion}
+                        </p>
+                      </div>
+                      <IonIcon icon={arrowForwardOutline} style={{ fontSize: '22px', color: '#cbd5e1' }} />
+                    </IonCardContent>
+                  </IonCard>
+                </IonCol>
+              ))}
+            </IonRow>
+          </IonGrid>
 
           {/* Encabezado de la sección */}
           <h1 style={{ fontWeight: 'bold', color: '#334155', fontSize: '24px', marginBottom: '8px' }}>

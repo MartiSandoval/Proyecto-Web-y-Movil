@@ -7,6 +7,8 @@ export function createUseCitasData(useCases: CitasUseCasesProtocol) {
       postCitaUseCase: useCases.postCitaUseCase,
       postArchivoUseCase: useCases.postArchivoUseCase,
       getMisCitasUseCase: useCases.getMisCitasUseCase,
+      getCitasPorTramiteUseCase: useCases.getCitasPorTramiteUseCase,
+      actualizarEstadoCitaUseCase: useCases.actualizarEstadoCitaUseCase,
     };
   };
 }

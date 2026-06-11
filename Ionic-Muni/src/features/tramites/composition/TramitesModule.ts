@@ -3,6 +3,11 @@ import { createRemoteTramitesRepository } from "../data/repositories/remoteTrami
 import type { TramitesUseCasesProtocol } from "../domain/useCases/protocols/tramitesUseCasesProtocol";
 import { createGetTramitesUseCase } from "../domain/useCases/getTramitesUseCase";
 import { createGetTramiteUseCase } from "../domain/useCases/getTramiteUseCase";
+import { createCrearTramiteUseCase } from "../domain/useCases/crearTramiteUseCase";
+import { createActualizarTramiteUseCase } from "../domain/useCases/actualizarTramiteUseCase";
+import { createEliminarTramiteUseCase } from "../domain/useCases/eliminarTramiteUseCase";
+import { createAsignarFuncionariosUseCase } from "../domain/useCases/asignarFuncionariosUseCase";
+import { createGetFuncionariosUseCase } from "../domain/useCases/getFuncionariosUseCase";
 import { createUseTramites } from "../presentation/hooks/useTramites";
 
 // MARK: Data
@@ -20,6 +25,11 @@ export function resolveTramitesDomain(): TramitesUseCasesProtocol {
   return {
     getTramitesUseCase: createGetTramitesUseCase(repository),
     getTramiteUseCase: createGetTramiteUseCase(repository),
+    crearTramiteUseCase: createCrearTramiteUseCase(repository),
+    actualizarTramiteUseCase: createActualizarTramiteUseCase(repository),
+    eliminarTramiteUseCase: createEliminarTramiteUseCase(repository),
+    asignarFuncionariosUseCase: createAsignarFuncionariosUseCase(repository),
+    getFuncionariosUseCase: createGetFuncionariosUseCase(repository),
   };
 }
 

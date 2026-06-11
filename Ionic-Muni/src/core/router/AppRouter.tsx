@@ -10,6 +10,9 @@ import { AgendarHoraScreen } from '../../features/citas/presentation/screens/Age
 import { SubirArchivosScreen } from '../../features/citas/presentation/screens/SubirArchivosScreen';
 import HistorialTramitesScreen from '../../features/citas/presentation/screens/HistorialTramitesScreen';
 import PanelFuncionarioScreen from '../../features/panel/presentation/screens/PanelFuncionarioScreen';
+import GestionCitasScreen from '../../features/panel/presentation/screens/GestionCitasScreen';
+import BloqueoHorariosScreen from '../../features/panel/presentation/screens/BloqueoHorariosScreen';
+import GestionTramitesScreen from '../../features/panel/presentation/screens/GestionTramitesScreen';
 import { useAuth } from '../../features/auth/presentation/hooks/useAuth';
 
 interface PrivateRouteProps {
@@ -52,12 +55,31 @@ const AppRouter: React.FC = () => (
     <PrivateRoute exact path="/tramite/:tramiteId/subir" component={SubirArchivosScreen} />
     <PrivateRoute exact path="/historial" component={HistorialTramitesScreen} />
 
-    {/* Ruta protegida — solo funcionario y jefe_sucursal */}
+    {/* Rutas protegidas — solo funcionario y jefe_sucursal */}
     <PrivateRoute
       exact
       path="/panel-funcionario"
       component={PanelFuncionarioScreen}
       roles={['funcionario', 'jefe_sucursal']}
+    />
+    <PrivateRoute
+      exact
+      path="/panel-funcionario/citas"
+      component={GestionCitasScreen}
+      roles={['funcionario', 'jefe_sucursal']}
+    />
+    <PrivateRoute
+      exact
+      path="/panel-funcionario/bloqueos"
+      component={BloqueoHorariosScreen}
+      roles={['funcionario', 'jefe_sucursal']}
+    />
+    {/* Gestión de trámites — exclusivo del jefe de sucursal */}
+    <PrivateRoute
+      exact
+      path="/panel-funcionario/tramites"
+      component={GestionTramitesScreen}
+      roles={['jefe_sucursal']}
     />
 
     <Route exact path="/" render={() => <Redirect to="/login" />} />

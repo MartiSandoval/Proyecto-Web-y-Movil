@@ -9,6 +9,8 @@ const tramitesRoutes = require("../../features/tramites/presentation/routes/tram
 const disponibilidadRoutes = require("../../features/disponibilidad/presentation/routes/disponibilidadRoutes");
 const citasRoutes = require("../../features/citas/presentation/routes/citasRoutes");
 const sucursalesRoutes = require("../../features/sucursales/presentation/routes/sucursalesRoutes");
+const bloqueosRoutes = require("../../features/bloqueos/presentation/routes/bloqueosRoutes");
+const funcionariosRoutes = require("../../features/funcionarios/presentation/routes/funcionariosRoutes");
 
 function createApp() {
   const app = express();
@@ -22,6 +24,8 @@ function createApp() {
   app.use("/disponibilidad", disponibilidadRoutes);
   app.use("/citas", citasRoutes);
   app.use("/sucursales", sucursalesRoutes);
+  app.use("/bloqueos", bloqueosRoutes);
+  app.use("/funcionarios", funcionariosRoutes);
 
   app.use(notFound);
   app.use(errorHandler);
