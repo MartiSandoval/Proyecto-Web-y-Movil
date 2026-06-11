@@ -171,58 +171,45 @@ La validación de inputs ocurre primero en el cliente para dar retroalimentació
 
 ## Estructura del proyecto
 
+El repositorio es un **monorepo** con dos subproyectos hermanos, cada uno
+organizado con **Clean Architecture** (`core/` + `features/<feature>/{data,domain,
+presentation[,composition]}`):
+
 ```
 Proyecto-Web-y-Movil/
-├── src/                          # Frontend React + Ionic
-│   ├── pages/                    # Vistas principales
-│   │   ├── LoginPage/
-│   │   ├── RegisterPage/
-│   │   ├── Tramites/
-│   │   ├── DetalleTramite/
-│   │   ├── AgendarHora/
-│   │   ├── SubirArchivos/
-│   │   ├── HistorialTramites/
-│   │   └── PanelFuncionario/     # Panel de gestión (funcionario/jefe_sucursal)
-│   ├── components/               # Componentes reutilizables
-│   ├── routes/                   # Rutas y protección de vistas
-│   ├── services/                 # Comunicación con APIs
-│   │   ├── api.ts                # Llamadas al backend Node.js
-│   │   └── supabase.ts           # Cliente Supabase (storage)
-│   ├── contexts/                 # Estado global (React Context)
-│   │   ├── AuthContext.tsx        # Sesión, token y rol del usuario
-│   │   └── CitasContext.tsx       # Estado de slots bloqueados en sesión
-│   ├── types/                    # Interfaces TypeScript
-│   └── theme/
-├── backend-node/                 # Servidor backend (Node.js + Express)
-│   ├── src/
-│   │   ├── config/db.js          # Conexión Supabase
-│   │   ├── controllers/          # Lógica de negocio por recurso
-│   │   ├── middleware/
-│   │   │   ├── authMiddleware.js  # Validación JWT y control de roles
-│   │   │   └── errorHandler.js   # Manejo centralizado de errores
-│   │   ├── routes/               # Definición de endpoints
-│   │   │   ├── auth.js           # /auth/registro, /auth/login, /auth/me
-│   │   │   ├── tramites.js
-│   │   │   ├── citas.js
-│   │   │   ├── disponibilidad.js
-│   │   │   └── sucursales.js
-│   │   └── app.js                # Express + middlewares + rutas
-│   ├── supabase/
-│   │   ├── schema.sql            # Schema de la BD (ejecutar en Supabase)
-│   │   ├── seed.sql              # Datos iniciales (sucursales y trámites)
-│   │   ├── seed-users.js         # Crea cuentas de prueba (npm run seed:users)
-│   │   └── reset.sql             # Limpieza total (¡cuidado!)
-│   ├── server.js                 # Entry point
-│   └── package.json
-└── .env                          # Variables del frontend (no commitear)
+├── Ionic-Muni/                   # Frontend (Ionic React + TypeScript)
+│   └── src/
+│       ├── network/             # Capa de red (httpClient axios, apiConfig, supabaseClient)
+│       ├── core/                # Transversal: auth (token), config, theme, router
+│       │   └── presentation/components/   # atoms / molecules / organisms (Header, Footer, ...)
+│       └── features/            # Una carpeta por dominio funcional
+│           ├── auth/            # login, registro, sesión
+│           ├── tramites/        # listado y detalle de trámites
+│           ├── citas/           # agendar, subir archivos, historial
+│           └── panel/           # panel de gestión (funcionario/jefe_sucursal)
+│                                # cada feature: data/ domain/ presentation/ composition/
+└── nodejs-Muni/                 # Backend (Node.js + Express)
+    ├── src/
+    │   ├── index.js             # Bootstrap: createApp().listen()
+    │   ├── core/                # config/ database/ middleware/ server/createApp
+    │   └── features/            # auth, tramites, citas, disponibilidad, sucursales, health
+    │                            # cada feature: presentation/ domain/ data/
+    └── supabase/
+        ├── schema.sql           # Schema de la BD (ejecutar en Supabase)
+        ├── seed.sql             # Datos iniciales (sucursales y trámites)
+        ├── seed-users.js        # Crea cuentas de prueba (npm run seed:users)
+        └── reset.sql            # Limpieza total (¡cuidado!)
 ```
+
+> Cada feature aplica el patrón DTO (data) → Model (domain), con `useCases` y sus
+> `protocols`, y un módulo de `composition` que conecta las tres capas.
 
 ---
 
 ## Requisitos previos
 
 - [Node.js](https://nodejs.org) v18 o superior
-- Proyecto en [Supabase](https://supabase.com) con las tablas creadas (ver `backend-node/supabase/schema.sql`)
+- Proyecto en [Supabase](https://supabase.com) con las tablas creadas (ver `nodejs-Muni/supabase/schema.sql`)
 
 ---
 
@@ -230,24 +217,25 @@ Proyecto-Web-y-Movil/
 
 ### 1. Variables de entorno del backend
 
-Crea el archivo `backend-node/.env`:
+Crea el archivo `nodejs-Muni/.env` (puedes partir de `nodejs-Muni/.env.example`):
 
 ```env
-PORT=8000
 NODE_ENV=development
+PORT=8000
+
+CORS_ORIGIN=http://localhost:5173
 
 SUPABASE_URL=https://xxxx.supabase.co
 SUPABASE_SERVICE_KEY=sb_secret_...
 SUPABASE_ANON_KEY=sb_publishable_...
-
-CORS_ORIGIN=http://localhost:5173
 ```
 
 ### 2. Variables de entorno del frontend
 
-Crea el archivo `.env` en la raíz del proyecto:
+Crea el archivo `Ionic-Muni/.env` (puedes partir de `Ionic-Muni/.env.example`):
 
 ```env
+VITE_API_URL=http://localhost:8000
 VITE_SUPABASE_URL=https://xxxx.supabase.co
 VITE_SUPABASE_ANON_KEY=sb_publishable_...
 ```
@@ -260,11 +248,12 @@ Necesitas dos terminales abiertas.
 
 ```bash
 # Terminal 1 — Backend
-cd backend-node
+cd nodejs-Muni
 npm install
 npm run dev          # http://localhost:8000
 
 # Terminal 2 — Frontend
+cd Ionic-Muni
 npm install
 npm run dev          # http://localhost:5173
 ```
