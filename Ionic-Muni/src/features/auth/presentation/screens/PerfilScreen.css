@@ -1,0 +1,66 @@
+.perfil-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.perfil-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.perfil-header-icon {
+  font-size: 80px;
+  color: var(--ion-color-primary, #1a3a6b);
+}
+
+.perfil-header-title {
+  font-weight: bold;
+  color: #334155;
+  margin-top: 10px;
+}
+
+.perfil-header-subtitle {
+  color: #64748b;
+}
+
+.perfil-card {
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.perfil-item-readonly {
+  margin-bottom: 10px;
+  --background: #f8fafc;
+}
+
+.perfil-input-readonly {
+  font-weight: bold;
+  color: #475569;
+}
+
+.perfil-item-editable {
+  margin-bottom: 10px;
+}
+
+.perfil-item-editable-last {
+  margin-bottom: 30px;
+}
+
+.perfil-validation-icon {
+  margin-top: 20px;
+}
+
+.perfil-save-button {
+  --border-radius: 8px;
+  height: 48px;
+  font-weight: bold;
+}
+
+.perfil-loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}

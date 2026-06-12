@@ -35,5 +35,10 @@ export function createRemoteAuthRepository(dataSource: AuthDataSourceProtocol): 
     async getCurrentUser(token: string) {
       return mapUser(await dataSource.getCurrentUser(token));
     },
+    async actualizarPerfil(datos: any): Promise<any> {
+      return await dataSource.actualizarPerfil(datos);
+    }
   };
+
+  
 }

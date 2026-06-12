@@ -5,6 +5,7 @@ import { createPostLoginUseCase } from "../domain/useCases/postLoginUseCase";
 import { createPostRegisterUseCase } from "../domain/useCases/postRegisterUseCase";
 import { createGetCurrentUserUseCase } from "../domain/useCases/getCurrentUserUseCase";
 import { createAuthProvider } from "../presentation/hooks/useAuth";
+import { actualizarPerfilUseCase } from '../domain/useCases/actualizarPerfilUseCase';
 
 // MARK: Data
 export function resolveAuthData() {
@@ -22,6 +23,7 @@ export function resolveAuthDomain(): AuthUseCasesProtocol {
     postLoginUseCase: createPostLoginUseCase(repository),
     postRegisterUseCase: createPostRegisterUseCase(repository),
     getCurrentUserUseCase: createGetCurrentUserUseCase(repository),
+    actualizarPerfilUseCase: actualizarPerfilUseCase(repository),
   };
 }
 

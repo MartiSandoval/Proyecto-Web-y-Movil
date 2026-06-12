@@ -6,4 +6,5 @@ export type AuthRepository = {
   login: (rut: string, password: string) => Promise<AuthSessionModel>;
   register: (data: RegisterDataModel) => Promise<AuthSessionModel>;
   getCurrentUser: (token: string) => Promise<AuthUserModel>;
+  actualizarPerfil: (datos: any) => Promise<any>;
 };

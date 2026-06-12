@@ -14,6 +14,7 @@ import GestionCitasScreen from '../../features/panel/presentation/screens/Gestio
 import BloqueoHorariosScreen from '../../features/panel/presentation/screens/BloqueoHorariosScreen';
 import GestionTramitesScreen from '../../features/panel/presentation/screens/GestionTramitesScreen';
 import { useAuth } from '../../features/auth/presentation/hooks/useAuth';
+import PerfilScreen from '../../features/auth/presentation/screens/PerfilScreen';
 
 interface PrivateRouteProps {
   path: string;
@@ -47,7 +48,9 @@ const AppRouter: React.FC = () => (
     <Route exact path="/registro">
       <RegisterScreen />
     </Route>
-
+    <Route path="/perfil" exact={true}>
+      <PerfilScreen />
+    </Route>
     {/* Rutas protegidas — cualquier usuario autenticado */}
     <PrivateRoute exact path="/tramites" component={TramitesScreen} />
     <PrivateRoute exact path="/tramite/:tramiteId/detalle" component={DetalleTramiteScreen} />

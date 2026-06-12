@@ -74,5 +74,8 @@ export function createRemoteCitasRepository(
     async actualizarEstadoCita(citaId: string, estado: EstadoCita) {
       return mapCitaGestion(await dataSource.actualizarEstadoCita(citaId, estado));
     },
+    async cancelarMiCita(citaId: string): Promise<void> {
+      await dataSource.cancelarMiCita(citaId);
+    },
   };
 }

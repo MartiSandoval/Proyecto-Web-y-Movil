@@ -10,4 +10,5 @@ export type CitasRepository = {
   getMisCitas: () => Promise<CitaHistorialModel[]>;
   getCitasPorTramite: (tramiteId: string, fecha?: string) => Promise<CitaGestionModel[]>;
   actualizarEstadoCita: (citaId: string, estado: EstadoCita) => Promise<CitaGestionModel>;
+  cancelarMiCita: (citaId: string) => Promise<any>;
 };

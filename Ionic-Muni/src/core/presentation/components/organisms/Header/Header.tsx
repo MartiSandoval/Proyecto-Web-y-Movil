@@ -5,7 +5,8 @@ import {
   chevronDownOutline,
   callOutline,
   personOutline,
-  logOutOutline
+  logOutOutline,
+  personCircleOutline
 } from 'ionicons/icons';
 import { ASSETS } from '../../../../config/constants';
 import SearchBar from '../../molecules/SearchBar/SearchBar';
@@ -44,10 +45,10 @@ const Header: React.FC<headerProps> = ({ simple = false }) => {
     display: 'block'
   };
 
-  if(simple) {
+  if (simple) {
     return (
       <div style={{ 
-        backgroundColor: '#1c3659', // <-- Color actualizado a azul marino oscuro
+        backgroundColor: '#1c3659',
         padding: '15px 40px', 
         display: 'flex', 
         justifyContent: 'space-between', 
@@ -56,7 +57,6 @@ const Header: React.FC<headerProps> = ({ simple = false }) => {
         position: 'relative', 
         zIndex: 10 
       }}>
-        
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
           <img 
             src={ASSETS.LOGO_MUNI} 
@@ -86,16 +86,16 @@ const Header: React.FC<headerProps> = ({ simple = false }) => {
       {/* 1. BARRA SUPERIOR OSCURA */}
       <HeaderTop /> 
 
-      {/* 2. HEADER PRINCIPAL (Ahora con el azul oscuro institucional) */}
+      {/* 2. HEADER PRINCIPAL */}
       <div style={{ 
-        backgroundColor: '#1c3659', // <-- Color actualizado a azul marino oscuro
+        backgroundColor: '#1c3659', 
         padding: '15px 40px', 
         display: 'flex', 
         justifyContent: 'space-between', 
         alignItems: 'center', 
         color: 'white', 
         position: 'relative', 
-        zIndex: 10 
+        zIndex: 20 
       }}>
         
         {/* Lado izquierdo: Logo y Títulos */}
@@ -111,19 +111,72 @@ const Header: React.FC<headerProps> = ({ simple = false }) => {
           </div>
         </div>
 
-        {/* Centro: Barra de búsqueda (Un poco más ancha para igualar la imagen) */}
+        {/* Centro: Barra de búsqueda */}
         <SearchBar width="55%" />
 
         {/* Lado derecho: usuario o contacto */}
         {user ? (
+          // 1. A este div general le quitamos el "position: relative"
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <IonIcon icon={personOutline} style={{ fontSize: '22px' }} />
-            <div style={{ textAlign: 'right', fontSize: '12px' }}>
-              <div style={{ fontWeight: 'bold' }}>{user.nombre}</div>
-              <div style={{ color: '#94a3b8', textTransform: 'capitalize' }}>
-                {user.rol === 'jefe_sucursal' ? 'Jefe de Sucursal' : user.rol}
+            
+            {/* 2. NUEVO CONTENEDOR: Envolvemos solo el perfil y su menú con relative */}
+            <div style={{ position: 'relative' }}>
+              
+              {/* === BOTÓN DEL USUARIO (Abre el submenú) === */}
+              <div 
+                onClick={() => toggleMenu('perfil')}
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '8px', 
+                  cursor: 'pointer', 
+                  padding: '5px 10px', 
+                  borderRadius: '6px',
+                  backgroundColor: menuAbierto === 'perfil' ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.1)'
+                }}
+                title="Opciones de cuenta"
+              >
+                <IonIcon icon={personOutline} style={{ fontSize: '22px' }} />
+                <div style={{ textAlign: 'right', fontSize: '12px' }}>
+                  <div style={{ fontWeight: 'bold' }}>{user.nombre}</div>
+                  <div style={{ color: '#94a3b8', textTransform: 'capitalize' }}>
+                    {user.rol === 'jefe_sucursal' ? 'Jefe de Sucursal' : user.rol}
+                  </div>
+                </div>
+                <IonIcon icon={chevronDownOutline} style={{ fontSize: '16px', marginLeft: '4px' }} />
               </div>
+
+              {/* === SUBMENÚ DESPLEGABLE DEL PERFIL === */}
+              {menuAbierto === 'perfil' && (
+                <div style={{ 
+                  position: 'absolute', 
+                  top: 'calc(100% + 10px)', // Mejorado: Se ajusta exacto debajo del botón
+                  right: '0', 
+                  backgroundColor: 'white', 
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)', 
+                  borderRadius: '6px', 
+                  minWidth: '180px', 
+                  padding: '5px 0', 
+                  zIndex: 20 
+                }}>
+                  <span 
+                    style={{ ...dropdownItemStyle, display: 'flex', alignItems: 'center', gap: '8px' }} 
+                    onClick={() => { toggleMenu('perfil'); navigate('/perfil'); }}
+                  >
+                    <IonIcon icon={personCircleOutline} style={{ fontSize: '18px' }} /> Editar Perfil
+                  </span>
+                  <span 
+                    style={{ ...dropdownItemStyle, display: 'flex', alignItems: 'center', gap: '8px', color: '#ef4444', borderBottom: 'none' }} 
+                    onClick={() => { toggleMenu('perfil'); handleLogout(); }}
+                  >
+                    <IonIcon icon={logOutOutline} style={{ fontSize: '18px' }} /> Cerrar sesión
+                  </span>
+                </div>
+              )}
             </div>
+            {/* FIN DEL NUEVO CONTENEDOR */}
+
+            {/* Botón de Panel de Gestión (Si aplica) */}
             {(user.rol === 'funcionario' || user.rol === 'jefe_sucursal') && (
               <span
                 onClick={() => navigate('/panel-funcionario')}
@@ -136,17 +189,12 @@ const Header: React.FC<headerProps> = ({ simple = false }) => {
                   borderRadius: '5px',
                   cursor: 'pointer',
                   whiteSpace: 'nowrap',
+                  marginLeft: '10px'
                 }}
               >
                 Panel de Gestión
               </span>
             )}
-            <IonIcon
-              icon={logOutOutline}
-              style={{ fontSize: '24px', cursor: 'pointer' }}
-              title="Cerrar sesión"
-              onClick={handleLogout}
-            />
           </div>
         ) : (
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -173,7 +221,6 @@ const Header: React.FC<headerProps> = ({ simple = false }) => {
               <div style={{ position: 'absolute', top: '30px', left: 0, backgroundColor: 'white', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', borderRadius: '6px', minWidth: '220px', padding: '5px 0' }}>
                 <span style={dropdownItemStyle}>Pago de Permisos</span>
                 <span style={dropdownItemStyle}>Certificados en línea</span>
-                
               </div>
             )}
           </div>

@@ -61,4 +61,9 @@ export const remoteCitasDataSource: CitasDataSourceProtocol = {
       throw buildApiError(error, "Error al actualizar el estado de la cita");
     }
   },
+
+  async cancelarMiCita(citaId: string): Promise<any> {
+    const response = await httpClient.put(`/citas/mis-citas/${citaId}/cancelar`);
+    return response.data;
+}
 };

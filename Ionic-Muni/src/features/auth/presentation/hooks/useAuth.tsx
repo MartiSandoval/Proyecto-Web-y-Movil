@@ -12,6 +12,8 @@ export interface AuthContextType {
   login: (rut: string, password: string) => Promise<void>;
   register: (data: RegisterDataModel) => Promise<void>;
   logout: () => void;
+  // NUEVO: Firma para exponer la actualización del perfil a toda la app
+  actualizarPerfil: (datos: { telefono?: string; direccion?: string }) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -63,7 +65,17 @@ export function createAuthProvider(useCases: AuthUseCasesProtocol) {
       setUser(null);
     };
 
-    const value: AuthContextType = { user, token, loading, login, register, logout };
+    // NUEVO: Llama al backend y luego actualiza el estado global de React
+    const actualizarPerfil = async (datos: { telefono?: string; direccion?: string }) => {
+      // 1. Enviamos la petición al backend a través del caso de uso
+      await useCases.actualizarPerfilUseCase(datos);
+      
+      // 2. Si es exitoso, actualizamos el estado local (user) para que la UI cambie instantáneamente
+      setUser((prevUser) => prevUser ? { ...prevUser, ...datos } : null);
+    };
+
+    // NUEVO: Agregamos 'actualizarPerfil' al value
+    const value: AuthContextType = { user, token, loading, login, register, logout, actualizarPerfil };
 
     return createElement(AuthContext.Provider, { value }, children);
   };

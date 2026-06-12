@@ -41,4 +41,8 @@ export const remoteAuthDataSource: AuthDataSourceProtocol = {
       throw buildApiError(error, "Sesión inválida");
     }
   },
+  async actualizarPerfil(datos: any): Promise<any> {
+    const response = await httpClient.put('/auth/me', datos);
+    return response.data;
+  }
 };

@@ -22,4 +22,5 @@ export type AuthDataSourceProtocol = {
   login: (payload: LoginPayloadDTO) => Promise<AuthSessionDTO>;
   register: (payload: RegisterPayloadDTO) => Promise<AuthSessionDTO>;
   getCurrentUser: (token: string) => Promise<AuthUserDTO>;
+  actualizarPerfil: (datos: any) => Promise<any>;
 };

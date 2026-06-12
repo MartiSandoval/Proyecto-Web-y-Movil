@@ -12,4 +12,5 @@ export type CitasUseCasesProtocol = {
   getMisCitasUseCase: GetMisCitasUseCaseProtocol;
   getCitasPorTramiteUseCase: GetCitasPorTramiteUseCaseProtocol;
   actualizarEstadoCitaUseCase: ActualizarEstadoCitaUseCaseProtocol;
+  cancelarMiCitaUseCase: (citaId: string) => Promise<void>;
 };

@@ -10,4 +10,5 @@ export type CitasDataSourceProtocol = {
   getMisCitas: () => Promise<CitaHistorialDTO[]>;
   getCitasPorTramite: (tramiteId: string, fecha?: string) => Promise<CitaGestionDTO[]>;
   actualizarEstadoCita: (citaId: string, estado: string) => Promise<CitaGestionDTO>;
+  cancelarMiCita: (citaId: string) => Promise<any>;
 };

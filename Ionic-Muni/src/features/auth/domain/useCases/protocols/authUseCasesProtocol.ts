@@ -6,4 +6,5 @@ export type AuthUseCasesProtocol = {
   postLoginUseCase: PostLoginUseCaseProtocol;
   postRegisterUseCase: PostRegisterUseCaseProtocol;
   getCurrentUserUseCase: GetCurrentUserUseCaseProtocol;
+  actualizarPerfilUseCase: (datos: { telefono?: string; direccion?: string }) => Promise<void>;
 };

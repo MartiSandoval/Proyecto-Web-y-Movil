@@ -9,6 +9,9 @@ import { createGetCitasPorTramiteUseCase } from "../domain/useCases/getCitasPorT
 import { createActualizarEstadoCitaUseCase } from "../domain/useCases/actualizarEstadoCitaUseCase";
 import { createUseCitasData } from "../presentation/hooks/useCitasData";
 
+// 1. Tu importación
+import { cancelarMiCitaUseCase } from '../domain/useCases/cancelarMiCitaUseCase';
+
 // MARK: Data
 export function resolveCitasData() {
   const dataSource = remoteCitasDataSource;
@@ -28,6 +31,9 @@ export function resolveCitasDomain(): CitasUseCasesProtocol {
     getMisCitasUseCase: createGetMisCitasUseCase(repository),
     getCitasPorTramiteUseCase: createGetCitasPorTramiteUseCase(repository),
     actualizarEstadoCitaUseCase: createActualizarEstadoCitaUseCase(repository),
+    
+    // 2. AQUÍ ES EL LUGAR CORRECTO PARA INYECTARLO
+    cancelarMiCitaUseCase: cancelarMiCitaUseCase(repository), 
   };
 }
 
@@ -40,10 +46,11 @@ export function resolveCitasPresentation(useCases: CitasUseCasesProtocol) {
 
 // MARK: Module
 export function useCitasModule() {
+  // 3. Volvemos a dejar esto como estaba, limpio.
   return {
     resolveData: resolveCitasData,
     resolveDomain: resolveCitasDomain,
-    resolvePresentation: () => resolveCitasPresentation(resolveCitasDomain()),
+    resolvePresentation: () => resolveCitasPresentation(resolveCitasDomain())
   };
 }
 
@@ -51,7 +58,7 @@ export function useCitasModule() {
 export function useCitasData() {
   const { resolvePresentation } = useCitasModule();
   const { useCitasData: useCitasDataHook } = resolvePresentation();
-
+  
   return useCitasDataHook();
 }
 

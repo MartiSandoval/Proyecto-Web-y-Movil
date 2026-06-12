@@ -9,7 +9,13 @@ import {
   IonRow,
   IonCol,
   IonIcon,
-  IonSpinner
+  IonSpinner,
+  useIonToast,
+  IonAlert,
+  IonButton,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel
 } from '@ionic/react';
 import {
   wifi,
@@ -36,10 +42,31 @@ const estadoLabel: Record<string, string> = {
 
 const HistorialTramitesScreen: React.FC = () => {
   const history = useHistory();
-  const { getMisCitasUseCase } = useCitasData();
   const [citas, setCitas] = useState<CitaHistorialModel[]>([]);
   const [cargando, setCargando] = useState(true);
 
+  // Extraemos los casos de uso
+  const { getMisCitasUseCase, cancelarMiCitaUseCase } = useCitasData();
+  
+  // Estados para la alerta y toast
+  const [presentToast] = useIonToast();
+  const [mostrarAlerta, setMostrarAlerta] = useState(false);
+  const [citaSeleccionada, setCitaSeleccionada] = useState<string | null>(null);
+  
+  // Estado para saber qué pestaña está activa
+  const [filtro, setFiltro] = useState<'vigentes' | 'canceladas'>('vigentes');
+
+  // Separar las citas usando filter()
+  const citasVigentes = citas.filter(cita => cita.estado.toLowerCase() !== 'cancelado');
+  const citasCanceladas = citas.filter(cita => cita.estado.toLowerCase() === 'cancelado');
+  
+  // Decidir qué lista dibujar según la pestaña activa
+  const citasAMostrar = filtro === 'vigentes' ? citasVigentes : citasCanceladas;
+  
+  const cargarCitas = () => {
+    getMisCitasUseCase().then(setCitas);
+  };
+  
   useIonViewWillEnter(() => {
     setCargando(true);
     getMisCitasUseCase()
@@ -47,11 +74,31 @@ const HistorialTramitesScreen: React.FC = () => {
       .finally(() => setCargando(false));
   });
 
+  // Función para abrir la alerta
+  const intentarCancelar = (citaId: string) => {
+    (document.activeElement as HTMLElement)?.blur(); 
+    setCitaSeleccionada(citaId);
+    setMostrarAlerta(true);
+  };
+  
+  const confirmarCancelacion = async () => {
+    if (!citaSeleccionada) return;
+    try {
+      await cancelarMiCitaUseCase(citaSeleccionada);
+      presentToast({ message: 'Cita cancelada exitosamente', duration: 2500, color: 'success' });
+      cargarCitas(); // Refresca la tabla automáticamente
+    } catch (error) {
+      presentToast({ message: 'Error al cancelar la cita', duration: 2500, color: 'danger' });
+    } finally {
+      setMostrarAlerta(false);
+      setCitaSeleccionada(null);
+    }
+  };
+
   return (
     <IonPage>
       <IonContent color="light">
 
-        {/* --- COMPONENTES GLOBALES IMPORTADOS --- */}
         <Header/>
 
         <div style={{ padding: '12px 24px' }}>
@@ -62,8 +109,6 @@ const HistorialTramitesScreen: React.FC = () => {
             ← Volver a Trámites
           </button>
         </div>
-
-        {/* --- CONTENIDO ESPECÍFICO DE LA PÁGINA --- */}
 
         {/* 1. Miga de Pan (Breadcrumbs) */}
         <div style={{ padding: '15px 40px', fontSize: '13px', color: '#64748b', display: 'flex', alignItems: 'center' }}>
@@ -76,26 +121,46 @@ const HistorialTramitesScreen: React.FC = () => {
           <h1 style={{ fontWeight: 'bold', color: '#334155', fontSize: '28px', marginBottom: '10px' }}>
             Historial de Trámites
           </h1>
-          <p style={{ color: '#94a3b8', fontSize: '16px', marginBottom: '40px', lineHeight: '1.5' }}>
+          <p style={{ color: '#94a3b8', fontSize: '16px', marginBottom: '30px', lineHeight: '1.5' }}>
             Aquí podrá encontrar todos los trámites que ha realizado a lo largo del tiempo.<br />
             Podrá modificar, cancelar o revisar el estado de sus trámites.
           </p>
+
+          {/* NUEVO: Segmento (Pestañas) para filtrar */}
+          <IonSegment 
+            value={filtro} 
+            onIonChange={(e) => setFiltro(e.detail.value as 'vigentes' | 'canceladas')}
+            style={{ maxWidth: '400px', marginBottom: '30px', backgroundColor: 'white' }}
+          >
+            <IonSegmentButton value="vigentes">
+              <IonLabel>Vigentes</IonLabel>
+            </IonSegmentButton>
+            <IonSegmentButton value="canceladas">
+              <IonLabel>Canceladas</IonLabel>
+            </IonSegmentButton>
+          </IonSegment>
 
           {/* 3. Listado de Trámites */}
           {cargando ? (
             <div style={{ display: 'flex', justifyContent: 'center', padding: '60px' }}>
               <IonSpinner name="crescent" />
             </div>
-          ) : citas.length === 0 ? (
-            <p style={{ color: '#94a3b8', textAlign: 'center', padding: '40px' }}>
-              No tienes trámites agendados aún.
+          ) : citasAMostrar.length === 0 ? (
+            <p style={{ color: '#94a3b8', textAlign: 'center', padding: '40px', backgroundColor: 'white', borderRadius: '8px', border: '1px dashed #cbd5e1' }}>
+              {filtro === 'vigentes' 
+                ? 'No tienes trámites vigentes en este momento.' 
+                : 'No tienes trámites cancelados en tu historial.'}
             </p>
           ) : (
             <IonGrid>
               <IonRow>
-                {citas.map((cita) => {
-                  const label = estadoLabel[cita.estado] ?? cita.estado;
-                  const terminado = cita.estado === 'completado';
+                {/* AQUI SE CAMBIÓ 'citas.map' POR 'citasAMostrar.map' */}
+                {citasAMostrar.map((cita) => {
+                  const estadoNormalizado = cita.estado.toLowerCase();
+                  const label = estadoLabel[estadoNormalizado] ?? cita.estado;
+                  const terminado = estadoNormalizado === 'completado';
+                  const cancelado = estadoNormalizado === 'cancelado';
+                  
                   return (
                     <IonCol size="12" sizeMd="6" key={cita.id} style={{ padding: '15px' }}>
                       <IonCard style={{ margin: 0, boxShadow: '0 2px 10px rgba(0,0,0,0.05)', borderRadius: '10px', border: '1px solid #f1f5f9', backgroundColor: 'white' }}>
@@ -119,14 +184,29 @@ const HistorialTramitesScreen: React.FC = () => {
                             <div style={{ backgroundColor: '#fcb864', color: '#7c2d12', padding: '6px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '5px' }}>
                               <IonIcon icon={wifi} /> En línea
                             </div>
+                            
                             <div style={{
-                              backgroundColor: terminado ? '#10b981' : '#fde047',
-                              color: terminado ? 'white' : '#854d0e',
+                              backgroundColor: terminado ? '#10b981' : (cancelado ? '#ef4444' : '#fde047'),
+                              color: terminado || cancelado ? 'white' : '#854d0e',
                               padding: '6px 10px', borderRadius: '4px', fontSize: '12px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '5px'
                             }}>
                               <IonIcon icon={terminado ? checkmarkCircleOutline : timeOutline} />
                               {label}
                             </div>
+
+                            {/* BOTÓN DE CANCELAR */}
+                            {estadoNormalizado === 'pendiente' && (
+                              <IonButton 
+                                color="danger" 
+                                fill="outline" 
+                                size="small" 
+                                style={{ marginTop: '5px', fontSize: '12px', height: '30px' }}
+                                onClick={() => intentarCancelar(cita.id)}
+                              >
+                                Cancelar Cita
+                              </IonButton>
+                            )}
+
                           </div>
                         </div>
 
@@ -141,6 +221,26 @@ const HistorialTramitesScreen: React.FC = () => {
         </div>
         <Footer />
       </IonContent>
+
+      <IonAlert
+        isOpen={mostrarAlerta}
+        onDidDismiss={() => setMostrarAlerta(false)}
+        header="¿Cancelar cita?"
+        message="Esta acción no se puede deshacer. Perderás tu hora reservada."
+        buttons={[
+          {
+            text: 'No, mantener',
+            role: 'cancel',
+            handler: () => setCitaSeleccionada(null)
+          },
+          {
+            text: 'Sí, cancelar',
+            role: 'confirm',
+            handler: confirmarCancelacion
+          }
+        ]}
+      />
+
     </IonPage>
   );
 };

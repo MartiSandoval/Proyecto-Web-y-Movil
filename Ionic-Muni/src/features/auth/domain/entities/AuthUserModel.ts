@@ -3,4 +3,7 @@ export interface AuthUserModel {
   nombre: string;
   rol: "usuario" | "funcionario" | "jefe_sucursal";
   sucursal_id?: string;
+  rut?: string;
+  telefono?: string;
+  direccion?: string;
 }
