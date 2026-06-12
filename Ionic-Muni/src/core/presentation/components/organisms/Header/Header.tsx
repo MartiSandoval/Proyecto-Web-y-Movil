@@ -112,7 +112,7 @@ const Header: React.FC<headerProps> = ({ simple = false }) => {
         </div>
 
         {/* Centro: Barra de búsqueda */}
-        <SearchBar width="55%" />
+        <SearchBar width="45%" />
 
         {/* Lado derecho: usuario o contacto */}
         {user ? (
@@ -136,10 +136,10 @@ const Header: React.FC<headerProps> = ({ simple = false }) => {
                 }}
                 title="Opciones de cuenta"
               >
-                <IonIcon icon={personOutline} style={{ fontSize: '22px' }} />
-                <div style={{ textAlign: 'right', fontSize: '12px' }}>
-                  <div style={{ fontWeight: 'bold' }}>{user.nombre}</div>
-                  <div style={{ color: '#94a3b8', textTransform: 'capitalize' }}>
+                <IonIcon icon={personOutline} style={{ fontSize: '22px', flexShrink: 0 }} />
+                <div style={{ textAlign: 'left', fontSize: '12px', minWidth: 0 }}>
+                  <div style={{ fontWeight: 'bold', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '140px' }}>{user.nombre}</div>
+                  <div style={{ color: '#94a3b8', textTransform: 'capitalize', whiteSpace: 'nowrap' }}>
                     {user.rol === 'jefe_sucursal' ? 'Jefe de Sucursal' : user.rol}
                   </div>
                 </div>

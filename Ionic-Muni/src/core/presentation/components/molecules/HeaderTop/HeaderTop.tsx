@@ -1,9 +1,8 @@
 import React from 'react';
 import { IonIcon } from '@ionic/react';
-import { 
-  tvOutline, 
-  hammerOutline, 
-  documentTextOutline 
+import {
+  hammerOutline,
+  documentTextOutline
 } from 'ionicons/icons';
 import './HeaderTop.css';
 import { ASSETS } from '../../../../config/constants';
@@ -38,11 +37,6 @@ const HeaderTop: React.FC = () => {
       <div className="header-top-link">
         <IonIcon icon={documentTextOutline} className="header-top-icon-normal" />
         <span>Decretos</span>
-      </div>
-
-      <div className="header-top-link header-top-live">
-        <IonIcon icon={tvOutline} className="header-top-icon-tv" />
-        <span>Observe el Consejo Municipal en VIVO</span>
       </div>
 
     </div>

@@ -41,6 +41,24 @@ const TEST_USERS = [
     rol: 'funcionario',
     sucursal_nombre: 'DIDECO',
   },
+  {
+    email: 'jefe@prueba.cl',
+    password: 'Test1234!',
+    nombre: 'Carlos Jefe',
+    rut: '33333333-3',
+    telefono: '911223344',
+    rol: 'jefe_sucursal',
+    sucursal_nombre: 'DIDECO',
+  },
+  {
+    email: 'funcionario2@prueba.cl',
+    password: 'Test1234!',
+    nombre: 'Pedro Funcionario',
+    rut: '44444444-4',
+    telefono: '955667788',
+    rol: 'funcionario',
+    sucursal_nombre: 'DIDECO',
+  },
 ]
 
 async function getSucursalId(nombre) {
@@ -128,8 +146,10 @@ async function main() {
     await createTestUser(user)
   }
   console.log('\nListo. Cuentas disponibles para el revisor:')
-  console.log('  RUT 11111111-1 / Test1234!  →  rol usuario    (flujo ciudadano)')
-  console.log('  RUT 22222222-2 / Test1234!  →  rol funcionario (panel de gestión)')
+  console.log('  RUT 11111111-1 / Test1234!  →  rol usuario       (flujo ciudadano)')
+  console.log('  RUT 22222222-2 / Test1234!  →  rol funcionario   (panel de gestión)')
+  console.log('  RUT 33333333-3 / Test1234!  →  rol jefe_sucursal (gestión de trámites)')
+  console.log('  RUT 44444444-4 / Test1234!  →  rol funcionario   (para probar asignación)')
 }
 
 main().catch(err => {

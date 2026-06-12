@@ -3,7 +3,7 @@
   color: #ffffff; /*letras blancas q contrastan*/
   padding: 10px 40px; /*espaciado interno del rectangulo de arriba */
   display: flex; /* flexbox */
-  justify-content: flex-end; /* para la derecha  */
+  justify-content: flex-start; /* navegación secundaria va a la izquierda */
   align-items: center;
   gap: 30px; /* Separación entre los elementos */
   font-size: 13px;

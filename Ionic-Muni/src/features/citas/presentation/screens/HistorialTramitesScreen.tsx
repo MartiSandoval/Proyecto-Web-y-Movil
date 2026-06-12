@@ -23,7 +23,8 @@ import {
   checkmarkCircleOutline,
   chevronForwardOutline,
   businessOutline,
-  clipboardOutline
+  clipboardOutline,
+  closeCircleOutline
 } from 'ionicons/icons';
 import type { CitaHistorialModel } from '../../domain/entities/CitaHistorialModel';
 import { useCitasData } from '../../composition/CitasModule';
@@ -192,15 +193,35 @@ const HistorialTramitesScreen: React.FC = () => {
 
                             {/* BOTÓN DE CANCELAR */}
                             {estadoNormalizado === 'pendiente' && (
-                              <IonButton 
-                                color="danger" 
-                                fill="outline" 
-                                size="small" 
-                                style={{ marginTop: '5px', fontSize: '12px', height: '30px' }}
+                              <button
                                 onClick={() => intentarCancelar(cita.id)}
+                                style={{
+                                  marginTop: '6px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  gap: '5px',
+                                  padding: '7px 14px',
+                                  backgroundColor: '#fee2e2',
+                                  border: 'none',
+                                  borderRadius: '999px',
+                                  color: '#dc2626',
+                                  fontSize: '12px',
+                                  fontWeight: '600',
+                                  cursor: 'pointer',
+                                  transition: 'background-color 0.2s ease',
+                                  letterSpacing: '0.3px',
+                                }}
+                                onMouseEnter={e => {
+                                  (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#fecaca';
+                                }}
+                                onMouseLeave={e => {
+                                  (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#fee2e2';
+                                }}
                               >
-                                Cancelar Cita
-                              </IonButton>
+                                <IonIcon icon={closeCircleOutline} style={{ fontSize: '14px' }} />
+                                Cancelar cita
+                              </button>
                             )}
 
                           </div>
