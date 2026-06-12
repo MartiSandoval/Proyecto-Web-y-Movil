@@ -61,10 +61,10 @@ const actualizarPerfil = async (usuarioId, datosActualizados) => {
     .update({
       correo: datosActualizados.correo,
       telefono: datosActualizados.telefono,
-      direccion: datosActualizados.direccion
+      direccion: datosActualizados.direccion,
     })
     .eq('id', usuarioId)
-    .select("id, telefono, direccion")
+    .select()
     .single();
 
   if (error) throw new Error(`Error al actualizar perfil: ${error.message}`);
