@@ -3,6 +3,7 @@ const { registrarArchivoUseCase } = require("../../domain/useCases/registrarArch
 const { actualizarEstadoCitaUseCase } = require("../../domain/useCases/actualizarEstadoCitaUseCase");
 const { getMisCitasUseCase } = require("../../domain/useCases/getMisCitasUseCase");
 const { getCitasPorTramiteUseCase } = require("../../domain/useCases/getCitasPorTramiteUseCase");
+const cancelarMiCitaUseCase = require("../../domain/useCases/cancelarMiCitaUseCase");
 
 async function crearCita(req, res, next) {
   try {
@@ -56,10 +57,29 @@ async function obtenerCitasPorTramite(req, res, next) {
   }
 }
 
+async function cancelarMiCita(req, res, next) {
+  try {
+    const { id: citaId } = req.params;
+    // Dependiendo de tu authMiddleware, el ID puede venir en .id, .sub o .usuario_id
+    const usuarioId = req.user?.id || req.user?.sub; 
+
+    if (!usuarioId) {
+      return res.status(401).json({ error: "Usuario no identificado." });
+    }
+
+    const cita = await cancelarMiCitaUseCase(citaId, usuarioId);
+    res.status(200).json(cita);
+    
+  } catch (err) {
+    res.status(403).json({ error: err.message, origen: "Base de Datos" });
+  }
+}
+
 module.exports = {
   crearCita,
   registrarArchivo,
   actualizarEstadoCita,
   obtenerMisCitas,
   obtenerCitasPorTramite,
+  cancelarMiCita
 };

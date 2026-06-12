@@ -15,4 +15,19 @@ function validarPassword(password) {
   return typeof password === "string" && password.length >= 6;
 }
 
-module.exports = { validarRut, validarEmail, validarPassword };
+function validarDireccion(direccion) {
+  return typeof direccion === "string" && direccion.trim().length >= 5;
+}
+
+function validarTelefono(telefono) {
+  if (!telefono) return true; // Pasa la validación si está vacío (opcional)
+  return /^[0-9+ ]{8,}$/.test(telefono);
+}
+
+module.exports = { 
+  validarRut, 
+  validarEmail, 
+  validarPassword, 
+  validarDireccion, 
+  validarTelefono 
+};

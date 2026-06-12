@@ -5,6 +5,7 @@ const {
   actualizarEstadoCita,
   obtenerMisCitas,
   obtenerCitasPorTramite,
+  cancelarMiCita,
 } = require("../controllers/citasControllers");
 const { authenticate, requireRole } = require("../../../../core/middleware/authMiddleware");
 
@@ -18,4 +19,5 @@ router.get("/tramite/:tramite_id", authenticate, requireRole("funcionario", "jef
 
 router.put("/:id/estado", authenticate, requireRole("funcionario", "jefe_sucursal"), actualizarEstadoCita);
 
+router.put("/mis-citas/:id/cancelar", authenticate, requireRole("usuario"), cancelarMiCita);
 module.exports = router;

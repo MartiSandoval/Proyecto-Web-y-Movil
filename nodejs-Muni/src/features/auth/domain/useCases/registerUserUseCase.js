@@ -1,6 +1,14 @@
 const bcrypt = require("bcrypt");
 const repository = require("../../data/repositories/authRepository");
-const { validarRut, validarEmail, validarPassword } = require("../authValidators");
+
+// 1. IMPORTAMOS LAS NUEVAS VALIDACIONES
+const { 
+  validarRut, 
+  validarEmail, 
+  validarPassword, 
+  validarDireccion, 
+  validarTelefono 
+} = require("../authValidators");
 
 const SALT_ROUNDS = 12;
 
@@ -10,11 +18,10 @@ async function registerUserUseCase(body) {
   const password = (body.password || "").trim();
   const nombre = (body.nombre || "").trim();
   const rut = (body.rut || "").trim();
+  const direccion = (body.direccion || "").trim(); // <-- NUEVO: Capturamos la dirección
   const telefono = (body.telefono || "").trim() || null;
   const fecha_nacimiento = (body.fecha_nacimiento || "").trim() || null;
   const genero = (body.genero || "").trim() || null;
-  const region = (body.region || "").trim() || null;
-  const comuna = (body.comuna || "").trim() || null;
 
   // ── Validación de inputs (EP 2.6a) ────────────────────────────────────────
   const errores = {};
@@ -35,6 +42,18 @@ async function registerUserUseCase(body) {
     errores.password = "La contraseña es requerida.";
   } else if (!validarPassword(password)) {
     errores.password = "La contraseña debe tener al menos 6 caracteres.";
+  }
+  
+  // NUEVO: Validación estricta de Dirección
+  if (!direccion) {
+    errores.direccion = "La dirección es requerida.";
+  } else if (!validarDireccion(direccion)) {
+    errores.direccion = "La dirección debe tener al menos 5 caracteres.";
+  }
+
+  // NUEVO: Validación de Teléfono (solo si el usuario decidió ingresarlo)
+  if (telefono && !validarTelefono(telefono)) {
+    errores.telefono = "Formato de teléfono inválido. Debe contener al menos 8 dígitos.";
   }
 
   if (Object.keys(errores).length > 0) {
@@ -79,10 +98,9 @@ async function registerUserUseCase(body) {
   await repository.updatePerfilData(authData.user.id, {
     rut,
     telefono,
+    direccion, // <-- NUEVO: Se envía a Supabase
     fecha_nacimiento,
     genero,
-    region,
-    comuna,
     password_hash,
   });
 

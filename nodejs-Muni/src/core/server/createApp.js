@@ -14,8 +14,11 @@ const funcionariosRoutes = require("../../features/funcionarios/presentation/rou
 
 function createApp() {
   const app = express();
-
-  app.use(cors({ origin: environment.corsOrigin }));
+  app.use(cors({ 
+  origin: environment.corsOrigin.split(','),
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  credentials: true
+  }));
   app.use(express.json());
 
   app.use("/", healthRoutes);

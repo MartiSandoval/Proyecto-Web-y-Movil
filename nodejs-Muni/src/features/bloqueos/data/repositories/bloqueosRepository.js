@@ -12,7 +12,7 @@ async function insertBloqueo({ tramiteId, fecha, hora, motivo, createdBy }) {
       motivo: motivo ?? null,
       created_by: createdBy ?? null,
     })
-    .select()
+    .select("id, fecha, hora, motivo")
     .single();
   if (error) throw error;
   return data;
@@ -21,7 +21,7 @@ async function insertBloqueo({ tramiteId, fecha, hora, motivo, createdBy }) {
 async function findByTramite(tramiteId, fecha) {
   let query = supabase
     .from("bloqueos_horario")
-    .select("*")
+    .select("id, fecha, hora, motivo")
     .eq("tramite_id", tramiteId)
     .order("fecha", { ascending: true })
     .order("hora", { ascending: true, nullsFirst: true });

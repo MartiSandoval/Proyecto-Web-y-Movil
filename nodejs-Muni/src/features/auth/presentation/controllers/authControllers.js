@@ -24,4 +24,22 @@ function getCurrentUser(req, res) {
   res.json(req.user);
 }
 
-module.exports = { registro, login, getCurrentUser };
+const actualizarPerfilUseCase = require("../../domain/useCases/actualizarPerfilUseCase");
+
+async function actualizarPerfil(req, res, next) {
+  try {
+    const usuarioId = req.user?.id || req.user?.sub;
+    const datosActualizados = req.body;
+
+    if (!usuarioId) {
+      return res.status(401).json({ error: "Usuario no autenticado." });
+    }
+
+    const perfilActualizado = await actualizarPerfilUseCase(usuarioId, datosActualizados);
+    res.status(200).json(perfilActualizado);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+}
+
+module.exports = { registro, login, getCurrentUser, actualizarPerfil };

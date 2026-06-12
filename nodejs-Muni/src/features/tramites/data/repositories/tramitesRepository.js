@@ -19,7 +19,7 @@ function toFrontend(t) {
 async function findActivos(sucursalId, funcionarioId) {
   let query = supabase
     .from("tramites")
-    .select("*, sucursales(nombre)")
+    .select("id, nombre, descripcion, costo, es_en_linea, documentos_requeridos, activo, sucursal_id, created_at, sucursales(nombre)")
     .eq("activo", true);
 
   if (sucursalId) {
@@ -41,7 +41,7 @@ async function findActivos(sucursalId, funcionarioId) {
 async function findById(id) {
   const { data, error } = await supabase
     .from("tramites")
-    .select("*, sucursales(nombre)")
+    .select("id, nombre, descripcion, costo, es_en_linea, documentos_requeridos, activo, sucursal_id, created_at, sucursales(nombre)")
     .eq("id", id)
     .single();
   if (error) throw error;
@@ -66,7 +66,7 @@ async function insertTramite({
   const { data, error } = await supabase
     .from("tramites")
     .insert({ sucursal_id, nombre, descripcion, costo, es_en_linea, documentos_requeridos, created_by })
-    .select()
+    .select("id")
     .single();
   if (error) throw error;
   return data;
@@ -77,7 +77,7 @@ async function updateTramite(id, { sucursal_id, nombre, descripcion, costo, es_e
     .from("tramites")
     .update({ sucursal_id, nombre, descripcion, costo, es_en_linea, documentos_requeridos })
     .eq("id", id)
-    .select()
+    .select("id")
     .single();
   if (error) throw error;
   return data;
@@ -88,7 +88,7 @@ async function deleteTramite(id) {
     .from("tramites")
     .delete()
     .eq("id", id)
-    .select()
+    .select("id")
     .single();
   if (error) throw error;
   return data;
