@@ -13,6 +13,7 @@ import { supabase } from "../../../../network/supabaseClient";
 import { FileUploadZone } from "../components/FileUploadZone/FileUploadZone";
 import { NavButtons } from "../../../../core/presentation/components/molecules/NavButtons/NavButtons";
 import "./SubirArchivosScreen.css";
+import Header from '../../../../core/presentation/components/organisms/Header/Header';
 
 interface LocationState {
   fecha: string;
@@ -125,11 +126,7 @@ export const SubirArchivosScreen = (): JSX.Element => {
   if (done) {
     return (
       <IonPage>
-        <IonHeader>
-          <IonToolbar color="primary" style={{ "--background": "#1a3a6b" }}>
-            <IonTitle>Cita Confirmada</IonTitle>
-          </IonToolbar>
-        </IonHeader>
+        <Header simple />
         <IonContent className="subir-content">
           <div className="subir-success">
             <div className="subir-success-icon">✓</div>
@@ -147,12 +144,7 @@ export const SubirArchivosScreen = (): JSX.Element => {
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar color="primary" style={{ "--background": "#1a3a6b" }}>
-          <IonTitle>Subir Archivos</IonTitle>
-        </IonToolbar>
-      </IonHeader>
-
+      <Header simple />
       <IonContent className="subir-content">
         <p className="subir-subtitle">
           En esta sección se le pedirá los archivos necesarios para agendar el trámite sin problema.

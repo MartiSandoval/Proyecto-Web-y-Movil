@@ -100,22 +100,18 @@ const HistorialTramitesScreen: React.FC = () => {
       <IonContent color="light">
 
         <Header/>
-
+        <div className="his-breadcrumb">
+        &rsaquo; Usted está en: <strong>Historial de Trámites</strong>
+        </div>
         <div style={{ padding: '12px 24px' }}>
           <button
             onClick={() => history.push('/tramites')}
             style={{ background: 'none', border: 'none', color: '#1a3a6b', cursor: 'pointer', fontSize: '14px', fontWeight: 600 }}
           >
-            ← Volver a Trámites
+            ← Volver al Inicio  
           </button>
         </div>
-
-        {/* 1. Miga de Pan (Breadcrumbs) */}
-        <div style={{ padding: '15px 40px', fontSize: '13px', color: '#64748b', display: 'flex', alignItems: 'center' }}>
-          <IonIcon icon={chevronForwardOutline} style={{ marginRight: '5px' }} />
-          Usted está en: <strong style={{ marginLeft: '5px', color: '#334155', textDecoration: 'underline' }}>Historial de Trámites</strong>
-        </div>
-
+                        
         {/* 2. Encabezado de la Sección */}
         <div style={{ padding: '20px 40px', maxWidth: '1200px', margin: '0 auto' }}>
           <h1 style={{ fontWeight: 'bold', color: '#334155', fontSize: '28px', marginBottom: '10px' }}>

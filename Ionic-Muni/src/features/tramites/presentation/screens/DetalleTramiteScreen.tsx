@@ -7,6 +7,7 @@ import {
 } from "@ionic/react";
 import type { TramiteModel } from "../../domain/entities/TramiteModel";
 import { useTramites } from "../../composition/TramitesModule";
+import Header from '../../../../core/presentation/components/organisms/Header/Header';
 import { NavButtons } from "../../../../core/presentation/components/molecules/NavButtons/NavButtons";
 import "./DetalleTramiteScreen.css";
 
@@ -27,13 +28,9 @@ export const DetalleTramiteScreen = (): JSX.Element => {
   }, [tramiteId]);
 
   return (
+    
     <IonPage>
-      <IonHeader>
-        <IonToolbar color="primary" style={{ "--background": "#1a3a6b" }}>
-          <IonTitle>Detalle del Trámite</IonTitle>
-        </IonToolbar>
-      </IonHeader>
-
+      <Header simple />
       <IonContent className="detalle-content">
         {loading && (
           <IonCard>
@@ -91,7 +88,6 @@ export const DetalleTramiteScreen = (): JSX.Element => {
         )}
       </IonContent>
 
-      {/* ✅ CORREGIDO: Atrás va a /tramites en vez de "/" */}
       <NavButtons
         onAtras={() => history.push("/tramites")}
         onContinuar={() => history.push(`/tramite/${tramiteId}/agendar`)}

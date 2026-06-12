@@ -66,7 +66,7 @@ export function createAuthProvider(useCases: AuthUseCasesProtocol) {
     };
 
     // NUEVO: Llama al backend y luego actualiza el estado global de React
-    const actualizarPerfil = async (datos: { telefono?: string; direccion?: string }) => {
+    const actualizarPerfil = async (datos: { correo?: string, telefono?: string; direccion?: string }) => {
       // 1. Enviamos la petición al backend a través del caso de uso
       await useCases.actualizarPerfilUseCase(datos);
       

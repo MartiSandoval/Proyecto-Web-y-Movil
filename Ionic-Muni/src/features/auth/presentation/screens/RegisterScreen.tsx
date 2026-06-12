@@ -277,11 +277,11 @@ const RegisterScreen: React.FC = () => {
 
               {/* Dirección */}
               <div className="input-group">
-                <IonLabel className="input-label">Dirección (Comuna de Santo Domingo)</IonLabel>
+                <IonLabel className="input-label">Dirección</IonLabel>
                 <IonItem className="custom-input" lines="none">
                   <IonInput 
                     type="text"
-                    placeholder="Ej: Los Jazmines 123"
+                    placeholder="Ej: Av. Santo Domingo"
                     value={direccion}
                     onIonInput={(e: any) => setDireccion(e.target.value)}
                   ></IonInput>

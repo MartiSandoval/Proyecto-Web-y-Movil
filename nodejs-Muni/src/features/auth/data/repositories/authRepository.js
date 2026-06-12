@@ -59,8 +59,9 @@ const actualizarPerfil = async (usuarioId, datosActualizados) => {
   const { data, error } = await supabaseAdmin // <-- CORRECCIÓN CRÍTICA: Era supabaseAdmin, no supabase
     .from('perfiles') 
     .update({
+      correo: datosActualizados.correo,
       telefono: datosActualizados.telefono,
-      direccion: datosActualizados.direccion,
+      direccion: datosActualizados.direccion
     })
     .eq('id', usuarioId)
     .select("id, telefono, direccion")

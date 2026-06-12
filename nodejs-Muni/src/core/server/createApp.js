@@ -15,7 +15,7 @@ const funcionariosRoutes = require("../../features/funcionarios/presentation/rou
 function createApp() {
   const app = express();
   app.use(cors({ 
-  origin: environment.corsOrigin.split(','),
+  origin: environment.corsOrigin,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   credentials: true
   }));

@@ -14,6 +14,8 @@ import { CalendarPicker } from "../components/CalendarPicker/CalendarPicker";
 import { TimeSlotGrid } from "../components/TimeSlotGrid/TimeSlotGrid";
 import { NavButtons } from "../../../../core/presentation/components/molecules/NavButtons/NavButtons";
 import "./AgendarHoraScreen.css";
+import Header from '../../../../core/presentation/components/organisms/Header/Header';
+
 
 const formatFechaLarga = (fecha: string) => {
   if (!fecha) return "";
@@ -82,11 +84,7 @@ export const AgendarHoraScreen = (): JSX.Element => {
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar color="primary" style={{ "--background": "#1a3a6b" }}>
-          <IonTitle>Agendar Hora</IonTitle>
-        </IonToolbar>
-      </IonHeader>
+      <Header simple />
 
       <IonContent className="agendar-content">
         <div className="agendar-layout">

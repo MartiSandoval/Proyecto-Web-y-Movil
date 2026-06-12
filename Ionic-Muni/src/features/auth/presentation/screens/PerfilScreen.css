@@ -1,5 +1,5 @@
 .perfil-container {
-  max-width: 600px;
+  max-width: 1000px;
   margin: 40px auto;
   padding: 0 20px;
 }
@@ -64,3 +64,12 @@
   align-items: center;
   height: 100%;
 }
+/* Breadcrumb */
+.perfil-breadcrumb {
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 8px 24px;
+  font-size: 13px;
+  color: #6b7280;
+}
+.perfil-breadcrumb strong { color: #1a3a6b; }

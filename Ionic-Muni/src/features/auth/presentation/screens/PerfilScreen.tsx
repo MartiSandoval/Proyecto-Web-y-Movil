@@ -12,7 +12,7 @@ import {
   useIonToast,
   IonSpinner
 } from '@ionic/react';
-import { checkmarkCircle, closeCircle, personCircleOutline } from 'ionicons/icons';
+import { checkmarkCircle, chevronForwardOutline, closeCircle, personCircleOutline } from 'ionicons/icons';
 import { useAuth } from '../hooks/useAuth'; 
 import Header from '../../../../core/presentation/components/organisms/Header/Header';
 import Footer from '../../../../core/presentation/components/organisms/Footer/footer';
@@ -27,21 +27,23 @@ const PerfilScreen: React.FC = () => {
 
   const [nombre] = useState(user?.nombre || '');
   const [rut] = useState(user?.rut || '');
+  const [correo, setCorreo] = useState(user?.correo || '');
   const [telefono, setTelefono] = useState(user?.telefono || '');
   const [direccion, setDireccion] = useState(user?.direccion || '');
 
   const isTelefonoValid = telefono.length >= 8 && /^[0-9+ ]+$/.test(telefono);
   const isDireccionValid = direccion.length > 5;
+  const isCorreoValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo);
 
   const manejarGuardar = async () => {
-    if (!isTelefonoValid || !isDireccionValid) {
+    if (!isTelefonoValid || !isDireccionValid || !isCorreoValid) {
       presentToast({ message: 'Por favor, completa los campos correctamente.', duration: 2000, color: 'warning' });
       return;
     }
 
     setGuardando(true);
     try {
-      await actualizarPerfil({ telefono, direccion });
+      await actualizarPerfil({ telefono, direccion, correo } as any);
       
       presentToast({ 
         message: 'Perfil actualizado exitosamente', 
@@ -61,23 +63,22 @@ const PerfilScreen: React.FC = () => {
     <IonPage>
       <Header />
       <IonContent color="light">
+        {/* 1. Miga de Pan (Breadcrumbs) */}
+        <div className="perfil-breadcrumb">
+        &rsaquo; Usted está en: <strong>Editar Perfil</strong>
+        </div>
+        <div style={{ padding: '12px 24px' }}>
+          <button
+            onClick={() => history.push('/tramites')}
+            style={{ background: 'none', border: 'none', color: '#1a3a6b', cursor: 'pointer', fontSize: '14px', fontWeight: 600 }}>
+            ← Volver al Inicio
+          </button>
+        </div>
         {/* 3. AÑADIMOS PADDING BOTTOM PARA SEPARAR EL CONTENIDO DEL FOOTER */}
         <div className="perfil-container" style={{ paddingBottom: '80px' }}>
-          
-          {/* 4. BOTÓN DE VOLVER ATRÁS */}
-          <div style={{ marginBottom: '20px' }}>
-            <button
-              onClick={() => history.goBack()} // Vuelve a la pantalla anterior
-              style={{ background: 'none', border: 'none', color: '#1a3a6b', cursor: 'pointer', fontSize: '14px', fontWeight: 600, display: 'flex', alignItems: 'center' }}
-            >
-              ← Volver atrás
-            </button>
-          </div>
-
           <div className="perfil-header">
             <IonIcon icon={personCircleOutline} className="perfil-header-icon" />
             <h1 className="perfil-header-title">Mi Perfil</h1>
-            <p className="perfil-header-subtitle">Revisa y mantén actualizada tu información de contacto.</p>
           </div>
 
           <IonCard className="perfil-card">
@@ -91,6 +92,24 @@ const PerfilScreen: React.FC = () => {
               <IonLabel position="stacked">RUT</IonLabel>
               <IonInput value={rut} readonly={true} className="perfil-input-readonly" />
             </IonItem>
+            
+            <IonItem lines="full" className="perfil-item-editable">
+              <IonLabel position="stacked">Correo Electrónico</IonLabel>
+              <IonInput 
+                value={correo} 
+                onIonInput={(e) => setCorreo(e.detail.value!)} 
+                placeholder="ejemplo@correo.com"
+                type="email"
+              />
+              {correo.length > 0 && (
+                <IonIcon 
+                  icon={isCorreoValid ? checkmarkCircle : closeCircle} 
+                  color={isCorreoValid ? 'success' : 'danger'} 
+                  slot="end" 
+                  className="perfil-validation-icon"
+                />
+              )}
+            </IonItem>
 
             <IonItem lines="full" className="perfil-item-editable">
               <IonLabel position="stacked">Teléfono de Contacto</IonLabel>
@@ -98,7 +117,7 @@ const PerfilScreen: React.FC = () => {
                 value={telefono} 
                 onIonInput={(e) => setTelefono(e.detail.value!)} 
                 type="tel"
-                placeholder="+56 9 1234 5678"
+                placeholder="9 1234 5678"
               />
               {telefono.length > 0 && (
                 <IonIcon 
@@ -110,12 +129,12 @@ const PerfilScreen: React.FC = () => {
               )}
             </IonItem>
 
-            <IonItem lines="none" className="perfil-item-editable-last">
-              <IonLabel position="stacked">Dirección (Comuna de Santo Domingo)</IonLabel>
+            <IonItem lines="full" className="perfil-item-editable-last">
+              <IonLabel position="stacked">Dirección</IonLabel>
               <IonInput 
                 value={direccion} 
                 onIonInput={(e) => setDireccion(e.detail.value!)} 
-                placeholder="Ej: Los Jazmines 123"
+                placeholder="Ej: Av. Santo Domingo"
               />
               {direccion.length > 0 && (
                 <IonIcon 

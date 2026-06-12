@@ -16,6 +16,16 @@
   display: flex;
   align-items: center;
 }
+/* Breadcrumb */
+.his-breadcrumb {
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 8px 24px;
+  font-size: 13px;
+  color: #6b7280;
+}
+.his-breadcrumb strong { color: #1a3a6b; }
+
 
 .historial-container {
   padding: 20px 40px;
