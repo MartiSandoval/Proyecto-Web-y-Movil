@@ -4,9 +4,6 @@ import { useAuth } from '../hooks/useAuth';
 
 import { 
   IonPage, 
-  IonHeader, 
-  IonToolbar, 
-  IonTitle, 
   IonContent, 
   IonInput, 
   IonButton, 
@@ -18,41 +15,32 @@ import {
   IonSelect,
   IonSelectOption,
   IonCheckbox,
-  IonText
+  IonText,
+  IonTitle
 } from '@ionic/react';
 import { lockClosedOutline, eyeOutline, calendarOutline, eyeOffOutline } from 'ionicons/icons';
 import './LoginScreen.css';
 import Header from '../../../../core/presentation/components/organisms/Header/Header';
-const municipalidadLogo = "/assets/logoMuni.png";
 
-
+// Utilidades de validación
 const validarRut = (rut: string) => {
-  const [num, dv] = rut.split("-");
-  //let num = numero;
-  if (num.length < 7 || num.length > 8 ) {
-    return false;
-  }
-  if (dv.length > 1) {
-    return false;
-  }
-  return /^[0-9]+-[0-9kK]$/.test(rut);
+  return /^\d{7,8}-[\dkK]$/i.test(rut);
 };
 
 const validarCorreo = (email: string) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  };
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
 
 const validarTel = (telefono: string) => {
-  if (telefono.length == 9) {
-    return true;
-  }
-  if (!isNaN(Number(telefono))) {
-    return false;
-  }
-}
+  // Acepta exactamente 9 dígitos numéricos
+  return /^\d{9}$/.test(telefono);
+};
 
 const RegisterScreen: React.FC = () => {
   const { register } = useAuth();
+  const history = useHistory();
+
+  // Estados de datos
   const [nombre, setNombre] = useState('');
   const [rut, setRut] = useState('');
   const [password, setPassword] = useState('');
@@ -61,47 +49,48 @@ const RegisterScreen: React.FC = () => {
   const [telefono, setTelefono] = useState('');
   const [fechaNacimiento, setFechaNacimiento] = useState('');
   const [genero, setGenero] = useState('');
-  const [region, setRegion] = useState('');
-  const [comuna, setComuna] = useState('');
+  const [direccion, setDireccion] = useState('');
   const [terminos, setTerminos] = useState(false);
+
+  // Estados de error
+  const [nombreError, setNombreError] = useState('');
   const [rutError, setRutError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [confirmError, setConfirmError] = useState('');
-  const [terminosError, setTerminosError] = useState('');
-  const [nombreError, setNombreError] = useState('');
   const [correoError, setCorreoError] = useState('');
-  const [regionError, setRegionError] = useState('');
-  const [comunaError, setComunaError] = useState('');
   const [telefonoError, setTelefonoError] = useState('');
+  const [direccionError, setDireccionError] = useState('');
+  const [terminosError, setTerminosError] = useState('');
   const [registroError, setRegistroError] = useState('');
+  
+  // Estados de UI
   const [cargando, setCargando] = useState(false);
   const [mostrarContra, setMostrarContra] = useState(false);
   const [mostrarContraConfirm, setMostrarContraConfirm] = useState(false);
-  const history = useHistory();
-  
-
 
   const handleRegister = async () => {
+    // 1. Limpiar errores previos
+    setNombreError('');
     setRutError('');
     setPasswordError('');
     setConfirmError('');
-    setTerminosError('');
-    setNombreError('');
     setCorreoError('');
-    setRegionError('');
-    setComunaError('');
     setTelefonoError('');
+    setDireccionError('');
+    setTerminosError('');
     setRegistroError('');
 
     let esValido = true;
     
-    // trim elimina los espacios en blanco
+    // 2. Sanitizar (quitar espacios en los extremos)
+    const nombreLimpio = nombre.trim();
     const rutLimpio = rut.trim();
     const passLimpio = password.trim();
-    const nombreLimpio = nombre.trim();
     const correoLimpio = correo.trim();
     const telLimpio = telefono.trim();
+    const direccionLimpia = direccion.trim();
 
+    // 3. Validaciones individuales
     if (!nombreLimpio) {
       setNombreError('El nombre completo es obligatorio.');
       esValido = false;
@@ -140,41 +129,39 @@ const RegisterScreen: React.FC = () => {
       setTelefonoError('El teléfono es obligatorio.');
       esValido = false;
     } else if (!validarTel(telLimpio)) {
-      setTelefonoError('El teléfono debe tener exactamente 9 dígitos numéricos.')
+      setTelefonoError('El teléfono debe tener exactamente 9 dígitos numéricos.');
       esValido = false;
     }
 
-    if (!region) {
-      setRegionError('Debe seleccionar una región.');
+    if (!direccionLimpia) {
+      setDireccionError('La dirección es obligatoria.');
+      esValido = false;
+    } else if (direccionLimpia.length < 5) {
+      setDireccionError('La dirección debe ser más específica.');
       esValido = false;
     }
-    if (!comuna) {
-      setComunaError('Debe seleccionar una comuna.');
-      esValido = false;
-    }
-
-    
 
     if (!terminos) {
       setTerminosError('Debe aceptar los términos y condiciones.');
       esValido = false;
     }
 
+    // 4. Ejecutar registro
     if (esValido) {
       try {
         setCargando(true);
         await register({
-          email: correo.trim(),
-          password: password.trim(),
-          nombre: nombre.trim(),
-          rut: rut.trim(),
-          telefono: telefono.trim() || undefined,
+          nombre: nombreLimpio,
+          rut: rutLimpio,
+          email: correoLimpio,
+          password: passLimpio,
+          direccion: direccionLimpia,
+          telefono: telLimpio,
           fecha_nacimiento: fechaNacimiento || undefined,
           genero: genero || undefined,
-          region: region || undefined,
-          comuna: comuna || undefined,
         });
-        window.location.replace('/tramites');
+        // Usar history de React Router en vez de window.location para una navegación más rápida (SPA)
+        history.replace('/tramites');
       } catch (err: any) {
         const msg: string = err.message || 'Error al crear la cuenta';
         if (msg.includes('RUT ya está registrado')) {
@@ -217,7 +204,8 @@ const RegisterScreen: React.FC = () => {
               <div className="input-group">
                 <IonLabel className="input-label">RUT</IonLabel>
                 <IonText color="medium"><p className="input-helper">Sin puntos y con guión</p></IonText>
-                <IonItem className="custom-input" color={rutError ? "danger": ""}lines="none">
+                {/* CORRECCIÓN: Se eliminó color={rutError ? "danger" : ""} */}
+                <IonItem className="custom-input" lines="none">
                   <IonInput 
                     placeholder="Ej: 21714338-9"
                     value={rut}
@@ -227,10 +215,25 @@ const RegisterScreen: React.FC = () => {
                 {rutError && <IonText color="danger"><p style={{ fontSize: '12px', marginTop: '5px' }}>{rutError}</p></IonText>}
               </div>
 
+              {/* Correo Electrónico */}
+              <div className="input-group">
+                <IonLabel className="input-label">Correo Electrónico</IonLabel>
+                <IonItem className="custom-input" lines="none">
+                  <IonInput 
+                    type="email"
+                    placeholder="ejemplo@gmail.com"
+                    value={correo}
+                    onIonInput={(e: any) => setCorreo(e.target.value)}
+                  ></IonInput>
+                </IonItem>
+                {correoError && <IonText color="danger"><p style={{ fontSize: '12px', marginTop: '5px' }}>{correoError}</p></IonText>}
+              </div>
+
               {/* Contraseña */}
               <div className="input-group">
                 <IonLabel className="input-label">Contraseña</IonLabel>
-                <IonItem className="custom-input" color={passwordError ? "danger": ""}lines="none">
+                {/* CORRECCIÓN: Se eliminó color={passwordError ? "danger" : ""} */}
+                <IonItem className="custom-input" lines="none">
                   <IonIcon slot="start" icon={lockClosedOutline} color="medium" />
                   <IonInput 
                     type={mostrarContra ? "text" : "password"}
@@ -252,11 +255,12 @@ const RegisterScreen: React.FC = () => {
               {/* Confirmar Contraseña */}
               <div className="input-group">
                 <IonLabel className="input-label">Confirmar Contraseña</IonLabel>
-                <IonItem className="custom-input" color={confirmError ? "danger": ""}lines="none">
+                {/* CORRECCIÓN: Se eliminó color={confirmError ? "danger" : ""} */}
+                <IonItem className="custom-input" lines="none">
                   <IonIcon slot="start" icon={lockClosedOutline} color="medium" />
                   <IonInput 
                     type={mostrarContraConfirm ? "text" : "password"}
-                    placeholder="Contraseña" 
+                    placeholder="Repita su contraseña" 
                     value={confirmPassword}
                     onIonInput={(e: any) => setConfirmPassword(e.target.value)}
                   ></IonInput>
@@ -271,18 +275,18 @@ const RegisterScreen: React.FC = () => {
                 {confirmError && <IonText color="danger"><p style={{ fontSize: '12px', marginTop: '5px' }}>{confirmError}</p></IonText>}
               </div>
 
-              {/* Correo Electrónico */}
+              {/* Dirección */}
               <div className="input-group">
-                <IonLabel className="input-label">Correo Electrónico</IonLabel>
+                <IonLabel className="input-label">Dirección (Comuna de Santo Domingo)</IonLabel>
                 <IonItem className="custom-input" lines="none">
                   <IonInput 
-                    type="email"
-                    placeholder="example@gmail.com"
-                    value={correo}
-                    onIonInput={(e: any) => setCorreo(e.target.value)}
+                    type="text"
+                    placeholder="Ej: Los Jazmines 123"
+                    value={direccion}
+                    onIonInput={(e: any) => setDireccion(e.target.value)}
                   ></IonInput>
                 </IonItem>
-                {correoError && <IonText color="danger"><p style={{ fontSize: '12px', marginTop: '5px' }}>{correoError}</p></IonText>}
+                {direccionError && <IonText color="danger"><p style={{ fontSize: '12px', marginTop: '5px' }}>{direccionError}</p></IonText>}
               </div>
 
               {/* Número de Teléfono */}
@@ -291,18 +295,18 @@ const RegisterScreen: React.FC = () => {
                 <IonItem className="custom-input" lines="none">
                   <IonInput 
                     type="tel"
-                    placeholder="998809831"
+                    placeholder="Ej: 998809831"
                     value={telefono}
                     onIonInput={(e: any) => setTelefono(e.target.value)}
+                    maxlength={9}
                   ></IonInput>
                 </IonItem>
                 {telefonoError && <IonText color="danger"><p style={{ fontSize: '12px', marginTop: '5px' }}>{telefonoError}</p></IonText>}
-
               </div>
 
               {/* Fecha de Nacimiento */}
               <div className="input-group">
-                <IonLabel className="input-label">Fecha de nacimiento</IonLabel>
+                <IonLabel className="input-label">Fecha de nacimiento (Opcional)</IonLabel>
                 <IonItem className="custom-input" lines="none">
                   <IonInput 
                     type="date"
@@ -315,7 +319,7 @@ const RegisterScreen: React.FC = () => {
 
               {/* Género */}
               <div className="input-group">
-                <IonLabel className="input-label">Género</IonLabel>
+                <IonLabel className="input-label">Género (Opcional)</IonLabel>
                 <IonItem className="custom-input" lines="none">
                   <IonSelect 
                     placeholder="Seleccione una opción" 
@@ -331,73 +335,29 @@ const RegisterScreen: React.FC = () => {
                 </IonItem>
               </div>
 
-              {/* Región */}
-              <div className="input-group">
-                <IonLabel className="input-label">Región</IonLabel>
-                <IonItem className="custom-input" lines="none">
-                  <IonSelect 
-                    placeholder="Selecciona una región" 
-                    value={region} 
-                    onIonChange={(e) => setRegion(e.detail.value)}
-                    interface="popover"
-                  >
-                    <IonSelectOption value="arica">Arica y Parinacota</IonSelectOption>
-                    <IonSelectOption value="tarapaca">Tarapacá</IonSelectOption>
-                    <IonSelectOption value="antofagasta">Antofagasta</IonSelectOption>
-                    <IonSelectOption value="atacama">Atacama</IonSelectOption>
-                    <IonSelectOption value="coquimbo">Coquimbo</IonSelectOption>
-                    <IonSelectOption value="valparaiso">Valparaíso</IonSelectOption>
-                    <IonSelectOption value="capital">Metropolitana</IonSelectOption>
-                    <IonSelectOption value="ohiggins">O'higgins</IonSelectOption>
-                    <IonSelectOption value="maule">Maule</IonSelectOption>
-                    <IonSelectOption value="nuble">Ñuble</IonSelectOption>
-                    <IonSelectOption value="biobio">Biobío</IonSelectOption>
-                    <IonSelectOption value="araucania">La Araucanía</IonSelectOption>
-                    <IonSelectOption value="rios">Los Ríos</IonSelectOption>
-                    <IonSelectOption value="lagos">Los Lagos</IonSelectOption>
-                    <IonSelectOption value="aysen">Aysén</IonSelectOption>
-                    <IonSelectOption value="magallanes">Magallanes</IonSelectOption>
-                  </IonSelect>
-                </IonItem>
-                {regionError && <IonText color="danger"><p style={{ fontSize: '12px', marginTop: '5px' }}>{regionError}</p></IonText>}
-              </div>
-
-              {/* Comuna */}
-              <div className="input-group">
-                <IonLabel className="input-label">Comuna</IonLabel>
-                <IonItem className="custom-input" lines="none">
-                  <IonSelect 
-                    placeholder="Selecciona una comuna" 
-                    value={comuna} 
-                    onIonChange={(e) => setComuna(e.detail.value)}
-                    interface="popover"
-                  >
-                    <IonSelectOption value="santo_domingo">Santo Domingo</IonSelectOption>
-                    <IonSelectOption value="buin">Buin</IonSelectOption>
-                    <IonSelectOption value="vina">Viña del Mar</IonSelectOption>
-                    {/* Agregar las demás comunas luego */}
-                  </IonSelect>
-                </IonItem>
-                {comunaError && <IonText color="danger"><p style={{ fontSize: '12px', marginTop: '5px' }}>{comunaError}</p></IonText>}
-              </div>
-
               {/* Términos y Condiciones */}
-              <div className="input-group" style={{ display: 'flex', alignItems: 'center', marginTop: '20px', marginBottom: '30px' }}>
-                <IonCheckbox 
-                  color={terminosError ? "danger": ""}
-                  checked={terminos} 
-                  onIonChange={(e) => setTerminos(e.detail.checked)} 
-                  style={{ marginRight: '10px' }}
-                />
-                <IonLabel style={{ fontSize: '14px', fontWeight: 'bold', color: '#373737' }}>
-                  Términos y Condiciones
-                </IonLabel>
-                {terminosError && <IonText color="danger"><p style={{ fontSize: '12px', marginTop: '5px' }}> {terminosError} </p></IonText>}
+              {/* CORRECCIÓN: Se reestructuró para quitar el position="absolute" y evitar sobreposiciones */}
+              <div className="input-group" style={{ marginTop: '20px', marginBottom: '30px' }}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <IonCheckbox 
+                    checked={terminos} 
+                    onIonChange={(e) => setTerminos(e.detail.checked)} 
+                    style={{ marginRight: '10px' }}
+                  />
+                  <IonLabel style={{ fontSize: '14px', fontWeight: 'bold', color: '#373737', whiteSpace: 'normal' }}>
+                    Acepto los Términos y Condiciones
+                  </IonLabel>
+                </div>
+                {terminosError && (
+                  <IonText color="danger">
+                    <p style={{ fontSize: '12px', marginTop: '8px', marginBottom: '0' }}>{terminosError}</p>
+                  </IonText>
+                )}
               </div>
 
               {registroError && (
                 <IonText color="danger">
-                  <p style={{ fontSize: '13px', textAlign: 'center', marginBottom: '10px' }}>{registroError}</p>
+                  <p style={{ fontSize: '13px', textAlign: 'center', marginBottom: '15px' }}>{registroError}</p>
                 </IonText>
               )}
 
@@ -408,7 +368,7 @@ const RegisterScreen: React.FC = () => {
                 onClick={handleRegister}
                 disabled={cargando}
               >
-                {cargando ? 'Creando cuenta...' : 'Crear Cuenta'}
+                {cargando ? 'Creando cuenta...' : 'CREAR CUENTA'}
               </IonButton>
 
             </IonCardContent>

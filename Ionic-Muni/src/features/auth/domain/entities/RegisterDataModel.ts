@@ -6,6 +6,6 @@ export interface RegisterDataModel {
   telefono?: string;
   fecha_nacimiento?: string;
   genero?: string;
-  region?: string;
-  comuna?: string;
+  direccion: string; // <-- NUEVO
+
 }
