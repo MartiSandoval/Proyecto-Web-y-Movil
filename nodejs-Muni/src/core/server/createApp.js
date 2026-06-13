@@ -1,7 +1,10 @@
 const express = require("express");
 const cors = require("cors");
+const helmet = require("helmet");
+const compression = require("compression");
 const { environment } = require("../config/environment");
 const { errorHandler, notFound } = require("../middleware/errorHandler");
+const { sanitizeBody } = require("../middleware/sanitizeMiddleware");
 
 const healthRoutes = require("../../features/health/presentation/routes/healthRoutes");
 const authRoutes = require("../../features/auth/presentation/routes/authRoutes");
@@ -14,12 +17,24 @@ const funcionariosRoutes = require("../../features/funcionarios/presentation/rou
 
 function createApp() {
   const app = express();
-  app.use(cors({ 
-  origin: environment.corsOrigin,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  credentials: true
+
+  app.use(helmet());
+  app.use(compression());
+
+  app.use(cors({
+    origin: (origin, callback) => {
+      if (!origin || environment.corsOrigin.includes(origin)) {
+        return callback(null, true);
+      }
+      callback(new Error(`CORS: origen no permitido: ${origin}`));
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
   }));
+
   app.use(express.json());
+  app.use(sanitizeBody);
 
   app.use("/", healthRoutes);
   app.use("/auth", authRoutes);

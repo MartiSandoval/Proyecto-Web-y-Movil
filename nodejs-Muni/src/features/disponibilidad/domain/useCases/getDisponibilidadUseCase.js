@@ -26,13 +26,15 @@ async function getDisponibilidadUseCase(tramiteId, fecha) {
     return { fecha, slots: [] };
   }
 
-  const bloqueos = await repository.findBloqueos(tramiteId, fecha);
+  const [bloqueos, citasOcupadas] = await Promise.all([
+    repository.findBloqueos(tramiteId, fecha),
+    repository.findCitasOcupadas(tramiteId, fecha),
+  ]);
+
   const horasBloqueadas = new Set(
     (bloqueos || []).map((b) => (b.hora ? b.hora.slice(0, 5) : null))
   );
   const diaCompleto = horasBloqueadas.has(null);
-
-  const citasOcupadas = await repository.findCitasOcupadas(tramiteId, fecha);
   const horasOcupadas = new Set((citasOcupadas || []).map((c) => c.hora.slice(0, 5)));
 
   const slots = [];

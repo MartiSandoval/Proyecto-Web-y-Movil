@@ -51,16 +51,15 @@ async function findByUsuario(usuarioId, page = 1, limit = 10) {
   const from = (page - 1) * limit;
   const to = from + limit - 1;
 
-  const { data, error } = await supabase
+  const { data, error, count } = await supabase
     .from("citas")
-    // Reemplaza estos campos con los nombres EXACTOS de tus columnas si difieren
-    .select("id, fecha, hora, estado, tramite_id, tramites(nombre)") 
+    .select("id, fecha, hora, estado, tramite_id, tramites(nombre)", { count: "exact" })
     .eq("usuario_id", usuarioId)
     .order("fecha", { ascending: false })
-    .range(from, to); // Paginación nativa de Supabase
+    .range(from, to);
 
   if (error) throw error;
-  return data;
+  return { data, total: count, page, limit };
 }
 
 async function findByTramite(tramiteId, fecha) {

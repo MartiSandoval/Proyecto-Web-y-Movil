@@ -372,3 +372,35 @@ Caso #7:
 Caso #15:
 
 <img src="https://github.com/MartiSandoval/Proyecto-Web-y-Movil/blob/main/imagenes-pruebas/15%20Acceder%20a%20tramites.png" alt="Test 15" width="300" height="300">
+
+---
+
+## EF 3 — Seguridad Avanzada en API
+
+Para reforzar la seguridad de la API se implementaron las siguientes medidas:
+
+**Headers de seguridad HTTP:** se incorporó el middleware `helmet`, que agrega automáticamente un conjunto de headers HTTP de seguridad en cada respuesta del servidor. Entre ellos se incluyen `Content-Security-Policy` (restringe desde qué fuentes el navegador puede cargar recursos, previniendo inyección de scripts externos), `X-Frame-Options` (impide que la aplicación sea embebida en iframes de otros dominios, bloqueando clickjacking), `X-Content-Type-Options` (evita que el navegador adivine el tipo de contenido de una respuesta) y `Strict-Transport-Security` (fuerza el uso de HTTPS).
+
+**CORS restringido:** la configuración anterior permitía peticiones desde cualquier origen (`*`). Esto fue reemplazado por una lista explícita de orígenes autorizados. En desarrollo se permite solo `localhost` en los puertos usados por el frontend; en producción se leen desde la variable de entorno `CORS_ORIGIN`. Cualquier petición desde un dominio no autorizado es rechazada antes de llegar a los controladores. Un CORS abierto con `*` permite que sitios externos realicen peticiones autenticadas a la API usando la sesión del usuario, lo que facilita ataques CSRF.
+
+**Rate limiting en autenticación:** se aplicó un límite de 10 intentos por IP cada 15 minutos sobre los endpoints de login y registro. Al superarlo, la API responde con `429 Too Many Requests`. Sin este control, un atacante puede automatizar miles de intentos por segundo para adivinar contraseñas por fuerza bruta.
+
+**Sanitización global contra XSS:** se creó un middleware que intercepta el `body` de cada petición antes de que llegue a cualquier use case, recorre todos los campos recursivamente y escapa los caracteres HTML peligrosos. Esto protege todos los endpoints de la API de manera uniforme, independientemente de si tienen validación propia o no.
+
+**Protección de rutas de sucursales:** las rutas de creación, edición y eliminación de sucursales no requerían autenticación, lo que permitía modificar datos críticos sin credenciales. Se les agregó verificación de JWT y restricción por rol (`jefe_sucursal` o `admin`).
+
+**Cifrado de contraseñas con bcrypt:** las contraseñas nunca se almacenan en texto plano. Se guarda únicamente el hash generado con bcrypt usando 12 salt rounds en la columna `password_hash`. La verificación en el login se realiza comparando el hash almacenado contra la contraseña ingresada, lo que garantiza que incluso con acceso directo a la base de datos las contraseñas no sean recuperables.
+
+**Protección contra inyección SQL:** las consultas a la base de datos se realizan exclusivamente a través del SDK de Supabase, que parametriza automáticamente todos los valores. Esto elimina la posibilidad de inyección SQL, ya que ningún valor proveniente del usuario se interpola directamente en una consulta.
+
+---
+
+## EF 4 — Optimización de Consultas y Respuesta Eficiente
+
+Para mejorar el rendimiento de la API se implementaron las siguientes optimizaciones:
+
+**Consultas paralelas en disponibilidad:** el endpoint de disponibilidad de horarios necesita consultar dos fuentes independientes: los bloqueos configurados por funcionarios y las citas ya agendadas. Estas consultas se ejecutaban de forma secuencial, es decir, la segunda esperaba que la primera terminara antes de iniciarse. Dado que son independientes entre sí, se migraron a ejecución paralela, reduciendo el tiempo total de respuesta al de la consulta más lenta en lugar de la suma de ambas. Este endpoint es el más llamado durante el flujo de agendamiento, ya que se invoca cada vez que el usuario selecciona una fecha.
+
+**Compresión gzip de respuestas:** se habilitó compresión automática de todas las respuestas HTTP usando gzip o deflate según lo que soporte el cliente. Las respuestas JSON de tamaño mediano (listas de trámites, historial de citas con joins) se reducen típicamente entre un 60% y 80% en tamaño, lo que disminuye el tiempo de transferencia y el consumo de datos, especialmente relevante para usuarios en dispositivos móviles.
+
+**Paginación con conteo total:** el endpoint de historial de citas devolvía únicamente el arreglo de resultados sin indicar cuántos registros existían en total. Se incorporó el conteo exacto en la misma consulta, evitando una segunda consulta adicional, y se expone junto con los datos, la página actual y el límite por página. Esto permite al frontend calcular el número total de páginas y construir una navegación de paginación correcta sin necesidad de cargar todos los registros.

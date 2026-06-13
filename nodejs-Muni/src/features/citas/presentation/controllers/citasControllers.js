@@ -39,8 +39,10 @@ async function actualizarEstadoCita(req, res, next) {
 
 async function obtenerMisCitas(req, res, next) {
   try {
-    const citas = await getMisCitasUseCase(req.user.id);
-    res.status(200).json(citas);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const result = await getMisCitasUseCase(req.user.id, page, limit);
+    res.status(200).json(result);
   } catch (err) {
     next(err);
   }
