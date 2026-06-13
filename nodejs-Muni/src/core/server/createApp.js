@@ -14,6 +14,7 @@ const citasRoutes = require("../../features/citas/presentation/routes/citasRoute
 const sucursalesRoutes = require("../../features/sucursales/presentation/routes/sucursalesRoutes");
 const bloqueosRoutes = require("../../features/bloqueos/presentation/routes/bloqueosRoutes");
 const funcionariosRoutes = require("../../features/funcionarios/presentation/routes/funcionariosRoutes");
+const notificacionesRoutes = require("../../features/notificaciones/presentation/routes/notificacionesRoute");
 
 function createApp() {
   const app = express();
@@ -44,6 +45,9 @@ function createApp() {
   app.use("/sucursales", sucursalesRoutes);
   app.use("/bloqueos", bloqueosRoutes);
   app.use("/funcionarios", funcionariosRoutes);
+  
+  // 2. CORRECCIÓN: Montamos las rutas en "/notificaciones"
+  app.use("/notificaciones", notificacionesRoutes);
 
   app.use(notFound);
   app.use(errorHandler);
