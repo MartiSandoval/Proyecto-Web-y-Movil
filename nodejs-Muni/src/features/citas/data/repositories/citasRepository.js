@@ -7,7 +7,7 @@ const cancelarCitaCiudadano = async (citaId, usuarioId) => {
     .update({ estado: 'cancelado' }) // Asegúrate de que este texto coincida con tu BD
     .eq('id', citaId)
     .eq('usuario_id', usuarioId) // CANDADO: Solo si es el dueño
-    .select('id', 'estado')
+    .select('id, estado')
     .single();
 
   if (error || !data) {
@@ -20,7 +20,7 @@ async function insertCita({ usuarioId, tramiteId, fecha, hora }) {
   const { data, error } = await supabase
     .from("citas")
     .insert({ id: uuidv4(), usuario_id: usuarioId, tramite_id: tramiteId, fecha, hora, estado: "pendiente" })
-    .select('id', 'fecha', 'hora', 'estado')
+    .select('id, fecha, hora, estado')
     .single();
   if (error) throw error;
   return data;
@@ -41,7 +41,7 @@ async function updateEstado(id, estado) {
     .from("citas")
     .update({ estado })
     .eq("id", id)
-    .select('id', 'estado')
+    .select('id, estado')
     .single();
   if (error) throw error;
   return data;

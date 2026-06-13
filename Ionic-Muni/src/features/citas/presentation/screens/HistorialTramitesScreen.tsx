@@ -11,7 +11,7 @@ import {
   IonIcon,
   IonSpinner,
   useIonToast,
-  IonAlert,
+  IonModal,
   IonButton,
   IonSegment,
   IonSegmentButton,
@@ -21,10 +21,10 @@ import {
   wifi,
   timeOutline,
   checkmarkCircleOutline,
-  chevronForwardOutline,
   businessOutline,
   clipboardOutline,
-  closeCircleOutline
+  closeCircleOutline,
+  alertCircleOutline
 } from 'ionicons/icons';
 import type { CitaHistorialModel } from '../../domain/entities/CitaHistorialModel';
 import { useCitasData } from '../../composition/CitasModule';
@@ -239,24 +239,35 @@ const HistorialTramitesScreen: React.FC = () => {
         <Footer />
       </IonContent>
 
-      <IonAlert
+      <IonModal
         isOpen={mostrarAlerta}
-        onDidDismiss={() => setMostrarAlerta(false)}
-        header="¿Cancelar cita?"
-        message="Esta acción no se puede deshacer. Perderás tu hora reservada."
-        buttons={[
-          {
-            text: 'No, mantener',
-            role: 'cancel',
-            handler: () => setCitaSeleccionada(null)
-          },
-          {
-            text: 'Sí, cancelar',
-            role: 'confirm',
-            handler: confirmarCancelacion
-          }
-        ]}
-      />
+        onDidDismiss={() => { setMostrarAlerta(false); setCitaSeleccionada(null); }}
+        className="confirm-modal"
+      >
+        <div className="confirm-modal-content">
+          <div className="confirm-modal-icon">
+            <IonIcon icon={alertCircleOutline} />
+          </div>
+          <h2 className="confirm-modal-title">¿Cancelar cita?</h2>
+          <p className="confirm-modal-message">
+            Esta acción no se puede deshacer.<br />Perderás tu hora reservada.
+          </p>
+          <div className="confirm-modal-actions">
+            <button
+              className="confirm-modal-btn confirm-modal-btn--secondary"
+              onClick={() => { setMostrarAlerta(false); setCitaSeleccionada(null); }}
+            >
+              No, mantener
+            </button>
+            <button
+              className="confirm-modal-btn confirm-modal-btn--danger"
+              onClick={confirmarCancelacion}
+            >
+              Sí, cancelar
+            </button>
+          </div>
+        </div>
+      </IonModal>
 
     </IonPage>
   );

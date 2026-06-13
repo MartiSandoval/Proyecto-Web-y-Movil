@@ -7,16 +7,13 @@ async function crearCitaUseCase(usuarioId, { tramite_id, fecha, hora }) {
     throw err;
   }
 
-  // 1. PRIMERO guardamos la cita
   const nuevaCita = await repository.insertCita({ usuarioId, tramiteId: tramite_id, fecha, hora });
 
-  // 2. DESPUÉS lanzamos la notificación al admin
-  await notificacionesRepo.crearNotificacion(
+  notificacionesRepo.crearNotificacion(
     "Nueva Cita Agendada",
     `Un ciudadano ha agendado una nueva cita. Revisa el calendario para más detalles.`
-  );
+  ).catch(() => {});
 
-  // 3. Retornamos la cita creada
   return nuevaCita;
 }
 

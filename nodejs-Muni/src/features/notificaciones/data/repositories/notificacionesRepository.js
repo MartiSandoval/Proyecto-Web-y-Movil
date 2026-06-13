@@ -31,4 +31,15 @@ async function marcarTodasLeidas() {
   return data;
 }
 
-module.exports = { crearNotificacion, obtenerNotificaciones, marcarTodasLeidas };
+async function marcarUnaLeida(id) {
+  const { data, error } = await supabaseAdmin
+    .from('notificaciones')
+    .update({ leida: true })
+    .eq('id', id)
+    .select('id')
+    .single();
+  if (error) throw new Error("Error al marcar notificación como leída");
+  return data;
+}
+
+module.exports = { crearNotificacion, obtenerNotificaciones, marcarTodasLeidas, marcarUnaLeida };

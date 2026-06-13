@@ -1,22 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { IonIcon, IonBadge, IonPopover, IonList, IonItem, IonLabel, IonButton } from '@ionic/react';
-import { notificationsOutline } from 'ionicons/icons';
+import { IonIcon, IonBadge, IonPopover } from '@ionic/react';
+import { notificationsOutline, calendarOutline, closeOutline } from 'ionicons/icons';
 import httpClient from '../../../../../network/httpClient';
 import './NotificacionesAdmin.css';
 
+interface Notificacion {
+  id: string;
+  titulo: string;
+  mensaje: string;
+  leida: boolean;
+  created_at: string;
+}
+
 const NotificacionesAdmin: React.FC = () => {
-  const [notificaciones, setNotificaciones] = useState<any[]>([]);
-  const [popoverState, setPopoverState] = useState({ show: false, event: undefined });
+  const [notificaciones, setNotificaciones] = useState<Notificacion[]>([]);
+  const [popoverState, setPopoverState] = useState({ show: false, event: undefined as any });
 
   const fetchNotificaciones = async () => {
     try {
       const response: any = await httpClient.get('/notificaciones');
-      const arregloNotificaciones = Array.isArray(response) ? response : (response.data || []);
-      
-      const soloNoLeidas = arregloNotificaciones.filter((n: any) => !n.leida);
-      setNotificaciones(soloNoLeidas);
-    } catch (error) {
-      console.error("Error cargando notificaciones", error);
+      const arr: Notificacion[] = Array.isArray(response) ? response : (response.data || []);
+      setNotificaciones(arr.filter(n => !n.leida));
+    } catch {
+      // silencioso
     }
   };
 
@@ -26,66 +32,78 @@ const NotificacionesAdmin: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Función para marcar todas como leídas y borrarlas de la vista
-  const marcarTodasComoLeidas = async () => {
-    try {
-      await httpClient.put('/notificaciones/leer-todas');
-      
-      // Vaciamos el arreglo para que desaparezcan inmediatamente de la pantalla
-      setNotificaciones([]);
-    } catch (error) {
-      console.error("Error al marcar como leídas", error);
-    }
+  const descartarUna = (id: string) => {
+    setNotificaciones(prev => prev.filter(n => n.id !== id));
+    httpClient.put(`/notificaciones/${id}/leer`).catch(() => {});
   };
 
-  const noLeidas = notificaciones.length;
+  const descartarTodas = () => {
+    setNotificaciones([]);
+    httpClient.put('/notificaciones/leer-todas').catch(() => {});
+  };
+
+  const formatearFecha = (iso: string) => {
+    const d = new Date(iso);
+    return d.toLocaleDateString('es-CL', { day: '2-digit', month: 'short', year: 'numeric' });
+  };
 
   return (
     <>
-      <IonButton fill="clear" onClick={(e: any) => setPopoverState({ show: true, event: e })} className="notificaciones-btn">
-        <IonIcon icon={notificationsOutline} style={{ color: '#ffffff', fontSize: '24px' }} />
-        {noLeidas > 0 && (
-          <IonBadge color="danger" className="notificaciones-badge">
-            {noLeidas}
-          </IonBadge>
+      <button
+        className="notif-trigger-btn"
+        onClick={(e: any) => setPopoverState({ show: true, event: e })}
+      >
+        <IonIcon icon={notificationsOutline} className="notif-trigger-icon" />
+        {notificaciones.length > 0 && (
+          <span className="notif-badge">{notificaciones.length}</span>
         )}
-      </IonButton>
+      </button>
 
       <IonPopover
         isOpen={popoverState.show}
         event={popoverState.event}
         onDidDismiss={() => setPopoverState({ show: false, event: undefined })}
+        className="notif-popover"
       >
-        <div className="notificaciones-header">
-          <h3 className="notificaciones-title">Notificaciones</h3>
-          {noLeidas > 0 && (
-            <button className="notificaciones-leer-btn" onClick={marcarTodasComoLeidas}>
-              Limpiar todas
-            </button>
-          )}
-        </div>
+        <div className="notif-panel">
+          <div className="notif-panel-header">
+            <span className="notif-panel-title">Notificaciones</span>
+            {notificaciones.length > 0 && (
+              <button className="notif-limpiar-btn" onClick={descartarTodas}>
+                Limpiar todas
+              </button>
+            )}
+          </div>
 
-        <IonList style={{ width: '400px', padding: 0 }}>
-          {notificaciones.length === 0 ? (
-            <IonItem lines="none"><IonLabel>No hay notificaciones nuevas</IonLabel></IonItem>
-          ) : (
-            notificaciones.map((notif) => (
-              <IonItem 
-                key={notif.id} 
-                lines="full" 
-                className="notificacion-item-unread"
-              >
-                <IonLabel className="ion-text-wrap">
-                  <h2 style={{ fontWeight: 'bold', color: '#003057' }}>{notif.titulo}</h2>
-                  <p>{notif.mensaje}</p>
-                  <p style={{ fontSize: '11px', color: 'gray', marginTop: '4px' }}>
-                    {new Date(notif.created_at).toLocaleDateString('es-CL')}
-                  </p>
-                </IonLabel>
-              </IonItem>
-            ))
-          )}
-        </IonList>
+          <div className="notif-list">
+            {notificaciones.length === 0 ? (
+              <div className="notif-empty">
+                <IonIcon icon={notificationsOutline} className="notif-empty-icon" />
+                <p>Sin notificaciones nuevas</p>
+              </div>
+            ) : (
+              notificaciones.map(notif => (
+                <div key={notif.id} className="notif-item">
+                  <div className="notif-item-icon">
+                    <IonIcon icon={calendarOutline} />
+                  </div>
+                  <div className="notif-item-body">
+                    <p className="notif-item-title">{notif.titulo}</p>
+                    <p className="notif-item-msg">{notif.mensaje}</p>
+                    <p className="notif-item-date">{formatearFecha(notif.created_at)}</p>
+                  </div>
+                  <button
+                    className="notif-item-dismiss"
+                    onClick={() => descartarUna(notif.id)}
+                    title="Descartar"
+                  >
+                    <IonIcon icon={closeOutline} />
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
       </IonPopover>
     </>
   );

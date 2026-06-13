@@ -4,7 +4,17 @@ const notificacionesRepo = require("../../data/repositories/notificacionesReposi
 async function marcarLeidas(req, res, next) {
   try {
     await notificacionesRepo.marcarTodasLeidas();
-    res.status(200).json({ success: true, message: "Notificaciones marcadas como leídas" });
+    res.status(200).json({ success: true });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function marcarUnaLeida(req, res, next) {
+  try {
+    const { id } = req.params;
+    await notificacionesRepo.marcarUnaLeida(id);
+    res.status(200).json({ success: true });
   } catch (err) {
     next(err);
   }
@@ -19,4 +29,4 @@ async function getNotificaciones(req, res, next) {
   }
 }
 
-module.exports = { getNotificaciones, marcarLeidas };
+module.exports = { getNotificaciones, marcarLeidas, marcarUnaLeida };

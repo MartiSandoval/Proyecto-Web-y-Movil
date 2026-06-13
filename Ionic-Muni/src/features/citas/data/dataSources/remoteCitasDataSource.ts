@@ -35,7 +35,7 @@ export const remoteCitasDataSource: CitasDataSourceProtocol = {
   async getMisCitas(): Promise<CitaHistorialDTO[]> {
     try {
       const response = await httpClient.get("/citas/mis-citas");
-      return response.data as CitaHistorialDTO[];
+      return (response.data as { data: CitaHistorialDTO[] }).data;
     } catch (error) {
       throw buildApiError(error, "Error al obtener historial");
     }
