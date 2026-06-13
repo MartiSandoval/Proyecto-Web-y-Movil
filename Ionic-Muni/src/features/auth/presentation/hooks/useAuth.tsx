@@ -1,6 +1,7 @@
 import { createContext, createElement, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { clearToken, getToken } from "../../../../core/auth/authTokenStorage";
+import { clearUserProfile, loadUserProfile, saveUserProfile } from "../../../../core/auth/userProfileStorage";
 import type { AuthUserModel } from "../../domain/entities/AuthUserModel";
 import type { RegisterDataModel } from "../../domain/entities/RegisterDataModel";
 import type { AuthUseCasesProtocol } from "../../domain/useCases/protocols/authUseCasesProtocol";
@@ -30,51 +31,66 @@ export function createAuthProvider(useCases: AuthUseCasesProtocol) {
 
     useEffect(() => {
       const savedToken = getToken();
-      if (savedToken) {
-        useCases
-          .getCurrentUserUseCase(savedToken)
-          .then((userData) => {
-            setUser(userData);
-            setTokenState(savedToken);
-          })
-          .catch(() => {
-            clearToken();
-          })
-          .finally(() => setLoading(false));
-      } else {
+      if (!savedToken) {
         setLoading(false);
+        return;
       }
+
+      // Muestra perfil cacheado de inmediato mientras se verifica el token
+      const cached = loadUserProfile();
+      if (cached) {
+        setUser(cached);
+        setTokenState(savedToken);
+      }
+
+      // Verificación del token en background — controla el estado de carga
+      useCases
+        .getCurrentUserUseCase(savedToken)
+        .then((userData) => {
+          setUser(userData);
+          setTokenState(savedToken);
+          saveUserProfile(userData);
+        })
+        .catch(() => {
+          clearToken();
+          clearUserProfile();
+          setUser(null);
+          setTokenState(null);
+        })
+        .finally(() => setLoading(false));
     }, []);
 
     const login = async (rut: string, password: string) => {
       const session = await useCases.postLoginUseCase(rut, password);
       setTokenState(session.token);
       setUser(session.user);
+      saveUserProfile(session.user);
     };
 
     const register = async (data: RegisterDataModel) => {
       const session = await useCases.postRegisterUseCase(data);
       setTokenState(session.token);
       setUser(session.user);
+      saveUserProfile(session.user);
     };
 
     const logout = () => {
       clearToken();
+      clearUserProfile();
       localStorage.removeItem("isLoggedIn");
       setTokenState(null);
       setUser(null);
     };
 
-    // NUEVO: Llama al backend y luego actualiza el estado global de React
     const actualizarPerfil = async (datos: { correo?: string, telefono?: string; direccion?: string }) => {
-      // 1. Enviamos la petición al backend a través del caso de uso
       await useCases.actualizarPerfilUseCase(datos);
-      
-      // 2. Si es exitoso, actualizamos el estado local (user) para que la UI cambie instantáneamente
-      setUser((prevUser) => prevUser ? { ...prevUser, ...datos } : null);
+      setUser((prevUser) => {
+        const updated = prevUser ? { ...prevUser, ...datos } : null;
+        if (updated) saveUserProfile(updated);
+        return updated;
+      });
     };
 
-    // NUEVO: Agregamos 'actualizarPerfil' al value
     const value: AuthContextType = { user, token, loading, login, register, logout, actualizarPerfil };
 
     return createElement(AuthContext.Provider, { value }, children);

@@ -14,6 +14,8 @@ import { IonButton } from "@ionic/react";
 
 type FiltroTipo = "todos" | "online" | "presencial";
 
+const ITEMS_POR_PAGINA = 8;
+
 export const TramitesScreen = (): JSX.Element => {
   const history = useHistory();
   const { getTramitesUseCase } = useTramites();
@@ -23,6 +25,7 @@ export const TramitesScreen = (): JSX.Element => {
   const [filtroTipo, setFiltroTipo] = useState<FiltroTipo>("todos");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [visibles, setVisibles] = useState(ITEMS_POR_PAGINA);
 
   useEffect(() => {
     getTramitesUseCase()
@@ -49,11 +52,13 @@ export const TramitesScreen = (): JSX.Element => {
   const handleBusqueda = (valor: string) => {
     setBusqueda(valor);
     setFiltrados(aplicarFiltros(valor, filtroTipo, tramites));
+    setVisibles(ITEMS_POR_PAGINA);
   };
 
   const handleFiltroTipo = (tipo: FiltroTipo) => {
     setFiltroTipo(tipo);
     setFiltrados(aplicarFiltros(busqueda, tipo, tramites));
+    setVisibles(ITEMS_POR_PAGINA);
   };
 
   return (
@@ -139,7 +144,7 @@ export const TramitesScreen = (): JSX.Element => {
                   <IonSkeletonText animated style={{ height: "48px", marginTop: "8px" }} />
                 </div>
               ))
-            : filtrados.map((tramite) => (
+            : filtrados.slice(0, visibles).map((tramite) => (
                 <div key={tramite.id} className="tr-card">
                   <div className="tr-card-top">
                     <div className="tr-card-icon">
@@ -165,6 +170,14 @@ export const TramitesScreen = (): JSX.Element => {
                 </div>
               ))}
         </div>
+
+        {!loading && visibles < filtrados.length && (
+          <div style={{ textAlign: "center", padding: "16px 0 8px" }}>
+            <IonButton fill="outline" onClick={() => setVisibles((v) => v + ITEMS_POR_PAGINA)}>
+              Cargar más trámites
+            </IonButton>
+          </div>
+        )}
 
         {!loading && filtrados.length === 0 && !error && (
           <p className="tr-empty">No se encontraron trámites.</p>

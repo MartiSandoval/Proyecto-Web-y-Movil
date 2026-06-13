@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useIonViewWillEnter } from '@ionic/react';
 import { useHistory } from 'react-router-dom';
 import {
@@ -41,6 +41,8 @@ const estadoLabel: Record<string, string> = {
   completado: 'Completado',
 };
 
+const ITEMS_POR_PAGINA = 6;
+
 const HistorialTramitesScreen: React.FC = () => {
   const history = useHistory();
   const [citas, setCitas] = useState<CitaHistorialModel[]>([]);
@@ -48,21 +50,27 @@ const HistorialTramitesScreen: React.FC = () => {
 
   // Extraemos los casos de uso
   const { getMisCitasUseCase, cancelarMiCitaUseCase } = useCitasData();
-  
+
   // Estados para la alerta y toast
   const [presentToast] = useIonToast();
   const [mostrarAlerta, setMostrarAlerta] = useState(false);
   const [citaSeleccionada, setCitaSeleccionada] = useState<string | null>(null);
-  
+
   // Estado para saber qué pestaña está activa
   const [filtro, setFiltro] = useState<'vigentes' | 'canceladas'>('vigentes');
+  const [visibles, setVisibles] = useState(ITEMS_POR_PAGINA);
 
   // Separar las citas usando filter()
   const citasVigentes = citas.filter(cita => cita.estado.toLowerCase() !== 'cancelado');
   const citasCanceladas = citas.filter(cita => cita.estado.toLowerCase() === 'cancelado');
-  
+
   // Decidir qué lista dibujar según la pestaña activa
   const citasAMostrar = filtro === 'vigentes' ? citasVigentes : citasCanceladas;
+  const citasVisibles = citasAMostrar.slice(0, visibles);
+
+  useEffect(() => {
+    setVisibles(ITEMS_POR_PAGINA);
+  }, [filtro]);
   
   const cargarCitas = () => {
     getMisCitasUseCase().then(setCitas);
@@ -144,15 +152,14 @@ const HistorialTramitesScreen: React.FC = () => {
             </div>
           ) : citasAMostrar.length === 0 ? (
             <p style={{ color: '#94a3b8', textAlign: 'center', padding: '40px', backgroundColor: 'white', borderRadius: '8px', border: '1px dashed #cbd5e1' }}>
-              {filtro === 'vigentes' 
-                ? 'No tienes trámites vigentes en este momento.' 
+              {filtro === 'vigentes'
+                ? 'No tienes trámites vigentes en este momento.'
                 : 'No tienes trámites cancelados en tu historial.'}
             </p>
           ) : (
             <IonGrid>
               <IonRow>
-                {/* AQUI SE CAMBIÓ 'citas.map' POR 'citasAMostrar.map' */}
-                {citasAMostrar.map((cita) => {
+                {citasVisibles.map((cita) => {
                   const estadoNormalizado = cita.estado.toLowerCase();
                   const label = estadoLabel[estadoNormalizado] ?? cita.estado;
                   const terminado = estadoNormalizado === 'completado';
@@ -233,6 +240,14 @@ const HistorialTramitesScreen: React.FC = () => {
                 })}
               </IonRow>
             </IonGrid>
+          )}
+
+          {!cargando && visibles < citasAMostrar.length && (
+            <div style={{ textAlign: 'center', padding: '16px 0' }}>
+              <IonButton fill="outline" onClick={() => setVisibles((v) => v + ITEMS_POR_PAGINA)}>
+                Cargar más
+              </IonButton>
+            </div>
           )}
 
         </div>

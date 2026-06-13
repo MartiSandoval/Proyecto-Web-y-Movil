@@ -13,6 +13,7 @@ function sanitizeValue(value) {
 
 function sanitizeBody(req, res, next) {
   if (req.body) req.body = sanitizeValue(req.body);
+  if (req.query) req.query = sanitizeValue(req.query);
   next();
 }
 

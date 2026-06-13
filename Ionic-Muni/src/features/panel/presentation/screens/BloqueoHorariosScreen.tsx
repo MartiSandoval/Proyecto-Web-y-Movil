@@ -181,7 +181,7 @@ const BloqueoHorariosScreen: React.FC = () => {
                     value={fecha}
                     min={hoy()}
                     onChange={(e) => setFecha(e.target.value)}
-                    style={{ border: '1px solid #e2e8f0', borderRadius: '6px', padding: '8px', fontSize: '14px', width: '100%' }}
+                    style={{ border: '1px solid #e2e8f0', borderRadius: '6px', padding: '8px', fontSize: '14px', width: '100%', backgroundColor: '#ffffff', color: '#1e293b', colorScheme: 'light' }}
                   />
                 </IonItem>
               </div>

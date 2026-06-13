@@ -1,4 +1,8 @@
 const { supabase } = require("../../../../core/database/supabaseClient");
+const cache = require("../../../../core/cache/inMemoryCache");
+
+const CACHE_PREFIX = "tramites:";
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutos
 
 // Mapea la fila de la tabla `tramites` a la forma que consume el frontend.
 function toFrontend(t) {
@@ -17,6 +21,10 @@ function toFrontend(t) {
 }
 
 async function findActivos(sucursalId, funcionarioId) {
+  const cacheKey = `${CACHE_PREFIX}${sucursalId ?? "all"}:${funcionarioId ?? "all"}`;
+  const cached = cache.get(cacheKey);
+  if (cached) return cached;
+
   let query = supabase
     .from("tramites")
     .select("id, nombre, descripcion, costo, es_en_linea, documentos_requeridos, activo, sucursal_id, created_at, sucursales(nombre)")
@@ -26,7 +34,6 @@ async function findActivos(sucursalId, funcionarioId) {
     query = query.eq("sucursal_id", sucursalId);
   }
 
-  // Si se filtra por funcionario, solo los trámites que tiene asignados.
   if (funcionarioId) {
     const ids = await findTramiteIdsByFuncionario(funcionarioId);
     if (ids.length === 0) return [];
@@ -35,7 +42,9 @@ async function findActivos(sucursalId, funcionarioId) {
 
   const { data, error } = await query;
   if (error) throw error;
-  return data.map(toFrontend);
+  const result = data.map(toFrontend);
+  cache.set(cacheKey, result, CACHE_TTL);
+  return result;
 }
 
 async function findById(id) {
@@ -69,6 +78,7 @@ async function insertTramite({
     .select("id")
     .single();
   if (error) throw error;
+  cache.invalidatePrefix(CACHE_PREFIX);
   return data;
 }
 
@@ -80,6 +90,7 @@ async function updateTramite(id, { sucursal_id, nombre, descripcion, costo, es_e
     .select("id")
     .single();
   if (error) throw error;
+  cache.invalidatePrefix(CACHE_PREFIX);
   return data;
 }
 
@@ -91,6 +102,7 @@ async function deleteTramite(id) {
     .select("id")
     .single();
   if (error) throw error;
+  cache.invalidatePrefix(CACHE_PREFIX);
   return data;
 }
 

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { IonIcon, IonBadge, IonPopover } from '@ionic/react';
+import React, { useState, useEffect, useRef } from 'react';
+import { IonIcon, IonPopover } from '@ionic/react';
 import { notificationsOutline, calendarOutline, closeOutline } from 'ionicons/icons';
 import httpClient from '../../../../../network/httpClient';
 import './NotificacionesAdmin.css';
@@ -15,12 +15,35 @@ interface Notificacion {
 const NotificacionesAdmin: React.FC = () => {
   const [notificaciones, setNotificaciones] = useState<Notificacion[]>([]);
   const [popoverState, setPopoverState] = useState({ show: false, event: undefined as any });
+  const shownIds = useRef<Set<string>>(new Set());
+  const isFirstFetch = useRef(true);
+
+  const dispararNotificacionNavegador = (notif: Notificacion) => {
+    if (Notification.permission === 'granted') {
+      new Notification(notif.titulo, {
+        body: notif.mensaje,
+        icon: '/favicon.png',
+      });
+    }
+  };
 
   const fetchNotificaciones = async () => {
     try {
       const response: any = await httpClient.get('/notificaciones');
       const arr: Notificacion[] = Array.isArray(response) ? response : (response.data || []);
-      setNotificaciones(arr.filter(n => !n.leida));
+      const noLeidas = arr.filter(n => !n.leida);
+
+      if (!isFirstFetch.current) {
+        noLeidas.forEach(n => {
+          if (!shownIds.current.has(n.id)) {
+            dispararNotificacionNavegador(n);
+          }
+        });
+      }
+
+      noLeidas.forEach(n => shownIds.current.add(n.id));
+      isFirstFetch.current = false;
+      setNotificaciones(noLeidas);
     } catch {
       // silencioso
     }
@@ -31,6 +54,13 @@ const NotificacionesAdmin: React.FC = () => {
     const interval = setInterval(fetchNotificaciones, 30000);
     return () => clearInterval(interval);
   }, []);
+
+  const handleAbrirCampanita = async (e: any) => {
+    if ('Notification' in window && Notification.permission === 'default') {
+      await Notification.requestPermission();
+    }
+    setPopoverState({ show: true, event: e });
+  };
 
   const descartarUna = (id: string) => {
     setNotificaciones(prev => prev.filter(n => n.id !== id));
@@ -51,7 +81,7 @@ const NotificacionesAdmin: React.FC = () => {
     <>
       <button
         className="notif-trigger-btn"
-        onClick={(e: any) => setPopoverState({ show: true, event: e })}
+        onClick={handleAbrirCampanita}
       >
         <IonIcon icon={notificationsOutline} className="notif-trigger-icon" />
         {notificaciones.length > 0 && (
