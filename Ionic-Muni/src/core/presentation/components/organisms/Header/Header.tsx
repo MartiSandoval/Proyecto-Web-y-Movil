@@ -11,6 +11,7 @@ import {
 import { ASSETS } from '../../../../config/constants';
 import SearchBar from '../../molecules/SearchBar/SearchBar';
 import HeaderTop from '../../molecules/HeaderTop/HeaderTop';
+import NotificacionesAdmin from '../../molecules/NotificacionesAdmin/NotificacionesAdmin';
 import { useAuth } from '../../../../../features/auth/presentation/hooks/useAuth';
 
 interface headerProps {
@@ -116,10 +117,14 @@ const Header: React.FC<headerProps> = ({ simple = false }) => {
 
         {/* Lado derecho: usuario o contacto */}
         {user ? (
-          // 1. A este div general le quitamos el "position: relative"
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             
-            {/* 2. NUEVO CONTENEDOR: Envolvemos solo el perfil y su menú con relative */}
+            {/* === COMPONENTE DE NOTIFICACIONES (Solo Admins) === */}
+            {(user.rol === 'funcionario' || user.rol === 'jefe_sucursal') && (
+              <NotificacionesAdmin />
+            )}
+
+            {/* NUEVO CONTENEDOR: Envolvemos solo el perfil y su menú con relative */}
             <div style={{ position: 'relative' }}>
               
               {/* === BOTÓN DEL USUARIO (Abre el submenú) === */}
@@ -150,7 +155,7 @@ const Header: React.FC<headerProps> = ({ simple = false }) => {
               {menuAbierto === 'perfil' && (
                 <div style={{ 
                   position: 'absolute', 
-                  top: 'calc(100% + 10px)', // Mejorado: Se ajusta exacto debajo del botón
+                  top: 'calc(100% + 10px)', 
                   right: '0', 
                   backgroundColor: 'white', 
                   boxShadow: '0 4px 12px rgba(0,0,0,0.15)', 
@@ -174,7 +179,6 @@ const Header: React.FC<headerProps> = ({ simple = false }) => {
                 </div>
               )}
             </div>
-            {/* FIN DEL NUEVO CONTENEDOR */}
 
             {/* Botón de Panel de Gestión (Si aplica) */}
             {(user.rol === 'funcionario' || user.rol === 'jefe_sucursal') && (
