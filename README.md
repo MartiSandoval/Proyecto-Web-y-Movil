@@ -359,19 +359,19 @@ Authorization: Bearer {{token}}
 
 Caso #1: 
 
-<img src="https://github.com/MartiSandoval/Proyecto-Web-y-Movil/blob/main/imagenes/1%20Crear%20usuario.png" alt="Test 1" width="450" height="450">
+<img src="imagenes/1%20Crear%20usuario.png" alt="Test 1" width="450" height="450">
 
 Caso #5:
 
-<img src="https://github.com/MartiSandoval/Proyecto-Web-y-Movil/blob/main/imagenes/5%20Login.png" alt="Test 5" width="450" height="450">
+<img src="imagenes/5%20Login.png" alt="Test 5" width="450" height="450">
 
 Caso #7:
 
-<img src="https://github.com/MartiSandoval/Proyecto-Web-y-Movil/blob/main/imagenes/7%20Perfil%20usuario.png" alt="Test 7" width="450" height="450">
+<img src="imagenes/7%20Perfil%20usuario.png" alt="Test 7" width="450" height="450">
 
 Caso #15:
 
-<img src="https://github.com/MartiSandoval/Proyecto-Web-y-Movil/blob/main/imagenes/15%20Acceder%20a%20tramites.png" alt="Test 15" width="450" height="450">
+<img src="imagenes/15%20Acceder%20a%20tramites.png" alt="Test 15" width="450" height="450">
 
 ---
 
@@ -405,24 +405,46 @@ Para mejorar el rendimiento de la API se implementaron las siguientes optimizaci
 
 **Paginación con conteo total:** el endpoint de historial de citas devolvía únicamente el arreglo de resultados sin indicar cuántos registros existían en total. Se incorporó el conteo exacto en la misma consulta, evitando una segunda consulta adicional, y se expone junto con los datos, la página actual y el límite por página. Esto permite al frontend calcular el número total de páginas y construir una navegación de paginación correcta sin necesidad de cargar todos los registros.
 
-## EF 6 (Informacion relevante -redacción)
+## EF 6 — Ejecución con Docker
 
-\* Importante tener [Docker Desktop]("https://www.docker.com/products/docker-desktop/") instalado, probar con `docker --version` y `docker compose version` para saber si ambos elementos se instalaron correctamente. 
+### Requisitos previos
 
-** Es probable que tire error y pida wsl, en ese caso ejecutar en cmd `wsl --install`
+- Tener [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado y corriendo.
+- Verificar la instalación con `docker --version` y `docker compose version`.
 
-Paso 1: Abrir terminal en la raiz del proyecto.
+> **Windows:** si Docker pide WSL, ejecutar en cmd: `wsl --install`
 
-Paso 2: Ejectuar comando: 
+### Pasos
 
-* `docker compose --profile full up --build` Para buildear todo
+**Paso 1 — Crear el archivo de variables de entorno para Docker**
 
-* `docker compose --profile backend up --build` Para buildear solo backend (Importante si se hacen cambios solo en backend)
+En la raíz del proyecto, copiar el archivo de ejemplo y completar con las credenciales reales del proyecto (disponibles en `env-entrega.txt`):
 
-Paso 3: Una vez buildeado el proyecto, debería aparecer automáticamente en Docker Desktop, desde la app es más facil gestionar las distintas partes del sistema.
+```bash
+cp .env.docker.example .env.docker
+```
 
-<img src="https://github.com/MartiSandoval/Proyecto-Web-y-Movil/blob/main/imagenes/Imagen%20Docker.png" alt="Imagen Docker" width="500" height="500">
+Editar `.env.docker` y reemplazar los valores de `SUPABASE_URL`, `SUPABASE_SERVICE_KEY` y `SUPABASE_ANON_KEY`.
 
-*** En la imagen se ven los perfiles de backend y frontend, ademas del perfil "padre" que inicia o detiene ambos juntos. 
+**Paso 2 — Abrir una terminal en la raíz del proyecto y ejecutar:**
 
-\**** Cualquier error se puede ver haciendo click en el nombre (columna `name`), esto mostrará los logs que corresponden a esa parte del programa, si se clickea al perfil padre se mostrarán ambos logs.
+```bash
+# Levantar todo (backend + frontend)
+docker compose --profile full up --build
+
+# Solo backend (útil si los cambios son solo en nodejs-Muni/)
+docker compose --profile backend up --build
+```
+
+**Paso 3 — Acceder a la aplicación**
+
+| Servicio | URL |
+|----------|-----|
+| Frontend | http://localhost |
+| Backend  | http://localhost:8000 |
+
+Una vez levantado, los contenedores aparecen en Docker Desktop donde es más fácil iniciar, detener y ver logs de cada parte del sistema.
+
+<img src="imagenes/Imagen%20Docker.png" alt="Imagen Docker" width="500" height="500">
+
+En la imagen se ven los perfiles de backend y frontend, además del perfil "padre" que inicia o detiene ambos juntos. Para ver los logs de cualquier contenedor, hacer clic en su nombre (columna `name`).
