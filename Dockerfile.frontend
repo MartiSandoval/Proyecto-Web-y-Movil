@@ -1,0 +1,39 @@
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Copiar manifiestos para aprovechar cache de capas
+COPY Ionic-Muni/package*.json ./
+
+# Instalar TODAS las dependencias (devDependencies necesarias para build)
+RUN npm ci
+
+# Copiar código fuente del frontend
+COPY Ionic-Muni/ .
+
+# Variables de build inyectadas desde docker-compose
+ARG VITE_API_URL
+ARG VITE_SUPABASE_URL
+ARG VITE_SUPABASE_ANON_KEY
+ENV VITE_API_URL=$VITE_API_URL
+ENV VITE_SUPABASE_URL=$VITE_SUPABASE_URL
+ENV VITE_SUPABASE_ANON_KEY=$VITE_SUPABASE_ANON_KEY
+
+# tsc + vite build
+RUN npm run build
+
+# ─────────────────────────────────────────
+FROM nginx:alpine AS runner
+
+# Copiar build estático generado por Vite
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Config de Nginx para SPA + proxy al backend
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD wget -qO- http://localhost:80 || exit 1
+
+CMD ["nginx", "-g", "daemon off;"]

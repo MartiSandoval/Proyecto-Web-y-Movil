@@ -1,0 +1,50 @@
+# Dependencias (se instalan dentro del container)
+node_modules
+*/node_modules
+**/node_modules
+
+# Backend viejo (no se usa en Docker)
+backend-node/
+
+# Variables de entorno reales
+.env
+.env.local
+.env.*.local
+.env.docker
+nodejs-Muni/.env
+nodejs-Muni/.env.development
+nodejs-Muni/.env.production
+Ionic-Muni/.env
+Ionic-Muni/.env.development
+Ionic-Muni/.env.production
+
+# Builds generados (se compilan dentro del container)
+dist
+build
+*/dist
+*/build
+
+# Tests y archivos de desarrollo
+*.log
+coverage
+.nyc_output
+Ionic-Muni/cypress/videos
+Ionic-Muni/cypress/screenshots
+
+# Control de versiones
+.git
+.gitignore
+*/.gitignore
+
+# Documentación e imágenes de prueba
+docs/
+imagenes-pruebas/
+*.md
+README.md
+
+# Archivos del sistema y editores
+.DS_Store
+Thumbs.db
+.vscode
+.idea
+*/.vscode

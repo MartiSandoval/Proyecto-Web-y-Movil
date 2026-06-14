@@ -359,19 +359,19 @@ Authorization: Bearer {{token}}
 
 Caso #1: 
 
-<img src="https://github.com/MartiSandoval/Proyecto-Web-y-Movil/blob/main/imagenes-pruebas/1%20Crear%20usuario.png" alt="Test 1" width="300" height="300">
+<img src="https://github.com/MartiSandoval/Proyecto-Web-y-Movil/blob/main/imagenes/1%20Crear%20usuario.png" alt="Test 1" width="450" height="450">
 
 Caso #5:
 
-<img src="https://github.com/MartiSandoval/Proyecto-Web-y-Movil/blob/main/imagenes-pruebas/5%20Login.png" alt="Test 5" width="300" height="300">
+<img src="https://github.com/MartiSandoval/Proyecto-Web-y-Movil/blob/main/imagenes/5%20Login.png" alt="Test 5" width="450" height="450">
 
 Caso #7:
 
-<img src="https://github.com/MartiSandoval/Proyecto-Web-y-Movil/blob/main/imagenes-pruebas/7%20Perfil%20usuario.png" alt="Test 7" width="300" height="300">
+<img src="https://github.com/MartiSandoval/Proyecto-Web-y-Movil/blob/main/imagenes/7%20Perfil%20usuario.png" alt="Test 7" width="450" height="450">
 
 Caso #15:
 
-<img src="https://github.com/MartiSandoval/Proyecto-Web-y-Movil/blob/main/imagenes-pruebas/15%20Acceder%20a%20tramites.png" alt="Test 15" width="300" height="300">
+<img src="https://github.com/MartiSandoval/Proyecto-Web-y-Movil/blob/main/imagenes/15%20Acceder%20a%20tramites.png" alt="Test 15" width="450" height="450">
 
 ---
 
@@ -404,3 +404,25 @@ Para mejorar el rendimiento de la API se implementaron las siguientes optimizaci
 **Compresión gzip de respuestas:** se habilitó compresión automática de todas las respuestas HTTP usando gzip o deflate según lo que soporte el cliente. Las respuestas JSON de tamaño mediano (listas de trámites, historial de citas con joins) se reducen típicamente entre un 60% y 80% en tamaño, lo que disminuye el tiempo de transferencia y el consumo de datos, especialmente relevante para usuarios en dispositivos móviles.
 
 **Paginación con conteo total:** el endpoint de historial de citas devolvía únicamente el arreglo de resultados sin indicar cuántos registros existían en total. Se incorporó el conteo exacto en la misma consulta, evitando una segunda consulta adicional, y se expone junto con los datos, la página actual y el límite por página. Esto permite al frontend calcular el número total de páginas y construir una navegación de paginación correcta sin necesidad de cargar todos los registros.
+
+## EF 6 (Informacion relevante -redacción)
+
+\* Importante tener [Docker Desktop]("https://www.docker.com/products/docker-desktop/") instalado, probar con `docker --version` y `docker compose version` para saber si ambos elementos se instalaron correctamente. 
+
+** Es probable que tire error y pida wsl, en ese caso ejecutar en cmd `wsl --install`
+
+Paso 1: Abrir terminal en la raiz del proyecto.
+
+Paso 2: Ejectuar comando: 
+
+* `docker compose --profile full up --build` Para buildear todo
+
+* `docker compose --profile backend up --build` Para buildear solo backend (Importante si se hacen cambios solo en backend)
+
+Paso 3: Una vez buildeado el proyecto, debería aparecer automáticamente en Docker Desktop, desde la app es más facil gestionar las distintas partes del sistema.
+
+<img src="https://github.com/MartiSandoval/Proyecto-Web-y-Movil/blob/main/imagenes/Imagen%20Docker.png" alt="Imagen Docker" width="500" height="500">
+
+*** En la imagen se ven los perfiles de backend y frontend, ademas del perfil "padre" que inicia o detiene ambos juntos. 
+
+\**** Cualquier error se puede ver haciendo click en el nombre (columna `name`), esto mostrará los logs que corresponden a esa parte del programa, si se clickea al perfil padre se mostrarán ambos logs. 

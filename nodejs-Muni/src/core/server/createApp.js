@@ -37,7 +37,7 @@ function createApp() {
   app.use(express.json());
   app.use(sanitizeBody);
 
-  app.use("/", healthRoutes);
+  app.use("/health", healthRoutes);
   app.use("/auth", authRoutes);
   app.use("/tramites", tramitesRoutes);
   app.use("/disponibilidad", disponibilidadRoutes);
