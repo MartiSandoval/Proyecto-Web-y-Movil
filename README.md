@@ -425,4 +425,4 @@ Paso 3: Una vez buildeado el proyecto, debería aparecer automáticamente en Doc
 
 *** En la imagen se ven los perfiles de backend y frontend, ademas del perfil "padre" que inicia o detiene ambos juntos. 
 
-\**** Cualquier error se puede ver haciendo click en el nombre (columna `name`), esto mostrará los logs que corresponden a esa parte del programa, si se clickea al perfil padre se mostrarán ambos logs. 
+\**** Cualquier error se puede ver haciendo click en el nombre (columna `name`), esto mostrará los logs que corresponden a esa parte del programa, si se clickea al perfil padre se mostrarán ambos logs.
