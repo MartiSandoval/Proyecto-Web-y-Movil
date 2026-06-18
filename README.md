@@ -30,16 +30,14 @@ Por lo tanto, este proyecto busca solucionar esta problemática mediante el desa
 | ID | Rol | Nombre | Descripción | Criterio de Aceptación |
 |---|---|---|---|---|
 | RF-01 | Usuario | Agendar hora | El usuario puede agendar una hora seleccionando el tipo de examen (Licencia Clase A, B, etc.) e indicando si es primera vez o renovación. | Al confirmar, la cita queda registrada en el sistema con todos los datos del examen seleccionado. |
-| RF-02 | Usuario | Gestión de la reserva | El usuario puede modificar o cancelar una cita previamente agendada desde su panel personal. | El usuario puede cambiar fecha, hora o tipo de examen, o cancelar la cita, y los cambios se reflejan de inmediato en el sistema. |
+| RF-02 | Usuario | Gestión de la reserva | El usuario puede cancelar una cita previamente agendada desde su panel personal. | El usuario puede cancelar la cita, y los cambios se reflejan de inmediato en el sistema. |
 | RF-03 | Usuario | Visualización del historial | El sistema muestra el registro completo de exámenes agendados por el usuario, con el detalle de cada trámite. | El historial lista todas las citas del usuario ordenadas cronológicamente con sus datos completos visibles. |
 | RF-04 | Usuario | Seguimiento de estado del examen | El usuario puede consultar el estado actualizado de su trámite (Aprobado, Rechazado, En Proceso) para el proceso de entrega de licencia. | El estado del trámite se muestra correctamente en el perfil del usuario y se actualiza cuando el administrador realiza cambios. |
-| RF-05 | Usuario | Lista de espera | Si no hay disponibilidad en las fechas deseadas, el usuario puede unirse a una lista de espera y recibe una notificación automática si se libera un cupo. | Al liberarse un cupo, el sistema notifica automáticamente al primer usuario en lista de espera para ese bloque horario. |
-| RF-06 | Usuario | Validación de identidad | El sistema integra validación por RUT para garantizar que cada persona pueda tener solo una hora vigente a la vez. | Un RUT con cita activa no puede agendar una segunda hora hasta cancelar o completar la existente. |
-| RF-07 | Usuario | Modificación de datos de contacto | El usuario puede actualizar su correo electrónico, número de teléfono u otros datos de contacto desde su perfil. | Los nuevos datos quedan guardados y se usan en las notificaciones siguientes. |
+| RF-05 | Usuario | Validación de identidad | El sistema integra validación por RUT para garantizar que cada persona pueda tener solo una hora vigente a la vez. | Un RUT con cita activa no puede agendar una segunda hora hasta cancelar o completar la existente. |
+| RF-07 | Usuario | Modificación de datos del perfil | El usuario puede actualizar su correo electrónico, número de teléfono u otros datos de contacto desde su perfil. | Los nuevos datos quedan guardados y se usan en las notificaciones siguientes. |
 | RF-08 | Funcionario / Jefe de Sucursal | Gestión de capacidad y bloqueos | El funcionario puede bloquear días o franjas horarias específicas por feriados, mantenimiento o ausencia de personal. | Los días bloqueados se aplican de inmediato al calendario visible por los usuarios. |
-| RF-09 | Jefe de Sucursal | Exportación de nóminas diarias | El sistema genera automáticamente listas de asistencia diaria en formato PDF o Excel con los datos clave de cada postulante agendado para ese día. | El jefe de sucursal puede descargar la nómina del día en cualquiera de los dos formatos con todos los campos requeridos. |
-| RF-10 | Funcionario | Buscador y editor de citas | El funcionario puede buscar a un usuario por RUT, modificar su hora agendada o registrar asistencia manual. | El funcionario encuentra al usuario por RUT y puede editar o registrar su cita sin errores. |
-| RF-11 | Jefe de Sucursal | Configuración de reglas de negocio | El jefe de sucursal puede editar parámetros del sistema como la duración de cada tipo de trámite y el número máximo de cupos por día. | Los cambios en los parámetros se aplican al flujo de agendamiento de forma inmediata. |
+| RF-09 | Funcionario / Jefe de Sucursal | Buscador y editor de citas | El funcionario puede buscar a un usuario por RUT, modificar su hora agendada o registrar asistencia manual. | El funcionario encuentra al usuario por RUT y puede editar o registrar su cita sin errores. |
+| RF-11 | Jefe de Sucursal | Creación de trámites | El jefe de sucursal puede crear trámites y especificar que funcionarios quiere que trabajen ahí, además de poner los horarios disponibles de este trámite. | Al crear el trámite, se refleja de inmediato en todos los perfiles. |
 
 ---
 
@@ -65,8 +63,6 @@ El login se realiza con **RUT + contraseña**. La autenticación usa JWT generad
 
 (El RUT ya no tiene que existir necesariamente, puede ser cualquiera que cumpla con la validación básica)
 
-(Hasta el momento en el proyecto solo se ve reflejado el rol de usuario con sus respectivas funciones, el rol de funcionario y jefe de surcursal aún no estan implementados).
-
 ---
 
 ## Arquitectura de navegación
@@ -82,12 +78,16 @@ El sistema diferencia dos flujos de navegación según el rol del usuario autent
 | `/` | Pública | Redirige automáticamente a `/login` |
 | `/login` | Pública | Inicio de sesión con RUT + contraseña |
 | `/registro` | Pública | Registro de nueva cuenta ciudadana |
+| `/perfil` | Pública | Editar datos de la persona |
 | `/tramites` | Autenticado (todos los roles) | Listado de trámites municipales disponibles |
 | `/tramite/:id/detalle` | Autenticado (todos los roles) | Detalle de un trámite específico |
 | `/tramite/:id/agendar` | Autenticado (todos los roles) | Selección de fecha y slot horario |
 | `/tramite/:id/subir` | Autenticado (todos los roles) | Subida de documentos y confirmación de cita |
 | `/historial` | Autenticado (todos los roles) | Historial de citas del usuario autenticado |
-| `/panel-funcionario` | Solo `funcionario` y `jefe_sucursal` | Panel de gestión de citas por sucursal |
+| `/panel-funcionario` | Solo `funcionario` y `jefe_sucursal` | Panel de gestión con funcionalidades de los funcionarios y jefes |
+| `/panel-funcionario/citas` | Solo `funcionario` y `jefe_sucursal` | Panel de gestión de citas por sucursal |
+| `/panel-funcionario/bloqueos` | Solo `funcionario` y `jefe_sucursal` | Panel de gestión de bloqueos |
+| `/panel-funcionario/tramites` | Solo `jefe_sucursal` | Panel de gestión de los trámites |
 
 Las rutas protegidas requieren sesión activa; sin sesión el usuario es redirigido a `/login`. Las rutas con restricción de rol redirigen a `/tramites` si el rol no coincide, sin exponer la existencia de la ruta restringida.
 
@@ -129,6 +129,7 @@ App
 ├── Rutas públicas
 │   ├── LoginPage
 │   └── RegisterPage
+│   └── Perfil
 └── Rutas protegidas (requieren sesión activa)
     ├── Tramites                        ← vista raíz para todos los roles
     │   └── DetalleTramite
@@ -136,6 +137,10 @@ App
     │           └── SubirArchivos
     ├── HistorialTramites
     └── PanelFuncionario                ← exclusivo: funcionario / jefe_sucursal
+        └── GestionCitas
+        └── BloqueoHorarios
+        └── GestionTramites             ← exclusivo: jefe_sucursal
+              
 ```
 
 ---
