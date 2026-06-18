@@ -289,6 +289,7 @@ Las siguientes cuentas ya están cargadas en la base de datos del proyecto:
 | POST | `/auth/registro` | Crear cuenta (email, password, nombre, rut, ...) |
 | POST | `/auth/login` | Iniciar sesión (rut, password) → devuelve JWT |
 | GET | `/auth/me` | Perfil del usuario autenticado |
+| PUT | `/auth/me` | Actualizar datos del perfil del usuario autenticado |
 
 ### Trámites y disponibilidad (públicos)
 
@@ -298,21 +299,67 @@ Las siguientes cuentas ya están cargadas en la base de datos del proyecto:
 | GET | `/tramites/:id` | Detalle de un trámite |
 | GET | `/disponibilidad/:tramiteId/:fecha` | Slots horarios disponibles |
 
+### Trámites — gestión (requieren JWT)
+
+| Método | URL | Roles | Descripción |
+|--------|-----|-------|-------------|
+| POST | `/tramites/` | jefe_sucursal | Crear un nuevo trámite |
+| PUT | `/tramites/:id` | jefe_sucursal | Editar un trámite existente |
+| DELETE | `/tramites/:id` | jefe_sucursal | Eliminar un trámite |
+| PUT | `/tramites/:id/funcionarios` | jefe_sucursal | Asignar funcionarios a un trámite |
+
 ### Sucursales (públicos)
 
 | Método | URL | Descripción |
 |--------|-----|-------------|
 | GET | `/sucursales` | Lista todas las sucursales activas |
 
+### Sucursales — gestión (requieren JWT)
+
+| Método | URL | Roles | Descripción |
+|--------|-----|-------|-------------|
+| POST | `/sucursales/` | jefe_sucursal, admin | Crear una nueva sucursal |
+| PUT | `/sucursales/:id` | jefe_sucursal, admin | Actualizar datos de una sucursal |
+| DELETE | `/sucursales/:id` | jefe_sucursal, admin | Eliminar una sucursal |
+
 ### Citas (requieren JWT)
 
 | Método | URL | Roles | Descripción |
 |--------|-----|-------|-------------|
-| POST | `/citas` | usuario, funcionario, jefe_sucursal | Crear una nueva cita |
+| POST | `/citas` | todos | Crear una nueva cita |
 | GET | `/citas/mis-citas` | todos | Historial de citas del usuario autenticado |
+| PUT | `/citas/mis-citas/:id/cancelar` | todos | Cancelar una cita propia |
 | GET | `/citas/tramite/:id` | funcionario, jefe_sucursal | Citas de un trámite (filtrable por fecha) |
 | PUT | `/citas/:id/estado` | funcionario, jefe_sucursal | Actualizar estado de una cita |
 | POST | `/citas/:id/archivos` | todos | Registrar archivo adjunto a una cita |
+
+### Bloqueos de horario (requieren JWT)
+
+| Método | URL | Roles | Descripción |
+|--------|-----|-------|-------------|
+| POST | `/bloqueos/` | funcionario, jefe_sucursal | Crear un bloqueo de día u hora |
+| GET | `/bloqueos/` | funcionario, jefe_sucursal | Listar bloqueos activos |
+| DELETE | `/bloqueos/:id` | funcionario, jefe_sucursal | Eliminar un bloqueo |
+
+### Funcionarios (requieren JWT)
+
+| Método | URL | Roles | Descripción |
+|--------|-----|-------|-------------|
+| GET | `/funcionarios/` | jefe_sucursal | Listar funcionarios de la sucursal |
+
+### Notificaciones (requieren JWT)
+
+| Método | URL | Roles | Descripción |
+|--------|-----|-------|-------------|
+| GET | `/notificaciones/` | todos | Obtener notificaciones del usuario |
+| PUT | `/notificaciones/leer-todas` | todos | Marcar todas las notificaciones como leídas |
+| PUT | `/notificaciones/:id/leer` | todos | Marcar una notificación como leída |
+
+### Health
+
+| Método | URL | Descripción |
+|--------|-----|-------------|
+| GET | `/health` | Estado del API (usado por Docker para health check) |
 
 # Pruebas
 
