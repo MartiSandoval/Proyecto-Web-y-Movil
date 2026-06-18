@@ -398,6 +398,10 @@ Para reforzar la seguridad de la API se implementaron las siguientes medidas:
 
 **Protección contra inyección SQL:** las consultas a la base de datos se realizan exclusivamente a través del SDK de Supabase, que parametriza automáticamente todos los valores. Esto elimina la posibilidad de inyección SQL, ya que ningún valor proveniente del usuario se interpola directamente en una consulta.
 
+### Diagrama de capas de seguridad
+
+<img src="imagenes/diagrama-seguridad.png" alt="Diagrama de capas de seguridad" width="600">
+
 ---
 
 ## EF 4 — Optimización de Consultas y Respuesta Eficiente
@@ -409,6 +413,39 @@ Para mejorar el rendimiento de la API se implementaron las siguientes optimizaci
 **Compresión gzip de respuestas:** se habilitó compresión automática de todas las respuestas HTTP usando gzip o deflate según lo que soporte el cliente. Las respuestas JSON de tamaño mediano (listas de trámites, historial de citas con joins) se reducen típicamente entre un 60% y 80% en tamaño, lo que disminuye el tiempo de transferencia y el consumo de datos, especialmente relevante para usuarios en dispositivos móviles.
 
 **Paginación con conteo total:** el endpoint de historial de citas devolvía únicamente el arreglo de resultados sin indicar cuántos registros existían en total. Se incorporó el conteo exacto en la misma consulta, evitando una segunda consulta adicional, y se expone junto con los datos, la página actual y el límite por página. Esto permite al frontend calcular el número total de páginas y construir una navegación de paginación correcta sin necesidad de cargar todos los registros.
+
+## EF 5 — Integración con Servicio Externo
+
+El proyecto integra **Supabase** como plataforma de servicios externos (BaaS — Backend as a Service). Supabase reemplaza la infraestructura que habitualmente se delega a AWS, proveyendo tres servicios distintos consumidos desde el backend y el frontend:
+
+### Servicios utilizados
+
+| Servicio | Rol en el proyecto | Integración |
+|---|---|---|
+| **Supabase Auth** | Generación y validación de JWT tras login exitoso | Backend: `loginUseCase.js`, `registerUserUseCase.js` |
+| **Supabase PostgreSQL** | Base de datos relacional completa (todas las tablas de la aplicación) | Backend: todas las consultas vía SDK de Supabase |
+| **Supabase Storage** | Almacenamiento de archivos adjuntos a citas (documentos del trámite) | Frontend: `Ionic-Muni/src/network/supabaseClient.ts` |
+
+### Configuración del cliente
+
+El backend mantiene dos clientes con permisos distintos (`nodejs-Muni/src/core/database/supabaseClient.js`):
+
+- **`supabaseAdmin`** (service role key): opera con privilegios elevados para operaciones de servidor como crear usuarios en Auth, leer datos sin restricciones RLS y gestionar registros desde los use cases.
+- **`supabaseAnon`** (anon key): expone solo las operaciones que corresponden al rol público, en línea con el principio de mínimo privilegio.
+
+### Flujo de autenticación con Supabase Auth
+
+El login no usa un JWT propio: el backend verifica la contraseña con `bcrypt`, y si es válida, solicita a **Supabase Auth** que genere el token. Todos los endpoints protegidos del backend validan ese token llamando a `supabaseAdmin.auth.getUser(token)`, sin necesidad de mantener secretos de firma propios.
+
+### Variables de entorno requeridas
+
+```env
+SUPABASE_URL=https://xxxx.supabase.co
+SUPABASE_SERVICE_KEY=sb_secret_...
+SUPABASE_ANON_KEY=sb_publishable_...
+```
+
+---
 
 ## EF 6 — Ejecución con Docker
 
